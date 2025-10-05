@@ -14,40 +14,114 @@
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=1200&h=800&fit=crop&crop=entropy&auto=format&q=80">
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80">
     
-    <!-- Google Analytics 4 - Enhanced Configuration -->
-    <!-- Google tag (gtag.js) -->
+    <!-- Google Analytics 4 - 기본 설정 (확실한 작동 보장) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
+        // 기본 dataLayer 설정
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
+        
+        // 현재 시간으로 초기화
         gtag('js', new Date());
-
-        // GA4 기본 설정 - Collector Page
+        
+        // GA4 측정 ID 설정 - 향상된 설정 (Collector Page)
         gtag('config', 'G-DE2ZNKWV2W', {
-            page_title: 'Artist - Collector Portal',
-            page_location: window.location.href,
-            send_page_view: true,
-            enhanced_measurement: true,
-            custom_map: {
-                'user_type': 'user_category',
-                'page_section': 'content_group1'
-            }
+            'page_title': 'Artist - Collector Portal',
+            'page_location': window.location.href,
+            'send_page_view': true,
+            'enhanced_measurements': {
+                'scrolls': true,
+                'outbound_clicks': true,
+                'site_search': false,
+                'video_engagement': false,
+                'file_downloads': true
+            },
+            'custom_parameters_allowed': true,
+            'allow_enhanced_conversions': true
         });
 
-        // GA4 초기화 및 Collector 전용 추적
-        function initializeGA4Collector() {
-            console.log('🖼️ Collector 페이지 GA4 초기화...');
-            
-            // Collector 페이지뷰 전송
-            gtag('event', 'page_view', {
-                page_title: 'Artist - Collector Portal',
-                page_location: window.location.href,
-                content_group1: 'collector_page',
-                user_category: 'collector_visitor'
-            });
+        console.log('🚀 GA4 초기화 완료 - 측정 ID: G-DE2ZNKWV2W (Collector Page)');
 
-            // Collector 특화 참여도 추적
-            startCollectorEngagementTracking();
+        // CTA 추적을 위한 표준화된 함수 - GA4 가이드라인 준수
+        function trackCTA(actionName, ctaLocation, ctaText) {
+            // GA4 권장 cta_click 이벤트
+            gtag('event', 'cta_click', {
+                'event_category': 'engagement',
+                'event_label': actionName,
+                'button_text': ctaText,
+                'button_location': ctaLocation,
+                'button_type': actionName.includes('primary') ? 'primary' : 'secondary',
+                'page_path': window.location.pathname,
+                'page_title': 'Artist - Collector Portal'
+            });
+            
+            // 개별 액션별 이벤트 (세부 분석용)
+            gtag('event', actionName, {
+                'event_category': 'user_action',
+                'location': ctaLocation,
+                'button_text': ctaText,
+                'timestamp': new Date().toISOString(),
+                'user_type': 'collector'
+            });
+            
+            console.log('📈 GA4 CTA 추적 (Collector):', {
+                event: 'cta_click',
+                action: actionName,
+                location: ctaLocation,
+                text: ctaText
+            });
+        }
+        
+        // 디버그 정보 출력
+        console.log('🖼️ GA4 로딩 시작 - ID: G-DE2ZNKWV2W (Collector)');
+        console.log('🌍 현재 URL:', window.location.href);
+        console.log('🏷️ 페이지 제목:', 'Artist - Collector Portal');
+        
+        // 즉시 확인 가능한 테스트 이벤트 전송
+        setTimeout(function() {
+            gtag('event', 'test_connection', {
+                'custom_parameter': 'collector_test_value',
+                'debug_timestamp': new Date().toISOString(),
+                'user_type': 'collector'
+            });
+            console.log('🧪 테스트 이벤트 전송 완료 (Collector)');
+            
+            // 페이지 진입 이벤트 (전환 퍼널 시작점)
+            gtag('event', 'page_view', {
+                'event_category': 'engagement',
+                'page_title': 'Artist - Collector Portal',
+                'page_location': window.location.href,
+                'user_engagement': 'collector_page_loaded',
+                'user_type': 'collector'
+            });
+            
+            console.log('📄 Collector 페이지 진입 이벤트 전송 완료');
+        }, 1000);
+        
+        // 페이지 로드 완료 시 추가 테스트
+        window.addEventListener('load', function() {
+            console.log('✅ Collector 페이지 로드 완료');
+            
+            // 로드 완료 이벤트
+            gtag('event', 'page_loaded', {
+                'event_category': 'page_timing',
+                'event_label': 'collector_load_complete',
+                'user_type': 'collector'
+            });
+            
+            // 3초 후 생존 확인 이벤트
+            setTimeout(function() {
+                gtag('event', 'user_alive', {
+                    'event_category': 'engagement',
+                    'event_label': '3_second_check_collector',
+                    'user_type': 'collector'
+                });
+                console.log('💓 3초 생존 확인 이벤트 전송 (Collector)');
+            }, 3000);
+        });
+        
+        console.log('🚀 GA4 스크립트 로딩 완료 (Collector)');
+    </script>
             
             console.log('✅ Collector GA4 초기화 완료');
         }
@@ -827,7 +901,7 @@
                     <li>안전한 거래 보장</li>
                 </ul>
                 
-                <button class="cta-button" onclick="openInterestForm()">관심 등록하기</button>
+                <button class="cta-button" onclick="trackCTA('collector_interest_signup', 'hero_section', '관심 등록하기'); openInterestForm()">관심 등록하기</button>
             </div>
         </div>
         
@@ -840,7 +914,7 @@
             
             <div class="features-grid">
                 <!-- AI 기반 스토리 탐색 -->
-                <div class="feature-card" onclick="trackCTAClick('ai_story_exploration', 'collector', 'core_feature')">
+                <div class="feature-card" onclick="trackCTA('ai_story_exploration', 'collector_features', 'AI 스토리 탐색')">
                     <div class="feature-icon">🤖</div>
                     <div class="feature-content">
                         <h3>AI 기반 스토리 탐색</h3>
@@ -855,7 +929,7 @@
                 </div>
 
                 <!-- 안심 거래 -->
-                <div class="feature-card" onclick="trackCTAClick('secure_transaction', 'collector', 'core_feature')">
+                <div class="feature-card" onclick="trackCTA('secure_transaction', 'collector_features', '안전한 거래')">
                     <div class="feature-icon">🛡️</div>
                     <div class="feature-content">
                         <h3>안심 거래</h3>
@@ -870,7 +944,7 @@
                 </div>
 
                 <!-- 즉시 소통·견적 -->
-                <div class="feature-card" onclick="trackCTAClick('instant_communication', 'collector', 'core_feature')">
+                <div class="feature-card" onclick="trackCTA('instant_communication', 'collector_features', '즉석 소통')">
                     <div class="feature-icon">💬</div>
                     <div class="feature-content">
                         <h3>즉시 소통·견적</h3>
@@ -890,7 +964,7 @@
     <!-- Interest Form Overlay -->
     <div class="interest-overlay" id="interestOverlay">
         <div class="interest-form">
-            <button class="close-btn" onclick="closeInterestForm()">&times;</button>
+            <button class="close-btn" onclick="trackCTA('collector_form_close', 'interest_form', '폼 닫기'); closeInterestForm()">&times;</button>
             <div class="form-header">
                 <h3>콜렉터 관심 등록</h3>
                 <p>맞춤 작품을 추천받으세요</p>
@@ -1020,15 +1094,17 @@
                 return;
             }
             
-            // GA4 이벤트 추적
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'collector_interest_submitted', {
-                    'event_category': 'conversion',
-                    'event_label': interests.join(','),
-                    'interests': interests,
-                    'budget_range': data.budget || 'not_specified'
-                });
-            }
+            // GA4 이벤트 추적 - 표준화된 trackCTA 함수 사용
+            trackCTA('collector_interest_submitted', 'interest_form', `관심 등록 완료 - ${interests.join(', ')}`);
+            
+            // 추가 상세 이벤트
+            gtag('event', 'collector_conversion', {
+                'event_category': 'conversion',
+                'event_label': interests.join(','),
+                'interests': interests,
+                'budget_range': data.budget || 'not_specified',
+                'user_type': 'collector'
+            });
             
             // Success message and close form
             alert('관심 등록이 완료되었습니다! 맞춤 작품을 추천해드리겠습니다.');
