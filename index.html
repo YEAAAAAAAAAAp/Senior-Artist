@@ -38,33 +38,51 @@
 
         console.log('🚀 GA4 초기화 완료 - 측정 ID: G-DE2ZNKWV2W');
 
-        // CTA 추적을 위한 표준화된 함수 - GA4 가이드라인 준수
+        // CTA 추적을 위한 표준화된 함수 - GA4 가이드라인 준수 (안전한 래퍼)
         function trackCTA(actionName, ctaLocation, ctaText) {
-            // GA4 권장 cta_click 이벤트
-            gtag('event', 'cta_click', {
-                'event_category': 'engagement',
-                'event_label': actionName,
-                'button_text': ctaText,
-                'button_location': ctaLocation,
-                'button_type': actionName.includes('primary') ? 'primary' : 'secondary',
-                'page_path': window.location.pathname,
-                'page_title': document.title
-            });
-            
-            // 개별 액션별 이벤트 (세부 분석용)
-            gtag('event', actionName, {
-                'event_category': 'user_action',
-                'location': ctaLocation,
-                'button_text': ctaText,
-                'timestamp': new Date().toISOString()
-            });
-            
-            console.log('📈 GA4 CTA 추적:', {
-                event: 'cta_click',
-                action: actionName,
-                location: ctaLocation,
-                text: ctaText
-            });
+            // gtag 함수가 정의되었는지 확인
+            if (typeof gtag === 'undefined') {
+                console.warn('⚠️ gtag 함수가 아직 로드되지 않음. 이벤트를 대기열에 추가:', actionName);
+                // gtag이 로드될 때까지 대기
+                setTimeout(function() {
+                    trackCTA(actionName, ctaLocation, ctaText);
+                }, 100);
+                return;
+            }
+
+            try {
+                // GA4 권장 cta_click 이벤트
+                gtag('event', 'cta_click', {
+                    'event_category': 'engagement',
+                    'event_label': actionName,
+                    'button_text': ctaText,
+                    'button_location': ctaLocation,
+                    'button_type': actionName.includes('primary') ? 'primary' : 'secondary',
+                    'page_path': window.location.pathname,
+                    'page_title': document.title
+                });
+                
+                // 개별 액션별 이벤트 (세부 분석용)
+                gtag('event', actionName, {
+                    'event_category': 'user_action',
+                    'location': ctaLocation,
+                    'button_text': ctaText,
+                    'timestamp': new Date().toISOString()
+                });
+                
+                console.log('📈 GA4 CTA 추적 성공:', {
+                    event: 'cta_click',
+                    action: actionName,
+                    location: ctaLocation,
+                    text: ctaText
+                });
+            } catch (error) {
+                console.error('❌ GA4 CTA 추적 오류:', error, {
+                    action: actionName,
+                    location: ctaLocation,
+                    text: ctaText
+                });
+            }
         }
         
         // 디버그 정보 출력
