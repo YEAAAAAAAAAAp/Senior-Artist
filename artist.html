@@ -144,11 +144,11 @@
         }
 
         .artist-content h1 {
-            font-size: clamp(42px, 5vw, 58px);
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 24px;
-            letter-spacing: -0.02em;
+            font-size: clamp(48px, 6vw, 64px);
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 28px;
+            letter-spacing: -0.025em;
         }
 
         .highlight {
@@ -156,6 +156,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            font-weight: 900;
         }
 
         .hero-description {
@@ -192,28 +193,30 @@
 
         .hero-cta {
             display: flex;
-            gap: 16px;
+            gap: 20px;
             flex-wrap: wrap;
+            margin-top: 2rem;
         }
 
         .btn {
-            padding: 16px 32px;
-            border-radius: 12px;
+            padding: 18px 36px;
+            border-radius: 50px;
             font-weight: 600;
             font-size: 16px;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: none;
             cursor: pointer;
+            letter-spacing: -0.01em;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, #8b5cf6, #06b6d4);
             color: white;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.25);
         }
 
         .btn-primary:hover {
@@ -221,16 +224,22 @@
             box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
         }
 
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(139, 92, 246, 0.35);
+        }
+
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
         }
 
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.25);
         }
 
         .artist-preview {
@@ -421,22 +430,28 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
+            background: rgba(15, 23, 42, 0.85);
+            display: none;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
+            z-index: 9999;
+            backdrop-filter: blur(8px);
+            padding: 20px;
+        }
+
+        .demo-modal.active {
+            display: flex;
         }
 
         .modal-content {
             background: white;
-            border-radius: 20px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
+            border-radius: 24px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
         }
 
         .modal-header {
@@ -1498,29 +1513,30 @@
         .artwork-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            max-width: 500px;
+            gap: 24px;
+            max-width: 600px;
             width: 100%;
         }
         
         .artwork-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .artwork-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
         }
         
         .artwork-image {
             width: 100%;
-            height: 150px;
+            height: 180px;
             background-size: cover;
             background-position: center;
             position: relative;
@@ -1547,9 +1563,9 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 100%);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
             color: white;
-            padding: 1rem;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -1557,11 +1573,24 @@
             text-align: center;
             opacity: 0;
             transition: all 0.3s ease;
-            backdrop-filter: blur(2px);
+            backdrop-filter: blur(8px);
         }
         
         .artwork-card:hover .story-overlay {
             opacity: 1;
+        }
+        
+        .story-overlay h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+        
+        .story-overlay p {
+            font-size: 13px;
+            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.9);
         }
         
         .story-overlay h4 {
