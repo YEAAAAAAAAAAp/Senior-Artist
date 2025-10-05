@@ -139,8 +139,9 @@
         });
         
         console.log('🚀 GA4 스크립트 로딩 완료 (Collector)');
-    </script>
-            
+        
+        // GA4 초기화 및 Collector 전용 추적
+        function initializeGA4Collector() {
             console.log('✅ Collector GA4 초기화 완료');
         }
 
@@ -195,6 +196,7 @@
         window.addEventListener('load', function() {
             setTimeout(initializeGA4Collector, 500);
         });
+    </script>
     
     <style>
         /* CSS Reset */
@@ -876,7 +878,6 @@
             }
         }
     </style>
-    </script>
 </head>
 <body>
     <!-- Header -->

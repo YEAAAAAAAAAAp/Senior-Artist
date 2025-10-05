@@ -139,7 +139,9 @@
         });
         
         console.log('🚀 GA4 스크립트 로딩 완료 (Artist)');
-    </script>
+        
+        // GA4 설정 확장
+        gtag('config', 'G-DE2ZNKWV2W', {
             custom_map: {
                 'user_type': 'user_category',
                 'page_section': 'content_group1'
@@ -215,6 +217,7 @@
         window.addEventListener('load', function() {
             setTimeout(initializeGA4Artist, 500);
         });
+    </script>
     
     <style>
         /* CSS Reset */
@@ -827,7 +830,6 @@
             }
         }
     </style>
-    </script>
 </head>
 <body>
     <!-- Header -->
