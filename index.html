@@ -91,16 +91,6 @@
             console.log('📄 페이지 진입 이벤트 전송 완료');
         }, 1000);
         
-        // 매우 간단한 클릭 추적 함수
-        function simpleTrack(eventName, details) {
-            gtag('event', eventName, {
-                'event_category': 'user_interaction',
-                'event_label': details || 'no_details',
-                'timestamp': new Date().toISOString()
-            });
-            console.log('📊 이벤트 전송:', eventName, details);
-        }
-        
         // 페이지 로드 완료 시 추가 테스트
         window.addEventListener('load', function() {
             console.log('✅ 페이지 로드 완료');
@@ -1426,6 +1416,9 @@
                 return_frequency: visitCount > 1 ? daysSinceFirst / visitCount : 0
             });
         }
+        
+        // 고급 분석 시스템 초기화 실행
+        initAdvancedAnalytics();
     </script>
 </head>
 <body>
@@ -1711,7 +1704,6 @@
                 trackCTA('general_click_interaction', 'page_element', e.target.textContent.trim());
             }
         });
-    </script>
     </script>
 
     <!-- About Modal -->
