@@ -269,9 +269,9 @@
         
         .artwork-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            max-width: 600px;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            max-width: 500px;
             width: 100%;
         }
         
@@ -279,7 +279,7 @@
             background: white;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             cursor: pointer;
@@ -287,28 +287,28 @@
         }
         
         .artwork-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+            transform: translateY(-12px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
         }
         
         .artwork-image {
             width: 100%;
-            height: 180px;
+            height: 320px;
             background-size: cover;
             background-position: center;
             position: relative;
         }
         
         .artwork-1 {
-            background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), 
-                        url('https://images.unsplash.com/photo-1596548438137-d51ea5c83d4d?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80');
+            background: linear-gradient(rgba(0,0,0,0.05), rgba(0,0,0,0.05)), 
+                        url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=800&fit=crop&crop=entropy&auto=format&q=80');
             background-size: cover;
             background-position: center;
         }
         
         .artwork-2 {
-            background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), 
-                        url('https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80');
+            background: linear-gradient(rgba(0,0,0,0.05), rgba(0,0,0,0.05)), 
+                        url('https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=600&h=800&fit=crop&crop=entropy&auto=format&q=80');
             background-size: cover;
             background-position: center;
         }
@@ -617,26 +617,26 @@
                 <div class="artwork-card">
                     <div class="artwork-image artwork-1">
                         <div class="story-overlay">
-                            <h4>평온한 호수</h4>
-                            <p>"40년간 이 호수를 바라보며 살았습니다. 새벽마다 변하는 호수의 모습에서 삶의 지혜를 얻었어요."</p>
+                            <h4>늦은 오후의 정원</h4>
+                            <p>"75세가 되어서야 붓을 들었습니다. 손자와 함께 가꾼 작은 정원에서 매일 변화하는 빛의 아름다움을 담으려 합니다. 인생 후반기에 찾은 새로운 꿈입니다."</p>
                         </div>
                     </div>
                     <div class="artwork-info">
-                        <h3>평온한 호수</h3>
-                        <p>김영수 작가 • 수채화</p>
+                        <h3>늦은 오후의 정원</h3>
+                        <p>박영희 작가 • 수채화 • 50호</p>
                     </div>
                 </div>
                 
                 <div class="artwork-card">
                     <div class="artwork-image artwork-2">
                         <div class="story-overlay">
-                            <h4>숲속의 기억</h4>
-                            <p>"어린 시절 뛰놀던 숲속의 기억을 70년 만에 다시 그려보았습니다. 그때의 감정이 고스란히 담겨 있어요."</p>
+                            <h4>고향의 기억</h4>
+                            <p>"60년 전 떠난 고향의 모습을 기억 속에서 되살려 그렸습니다. 이제는 없어진 초가집과 논밭, 그리고 어머니의 뒷모습까지. 그리움이 예술이 되었습니다."</p>
                         </div>
                     </div>
                     <div class="artwork-info">
-                        <h3>숲속의 기억</h3>
-                        <p>박미선 작가 • 연필화</p>
+                        <h3>고향의 기억</h3>
+                        <p>김철수 작가 • 유화 • 40호</p>
                     </div>
                 </div>
             </div>
