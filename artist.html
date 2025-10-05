@@ -10,6 +10,10 @@
     <meta property="og:type" content="website">
     <title>시니어 아티스트 - 예술가 전용 플랫폼</title>
     
+    <!-- Preload critical images for performance -->
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&h=800&fit=crop&crop=entropy&auto=format&q=80">
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80">
+    
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
@@ -108,7 +112,11 @@
 
         /* 업그레이드된 Artist Hero 스타일 */
         .artist-hero {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%), 
+                        url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&h=800&fit=crop&crop=entropy&auto=format&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             color: white;
             padding: 120px 40px 100px;
             display: grid;
@@ -127,7 +135,7 @@
             right: 0;
             bottom: 0;
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            opacity: 0.3;
+            opacity: 0.2;
         }
 
         .artist-content {
@@ -1518,17 +1526,17 @@
             position: relative;
         }
         
-        /* Updated background images with Base64 encoded artwork images */
+        /* Updated background images with high-quality artwork from Unsplash */
         .artwork-1 {
             background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), 
-                        url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibGFrZUdyYWRpZW50IiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6Izg3Q0VFQjtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSI1MCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM5OERCRUE7c3RvcC1vcGFjaXR5OjEiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzY5QjNEOTtzdG9wLW9wYWNpdHk6MSIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2xha2VHcmFkaWVudCkiLz4KICA8IS0tIFNreSwgY2xvdWRzLCBhbmQgdHJlZXMgLS0+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjMwMCIgaGVpZ2h0PSI4MCIgZmlsbD0iIzg3Q0VFQiIvPgogIDxjaXJjbGUgY3g9IjUwIiBjeT0iMzAiIHI9IjE1IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjgiLz4KICA8Y2lyY2xlIGN4PSIxNTAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuNyIvPgogIDxjaXJjbGUgY3g9IjI1MCIgY3k9IjQwIiByPSIxOCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC42Ii8+CiAgPCEtLSBUcmVlcyAtLT4KICA8ZWxsaXBzZSBjeD0iMzAiIGN5PSIxMjAiIHJ4PSIyNSIgcnk9IjQwIiBmaWxsPSIjMzRBODUzIi8+CiAgPGVsbGlwc2UgY3g9IjI3MCIgY3k9IjExMCIgcng9IjMwIiByeT0iNDUiIGZpbGw9IiMzNEE4NTMiLz4KICA8IS0tIExha2UgLS0+CiAgPGVsbGlwc2UgY3g9IjE1MCIgY3k9IjE0MCIgcng9IjEwMCIgcnk9IjQwIiBmaWxsPSIjNjlCM0Q5IiBvcGFjaXR5PSIwLjkiLz4KICA8IS0tIFJlZmxlY3Rpb24gLS0+CiAgPGVsbGlwc2UgY3g9IjE1MCIgY3k9IjE0NSIgcng9IjgwIiByeT0iMjAiIGZpbGw9IiNhZGQ4ZTYiIG9wYWNpdHk9IjAuNSIvPgo8L3N2Zz4=');
+                        url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80');
             background-size: cover;
             background-position: center;
         }
         
         .artwork-2 {
             background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), 
-                        url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZm9yZXN0R3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMkU4QjU3O3N0b3Atb3BhY2l0eToxIiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3R5bGU9InN0b3AtY29sb3I6IzM0QTg1MztzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMjI2OTMyO3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9InVybCgjZm9yZXN0R3JhZGllbnQpIi8+CiAgPCEtLSBUcmVlIHRydW5rcyAtLT4KICA8cmVjdCB4PSI0MCIgeT0iMTIwIiB3aWR0aD0iMTAiIGhlaWdodD0iODAiIGZpbGw9IiM2QjQyMjMiLz4KICA8cmVjdCB4PSIxMDAiIHk9IjEwMCIgd2lkdGg9IjE1IiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzZCNDIyMyIvPgogIDxyZWN0IHg9IjE4MCIgeT0iMTEwIiB3aWR0aD0iMTIiIGhlaWdodD0iOTAiIGZpbGw9IiM2QjQyMjMiLz4KICA8cmVjdCB4PSIyNDAiIHk9IjkwIiB3aWR0aD0iMTgiIGhlaWdodD0iMTEwIiBmaWxsPSIjNkI0MjIzIi8+CiAgPCEtLSBUcmVlIGNyb3ducyAtLT4KICA8Y2lyY2xlIGN4PSI0NSIgY3k9IjEwMCIgcj0iMzAiIGZpbGw9IiMzNEE4NTMiLz4KICA8Y2lyY2xlIGN4PSIxMDciIGN5PSI4MCIgcj0iNDAiIGZpbGw9IiMzNEE4NTMiLz4KICA8Y2lyY2xlIGN4PSIxODYiIGN5PSI5MCIgcj0iMzUiIGZpbGw9IiMzNEE4NTMiLz4KICA8Y2lyY2xlIGN4PSIyNDkiIGN5PSI3MCIgcj0iNDUiIGZpbGw9IiMzNEE4NTMiLz4KICA8IS0tIEZvcmVzdCBmbG9vciAtLT4KICA8cmVjdCB4PSIwIiB5PSIxODAiIHdpZHRoPSIzMDAiIGhlaWdodD0iMjAiIGZpbGw9IiMyRThCNTciLz4KICA8IS0tIFN1bmxpZ2h0IHN0cmVha3MgLS0+CiAgPGxpbmUgeDE9IjUwIiB5MT0iMCIgeDI9IjYwIiB5Mj0iMTAwIiBzdHJva2U9IiNGRkY3OTEiIHN0cm9rZS13aWR0aD0iMyIgb3BhY2l0eT0iMC42Ii8+CiAgPGxpbmUgeDE9IjE1MCIgeTE9IjAiIHgyPSIxNjAiIHkyPSIxMjAiIHN0cm9rZT0iI0ZGRjc5MSIgc3Ryb2tlLXdpZHRoPSI0IiBvcGFjaXR5PSIwLjUiLz4KICA8bGluZSB4MT0iMjIwIiB5MT0iMCIgeDI9IjIzMCIgeTI9IjE0MCIgc3Ryb2tlPSIjRkZGNzkxIiBzdHJva2Utd2lkdGg9IjMiIG9wYWNpdHk9IjAuNyIvPgo8L3N2Zz4=');
+                        url('https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80');
             background-size: cover;
             background-position: center;
         }
