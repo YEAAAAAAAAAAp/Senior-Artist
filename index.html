@@ -86,17 +86,41 @@
             });
         }
 
-        // 개선된 CTA 추적 함수
+        // 고급 CTA 추적 함수
         function trackCTA(action, category = 'cta_click', label = '') {
-            gtag('event', action, {
+            // 세션 데이터 업데이트
+            if (typeof sessionKPI !== 'undefined') {
+                sessionKPI.ctaClicks++;
+                sessionKPI.interactions++;
+            }
+            
+            // 상세한 CTA 분석 데이터
+            const ctaData = {
                 event_category: category,
                 event_label: label,
                 value: 1,
                 user_type: 'visitor',
-                page_section: 'main_landing'
+                page_section: 'main_landing',
+                session_cta_clicks: typeof sessionKPI !== 'undefined' ? sessionKPI.ctaClicks : 1,
+                session_interactions: typeof sessionKPI !== 'undefined' ? sessionKPI.interactions : 1,
+                time_on_page: typeof sessionKPI !== 'undefined' ? 
+                    Math.round((Date.now() - sessionKPI.startTime) / 1000) : 0
+            };
+            
+            gtag('event', action, ctaData);
+            
+            // 별도의 상세 CTA 이벤트
+            gtag('event', 'cta_conversion_funnel', {
+                event_category: 'conversion',
+                cta_type: action,
+                cta_position: label,
+                funnel_step: category.includes('path_selection') ? 'path_selection' : 
+                           category.includes('main') ? 'hero_engagement' : 'feature_interaction',
+                conversion_intent: ctaData.session_cta_clicks > 2 ? 'high' : 
+                                 ctaData.session_cta_clicks > 1 ? 'medium' : 'initial'
             });
             
-            console.log(`📊 CTA 추적: ${action} - ${category} - ${label}`);
+            console.log(`📊 고급 CTA 추적: ${action} - ${category} - ${label}`, ctaData);
         }
         
         // 페이지 로드 시 GA4 초기화
@@ -1002,7 +1026,127 @@
         document.addEventListener('DOMContentLoaded', function() {
             trackUserRetention();
             trackTrafficSource();
+            initAdvancedAnalytics();
         });
+        
+        // 고급 분석 시스템 초기화
+        function initAdvancedAnalytics() {
+            // 1. 페이지 성능 추적
+            window.addEventListener('load', function() {
+                setTimeout(trackPagePerformance, 1000);
+            });
+            
+            // 2. 사용자 행동 패턴 추적
+            trackUserBehaviorPatterns();
+            
+            // 3. 실시간 트래픽 품질 측정
+            trackTrafficQuality();
+            
+            // 4. 리텐션 세그먼트 분석
+            analyzeRetentionSegments();
+        }
+        
+        // 페이지 성능 추적
+        function trackPagePerformance() {
+            if ('performance' in window) {
+                const perfData = performance.getEntriesByType('navigation')[0];
+                gtag('event', 'page_performance', {
+                    event_category: 'technical',
+                    load_time: Math.round(perfData.loadEventEnd - perfData.fetchStart),
+                    dom_content_loaded: Math.round(perfData.domContentLoadedEventEnd - perfData.fetchStart),
+                    first_paint: Math.round(performance.getEntriesByType('paint')[0]?.startTime || 0),
+                    page_type: 'main_landing'
+                });
+            }
+        }
+        
+        // 사용자 행동 패턴 추적
+        function trackUserBehaviorPatterns() {
+            let mouseMovements = 0;
+            let clicks = 0;
+            let keystrokes = 0;
+            
+            document.addEventListener('mousemove', function() {
+                mouseMovements++;
+            });
+            
+            document.addEventListener('click', function() {
+                clicks++;
+            });
+            
+            document.addEventListener('keydown', function() {
+                keystrokes++;
+            });
+            
+            // 30초마다 행동 패턴 전송
+            setInterval(function() {
+                if (mouseMovements > 0 || clicks > 0 || keystrokes > 0) {
+                    gtag('event', 'user_behavior_pattern', {
+                        event_category: 'engagement',
+                        mouse_movements: mouseMovements,
+                        clicks: clicks,
+                        keystrokes: keystrokes,
+                        activity_score: (mouseMovements * 0.1) + (clicks * 2) + (keystrokes * 1.5)
+                    });
+                    
+                    // 카운터 리셋
+                    mouseMovements = 0;
+                    clicks = 0;
+                    keystrokes = 0;
+                }
+            }, 30000);
+        }
+        
+        // 트래픽 품질 측정
+        function trackTrafficQuality() {
+            const startTime = Date.now();
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            gtag('event', 'traffic_quality', {
+                event_category: 'acquisition',
+                referrer_domain: document.referrer ? new URL(document.referrer).hostname : 'direct',
+                utm_source: urlParams.get('utm_source') || 'none',
+                utm_medium: urlParams.get('utm_medium') || 'none',
+                utm_campaign: urlParams.get('utm_campaign') || 'none',
+                device_type: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+                browser: navigator.userAgent.includes('Chrome') ? 'chrome' : 
+                        navigator.userAgent.includes('Firefox') ? 'firefox' : 
+                        navigator.userAgent.includes('Safari') ? 'safari' : 'other'
+            });
+        }
+        
+        // 리텐션 세그먼트 분석
+        function analyzeRetentionSegments() {
+            const visitHistory = JSON.parse(localStorage.getItem('visitHistory') || '[]');
+            const currentVisit = {
+                timestamp: Date.now(),
+                page: 'main',
+                sessionId: sessionStorage.getItem('sessionId') || Math.random().toString(36)
+            };
+            
+            visitHistory.push(currentVisit);
+            
+            // 최근 30일 방문만 유지
+            const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+            const recentVisits = visitHistory.filter(visit => visit.timestamp > thirtyDaysAgo);
+            
+            localStorage.setItem('visitHistory', JSON.stringify(recentVisits));
+            
+            // 리텐션 분석
+            const visitCount = recentVisits.length;
+            const daysSinceFirst = recentVisits.length > 1 ? 
+                Math.floor((Date.now() - recentVisits[0].timestamp) / (24 * 60 * 60 * 1000)) : 0;
+            
+            gtag('event', 'retention_analysis', {
+                event_category: 'retention',
+                visit_count_30d: visitCount,
+                days_since_first_visit: daysSinceFirst,
+                user_segment: visitCount === 1 ? 'new' : 
+                           visitCount <= 3 ? 'casual' : 
+                           visitCount <= 10 ? 'regular' : 'power_user',
+                return_frequency: visitCount > 1 ? daysSinceFirst / visitCount : 0
+            });
+        }
     </script>
 </head>
 <body>

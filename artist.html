@@ -1017,6 +1017,79 @@
         }
 
         console.log('🎨 Artist page loaded successfully');
+        
+        // Artist 페이지 고급 분석 시스템
+        document.addEventListener('DOMContentLoaded', function() {
+            initArtistAdvancedAnalytics();
+        });
+        
+        function initArtistAdvancedAnalytics() {
+            // 트래픽 소스 추적
+            trackArtistTrafficSource();
+            
+            // 작가 특화 리텐션 분석
+            analyzeArtistRetention();
+            
+            // 작품 상호작용 추적
+            trackArtworkInteractions();
+        }
+        
+        function trackArtistTrafficSource() {
+            const urlParams = new URLSearchParams(window.location.search);
+            gtag('event', 'artist_traffic_analysis', {
+                event_category: 'artist_acquisition',
+                referrer_domain: document.referrer ? new URL(document.referrer).hostname : 'direct',
+                utm_source: urlParams.get('utm_source') || 'none',
+                utm_medium: urlParams.get('utm_medium') || 'none',
+                utm_campaign: urlParams.get('utm_campaign') || 'none',
+                page_type: 'artist_portal',
+                user_intent: 'artist_registration'
+            });
+        }
+        
+        function analyzeArtistRetention() {
+            const artistVisitHistory = JSON.parse(localStorage.getItem('artistVisitHistory') || '[]');
+            const currentVisit = {
+                timestamp: Date.now(),
+                page: 'artist_portal',
+                features_viewed: [],
+                registration_attempted: false
+            };
+            
+            artistVisitHistory.push(currentVisit);
+            localStorage.setItem('artistVisitHistory', JSON.stringify(artistVisitHistory));
+            
+            gtag('event', 'artist_retention_analysis', {
+                event_category: 'artist_retention',
+                visit_count: artistVisitHistory.length,
+                user_segment: artistVisitHistory.length === 1 ? 'new_artist' : 'returning_artist',
+                registration_journey_stage: artistVisitHistory.length <= 2 ? 'discovery' : 'consideration'
+            });
+        }
+        
+        function trackArtworkInteractions() {
+            // 작품 미리보기 상호작용 추적
+            const artworkContainer = document.querySelector('.artwork-image-container');
+            if (artworkContainer) {
+                let hoverStartTime;
+                
+                artworkContainer.addEventListener('mouseenter', function() {
+                    hoverStartTime = Date.now();
+                });
+                
+                artworkContainer.addEventListener('mouseleave', function() {
+                    if (hoverStartTime) {
+                        const hoverDuration = Date.now() - hoverStartTime;
+                        gtag('event', 'artist_artwork_interaction', {
+                            event_category: 'artist_engagement',
+                            interaction_type: 'artwork_hover',
+                            duration_ms: hoverDuration,
+                            engagement_depth: hoverDuration > 3000 ? 'deep' : hoverDuration > 1000 ? 'medium' : 'brief'
+                        });
+                    }
+                });
+            }
+        }
     </script>
 </body>
 </html>

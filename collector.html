@@ -243,6 +243,7 @@
             font-weight: 700;
             line-height: 1.1;
             letter-spacing: -0.03em;
+            color: #2c3e50;
         }
         
         .highlight {
@@ -256,7 +257,7 @@
         .collector-content p {
             font-size: 18px;
             margin-bottom: 24px;
-            color: #475569;
+            color: #2c3e50;
             line-height: 1.5;
             font-weight: 400;
         }
@@ -805,7 +806,7 @@
         <!-- Left Side - Collector Hero -->
         <div class="collector-hero">
             <div class="collector-content">
-                <h1><span class="highlight">시니어 아티스트</span><br>콜렉터 전용 플랫폼</h1>
+                <h1><span class="highlight">아티스트</span><br>콜렉터 전용 플랫폼</h1>
                 <p>깊이 있는 작품 스토리를 발견하고<br>작가와 직접 소통하며 특별한 컬렉션을 시작하세요</p>
                 
                 <!-- Featured Artwork Preview -->
@@ -1103,6 +1104,109 @@
         }
 
         console.log('🎨 Collector page loaded successfully');
+        
+        // Collector 페이지 고급 분석 시스템
+        document.addEventListener('DOMContentLoaded', function() {
+            initCollectorAdvancedAnalytics();
+        });
+        
+        function initCollectorAdvancedAnalytics() {
+            // 콜렉터 트래픽 소스 추적
+            trackCollectorTrafficSource();
+            
+            // 콜렉터 특화 리텐션 분석
+            analyzeCollectorRetention();
+            
+            // AI 추천 시스템 상호작용 추적
+            trackAIRecommendationInteractions();
+            
+            // 구매 의도 신호 감지
+            detectPurchaseIntent();
+        }
+        
+        function trackCollectorTrafficSource() {
+            const urlParams = new URLSearchParams(window.location.search);
+            gtag('event', 'collector_traffic_analysis', {
+                event_category: 'collector_acquisition',
+                referrer_domain: document.referrer ? new URL(document.referrer).hostname : 'direct',
+                utm_source: urlParams.get('utm_source') || 'none',
+                utm_medium: urlParams.get('utm_medium') || 'none',
+                utm_campaign: urlParams.get('utm_campaign') || 'none',
+                page_type: 'collector_portal',
+                user_intent: 'art_discovery'
+            });
+        }
+        
+        function analyzeCollectorRetention() {
+            const collectorVisitHistory = JSON.parse(localStorage.getItem('collectorVisitHistory') || '[]');
+            const currentVisit = {
+                timestamp: Date.now(),
+                page: 'collector_portal',
+                ai_features_used: [],
+                artworks_viewed: [],
+                purchase_signals: 0
+            };
+            
+            collectorVisitHistory.push(currentVisit);
+            localStorage.setItem('collectorVisitHistory', JSON.stringify(collectorVisitHistory));
+            
+            const visitCount = collectorVisitHistory.length;
+            const collectorSegment = visitCount === 1 ? 'new_collector' :
+                                   visitCount <= 3 ? 'browsing_collector' :
+                                   visitCount <= 10 ? 'engaged_collector' : 'serious_collector';
+            
+            gtag('event', 'collector_retention_analysis', {
+                event_category: 'collector_retention',
+                visit_count: visitCount,
+                collector_segment: collectorSegment,
+                buying_journey_stage: visitCount <= 2 ? 'awareness' : 
+                                    visitCount <= 5 ? 'consideration' : 'decision'
+            });
+        }
+        
+        function trackAIRecommendationInteractions() {
+            // AI 추천 기능 버튼 클릭 추적
+            const aiRecommendationCard = document.querySelector('[onclick*="ai_story_exploration"]');
+            if (aiRecommendationCard) {
+                aiRecommendationCard.addEventListener('click', function() {
+                    gtag('event', 'ai_recommendation_engagement', {
+                        event_category: 'ai_features',
+                        feature_type: 'story_exploration',
+                        interaction_type: 'feature_click',
+                        user_segment: 'collector',
+                        ai_adoption_stage: 'initial_engagement'
+                    });
+                });
+            }
+        }
+        
+        function detectPurchaseIntent() {
+            let artworkViewTime = 0;
+            let featureInteractions = 0;
+            
+            // 작품 이미지 상호작용 추적
+            document.querySelectorAll('.artwork-sample img').forEach(img => {
+                img.addEventListener('mouseenter', function() {
+                    artworkViewTime = Date.now();
+                });
+                
+                img.addEventListener('mouseleave', function() {
+                    if (artworkViewTime) {
+                        const viewDuration = Date.now() - artworkViewTime;
+                        if (viewDuration > 2000) { // 2초 이상 관찰
+                            featureInteractions++;
+                            gtag('event', 'purchase_intent_signal', {
+                                event_category: 'collector_behavior',
+                                signal_type: 'artwork_deep_view',
+                                view_duration_ms: viewDuration,
+                                intent_strength: viewDuration > 5000 ? 'high' : 'medium',
+                                cumulative_signals: featureInteractions
+                            });
+                        }
+                    }
+                });
+            });
+        }
     </script>
 </body>
 </html>
