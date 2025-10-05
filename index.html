@@ -10,115 +10,64 @@
     <meta property="og:type" content="website">
     <title>아티스트 - 당신의 예술 여정을 시작하세요</title>
     
-    <!-- Google Analytics 4 - Enhanced Configuration -->
-    <!-- Google tag (gtag.js) -->
+    <!-- Google Analytics 4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-        // GA4 기본 설정
+        // GA4 기본 설정 (간소화)
         gtag('config', 'G-DE2ZNKWV2W', {
-            page_title: 'Artist - Main Landing',
-            page_location: window.location.href,
             send_page_view: true,
-            // Enhanced 측정 활성화
-            enhanced_measurement: true,
-            // 커스텀 매개변수 설정
-            custom_map: {
-                'user_type': 'user_category',
-                'page_section': 'content_group1'
-            }
+            enhanced_measurement: true
         });
 
-        // GA4 연결 확인 및 초기화
-        function initializeGA4() {
-            console.log('🔄 GA4 초기화 중...');
-            
-            // 페이지뷰 수동 전송 (확실한 추적을 위해)
-            gtag('event', 'page_view', {
-                page_title: 'Artist - Main Landing',
-                page_location: window.location.href,
-                content_group1: 'main_page'
-            });
-
-            // 사용자 참여도 측정 시작
-            startEngagementTracking();
-            
-            console.log('✅ GA4 초기화 완료: G-DE2ZNKWV2W');
-        }
-
-        // 사용자 참여도 추적
-        let engagementStartTime = Date.now();
-        let scrollDepth = 0;
-        let maxScrollDepth = 0;
-
-        function startEngagementTracking() {
-            // 스크롤 깊이 추적
-            window.addEventListener('scroll', function() {
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-                scrollDepth = Math.round((scrollTop / docHeight) * 100);
-                
-                if (scrollDepth > maxScrollDepth) {
-                    maxScrollDepth = scrollDepth;
-                    
-                    // 25%, 50%, 75%, 90% 스크롤 시 이벤트 전송
-                    if ([25, 50, 75, 90].includes(scrollDepth)) {
-                        gtag('event', 'scroll', {
-                            event_category: 'engagement',
-                            event_label: `${scrollDepth}%`,
-                            value: scrollDepth
-                        });
-                    }
-                }
-            });
-
-            // 페이지 이탈 시 체류시간 측정
-            window.addEventListener('beforeunload', function() {
-                const timeSpent = Math.round((Date.now() - engagementStartTime) / 1000);
-                gtag('event', 'timing_complete', {
-                    event_category: 'engagement',
-                    name: 'page_dwell_time',
-                    value: timeSpent
-                });
-            });
-        }
-
-        // 고급 CTA 추적 함수
+        // 세션 시작 시간 기록
+        const sessionStartTime = Date.now();
+        
+        // 기본 이벤트 추적 함수들
         function trackCTA(action, category = 'cta_click', label = '') {
-            // 세션 데이터 업데이트
-            if (typeof sessionKPI !== 'undefined') {
-                sessionKPI.ctaClicks++;
-                sessionKPI.interactions++;
-            }
-            
-            // 상세한 CTA 분석 데이터
-            const ctaData = {
+            gtag('event', action, {
                 event_category: category,
                 event_label: label,
-                value: 1,
-                user_type: 'visitor',
-                page_section: 'main_landing',
-                session_cta_clicks: typeof sessionKPI !== 'undefined' ? sessionKPI.ctaClicks : 1,
-                session_interactions: typeof sessionKPI !== 'undefined' ? sessionKPI.interactions : 1,
-                time_on_page: typeof sessionKPI !== 'undefined' ? 
-                    Math.round((Date.now() - sessionKPI.startTime) / 1000) : 0
-            };
-            
-            gtag('event', action, ctaData);
-            
-            // 별도의 상세 CTA 이벤트
-            gtag('event', 'cta_conversion_funnel', {
-                event_category: 'conversion',
-                cta_type: action,
-                cta_position: label,
-                funnel_step: category.includes('path_selection') ? 'path_selection' : 
-                           category.includes('main') ? 'hero_engagement' : 'feature_interaction',
-                conversion_intent: ctaData.session_cta_clicks > 2 ? 'high' : 
-                                 ctaData.session_cta_clicks > 1 ? 'medium' : 'initial'
+                page_title: document.title,
+                timestamp: new Date().toISOString()
             });
+            console.log('GA4 Event:', action, category, label);
+        }
+
+        function trackPageEngagement(action, data = {}) {
+            gtag('event', action, {
+                event_category: 'engagement',
+                page_title: document.title,
+                ...data
+            });
+            console.log('GA4 Engagement:', action, data);
+        }
+
+        // 페이지 로드 시 기본 추적
+        window.addEventListener('load', function() {
+            // 페이지 로드 완료 이벤트
+            trackPageEngagement('page_loaded', {
+                load_time: Date.now() - sessionStartTime
+            });
+            
+            // 스크롤 추적
+            let maxScroll = 0;
+            window.addEventListener('scroll', function() {
+                const scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+                if (scrollPercent > maxScroll && scrollPercent % 25 === 0) {
+                    maxScroll = scrollPercent;
+                    trackPageEngagement('scroll_depth', {
+                        scroll_depth: scrollPercent + '%'
+                    });
+                }
+            });
+        });
+        
+        console.log('✅ GA4 초기화 완료: G-DE2ZNKWV2W');
+    </script>
             
             console.log(`📊 고급 CTA 추적: ${action} - ${category} - ${label}`, ctaData);
         }
@@ -148,7 +97,11 @@
                 timestamp: new Date().toISOString()
             });
         }
-    </script>
+        
+        // 세션 품질 추적
+        function trackSessionQuality() {
+            const timeSpent = Math.round((Date.now() - sessionStartTime) / 1000);
+            const actions = parseInt(sessionStorage.getItem('user_actions') || '0');
             
             let sessionQuality = 'low';
             if (actions >= 3 && timeSpent >= 60) {
@@ -257,6 +210,11 @@
             color: #1a1a1a;
             letter-spacing: -0.02em;
             text-transform: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
         }
         
         .nav-menu {
@@ -946,6 +904,252 @@
                 position: relative;
             }
         }
+
+        /* About Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(250, 248, 245, 0.98) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 30px 20px;
+            border-bottom: 1px solid rgba(139, 127, 115, 0.2);
+        }
+
+        .modal-header h2 {
+            color: #2c3e50;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .close {
+            color: #7f8c8d;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            line-height: 1;
+            padding: 5px;
+            border-radius: 50%;
+        }
+
+        .close:hover {
+            color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+            transform: scale(1.1);
+        }
+
+        .modal-body {
+            padding: 30px;
+            color: #2c3e50;
+        }
+
+        .intro-section {
+            margin-bottom: 30px;
+        }
+
+        .intro-section h3 {
+            color: #34495e;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(139, 127, 115, 0.3);
+        }
+
+        .intro-section p {
+            font-size: 16px;
+            line-height: 1.7;
+            color: #555;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .service-item {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(139, 127, 115, 0.2);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .service-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 127, 115, 0.2);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .service-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .service-item h4 {
+            color: #2c3e50;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .service-item p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            font-size: 16px;
+            color: #555;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .feature-list li::before {
+            content: '✨';
+            position: absolute;
+            left: 0;
+            color: #8b7f73;
+        }
+
+        .modal-footer {
+            padding: 20px 30px 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            border-top: 1px solid rgba(139, 127, 115, 0.2);
+        }
+
+        .modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            min-width: 140px;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(45deg, #8b7f73, #706458);
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            background: linear-gradient(45deg, #706458, #5a4f43);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 127, 115, 0.4);
+        }
+
+        .modal-btn.secondary {
+            background: rgba(139, 127, 115, 0.1);
+            color: #8b7f73;
+            border: 2px solid #8b7f73;
+        }
+
+        .modal-btn.secondary:hover {
+            background: #8b7f73;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Mobile Responsive for Modal */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+                max-height: 85vh;
+            }
+
+            .modal-header {
+                padding: 20px 20px 15px;
+            }
+
+            .modal-header h2 {
+                font-size: 24px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .service-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .modal-footer {
+                padding: 15px 20px 20px;
+                flex-direction: column;
+            }
+
+            .modal-btn {
+                width: 100%;
+                margin: 0;
+            }
+        }
     </style>
     
     <!-- KPI 추적 강화 스크립트 -->
@@ -1028,6 +1232,59 @@
             trackTrafficSource();
             initAdvancedAnalytics();
         });
+
+        // About Modal Functions
+        function openAboutModal() {
+            const modal = document.getElementById('aboutModal');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+            
+            // 모달 열기 이벤트 추적
+            gtag('event', 'modal_open', {
+                event_category: 'engagement',
+                event_label: 'about_modal',
+                modal_type: 'service_introduction'
+            });
+            
+            // ESC 키로 모달 닫기
+            document.addEventListener('keydown', handleEscKey);
+            
+            // 모달 외부 클릭으로 닫기
+            modal.addEventListener('click', handleOutsideClick);
+        }
+
+        function closeAboutModal() {
+            const modal = document.getElementById('aboutModal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+            
+            // 이벤트 리스너 제거
+            document.removeEventListener('keydown', handleEscKey);
+            modal.removeEventListener('click', handleOutsideClick);
+            
+            // 모달 닫기 이벤트 추적
+            gtag('event', 'modal_close', {
+                event_category: 'engagement',
+                event_label: 'about_modal'
+            });
+        }
+
+        function handleEscKey(event) {
+            if (event.key === 'Escape') {
+                closeAboutModal();
+            }
+        }
+
+        function handleOutsideClick(event) {
+            const modalContent = document.querySelector('.modal-content');
+            if (event.target === event.currentTarget && !modalContent.contains(event.target)) {
+                closeAboutModal();
+            }
+        }
         
         // 고급 분석 시스템 초기화
         function initAdvancedAnalytics() {
@@ -1157,7 +1414,7 @@
             <ul class="nav-menu" id="navMenu">
                 <li><a href="artist.html" class="nav-link">예술가용</a></li>
                 <li><a href="collector.html" class="nav-link">콜렉터용</a></li>
-                <li><a href="#about" class="nav-link">소개</a></li>
+                <li><a href="#" class="nav-link" onclick="openAboutModal()">소개</a></li>
             </ul>
             <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기">☰</button>
         </nav>
@@ -1170,10 +1427,6 @@
             <div class="hero-text">
                 <h1>예술가와<br>콜렉터를 연결합니다</h1>
                 <p>깊이 있는 작품 스토리와 함께<br>특별한 예술 경험을 시작하세요</p>
-                <div class="cta-buttons">
-                    <button class="btn btn-primary" onclick="openForm(); enhancedTrackCTA('start_now_click', 'main_cta', 'hero_section')">지금 시작하기</button>
-                    <a href="#" class="btn btn-secondary" onclick="enhancedTrackCTA('learn_more_click', 'main_cta', 'hero_section')">더 알아보기</a>
-                </div>
             </div>
         </div>
         
@@ -1372,127 +1625,83 @@
             }
         });
         
-        // Mobile menu toggle
+        // 모바일 메뉴 토글
         document.getElementById('mobileToggle')?.addEventListener('click', function() {
             const navMenu = document.getElementById('navMenu');
             navMenu.classList.toggle('active');
         });
 
-        // Close mobile menu when clicking on links
+        // 모바일 메뉴 링크 클릭 시 메뉴 닫기
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function() {
                 const navMenu = document.getElementById('navMenu');
                 navMenu.classList.remove('active');
             });
         });
-        
-        // 핵심 KPI 이벤트 리스너 설정
-        window.addEventListener('load', function() {
-            // 페이지 로드 완료 추적
-            gtag('event', 'page_load_complete', {
-                'page_title': document.title,
-                'page_location': window.location.href,
-                'load_time': performance.now()
-            });
-            
-            // 사용자 활동 추적 시작
-            lastActivityTime = new Date().getTime();
-        });
-        
-        // 스크롤 이벤트 리스너
-        let scrollTimeout;
-        window.addEventListener('scroll', function() {
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                trackScrollDepth();
-                trackEngagement('scroll', Math.round(window.pageYOffset / 100));
-            }, 100);
-            
-            lastActivityTime = new Date().getTime();
-        });
-        
-        // 마우스 움직임 추적
-        let mouseTimeout;
-        document.addEventListener('mousemove', function() {
-            clearTimeout(mouseTimeout);
-            mouseTimeout = setTimeout(() => {
-                trackEngagement('mouse_movement', 1);
-            }, 1000);
-            
-            lastActivityTime = new Date().getTime();
-        });
-        
-        // 클릭 이벤트 추적
+
+        // 기본 CTA 클릭 추적
         document.addEventListener('click', function(e) {
-            incrementUserAction();
-            trackEngagement('click', 1);
-            
-            // 특별한 요소들에 대한 추가 추적
-            if (e.target.classList.contains('choice-btn')) {
-                gtag('event', 'user_path_selection', {
-                    'path_type': e.target.textContent.includes('작가') ? 'artist' : 'collector',
-                    'button_text': e.target.textContent
-                });
-            }
-            
-            if (e.target.classList.contains('cta-button')) {
-                gtag('event', 'cta_interaction', {
-                    'cta_type': 'primary',
-                    'cta_text': e.target.textContent
-                });
-            }
-            
-            lastActivityTime = new Date().getTime();
-        });
-        
-        // 포커스/블러 이벤트로 사용자 활성도 추적
-        window.addEventListener('focus', function() {
-            trackEngagement('page_focus', 1);
-            lastActivityTime = new Date().getTime();
-        });
-        
-        window.addEventListener('blur', function() {
-            trackEngagement('page_blur', 1);
-            trackTimeOnPage();
-        });
-        
-        // 페이지 떠나기 전 최종 데이터 전송
-        window.addEventListener('beforeunload', function() {
-            trackTimeOnPage();
-            trackSessionQuality();
-            
-            // Beacon API로 안전한 데이터 전송
-            if (navigator.sendBeacon) {
-                const data = {
-                    event: 'page_exit',
-                    page_title: document.title,
-                    page_location: window.location.href,
-                    session_duration: Math.round((new Date().getTime() - pageStartTime) / 1000),
-                    max_scroll_depth: maxScrollDepth,
-                    user_actions: parseInt(sessionStorage.getItem('user_actions') || '0')
-                };
-                
-                navigator.sendBeacon('https://www.google-analytics.com/collect', 
-                    `v=1&t=event&tid=G-DE2ZNKWV2W&cid=1&ec=engagement&ea=page_exit&el=${JSON.stringify(data)}`);
+            if (e.target.classList.contains('choice-btn') || 
+                e.target.classList.contains('cta-button') ||
+                e.target.classList.contains('nav-link')) {
+                trackCTA('click', 'user_interaction', e.target.textContent);
             }
         });
-        
-        // 비활성 사용자 감지 (30초 동안 활동 없음)
-        setInterval(function() {
-            const now = new Date().getTime();
-            const timeSinceLastActivity = now - lastActivityTime;
-            
-            if (timeSinceLastActivity > 30000) { // 30초
-                trackEngagement('user_inactive', Math.round(timeSinceLastActivity / 1000));
-            }
-        }, 30000);
-        
-        // 주기적 세션 체크 (5분마다)
-        setInterval(function() {
-            trackSessionQuality();
-            trackTimeOnPage();
-        }, 300000);
     </script>
+    </script>
+
+    <!-- About Modal -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🎨 아티스트 플랫폼 소개</h2>
+                <span class="close" onclick="closeAboutModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="service-intro">
+                    <div class="intro-section">
+                        <h3>✨ 우리의 미션</h3>
+                        <p>예술가와 콜렉터를 연결하는 혁신적인 플랫폼을 통해, 작품의 깊은 이야기와 감정을 공유하고 특별한 예술 경험을 제공합니다.</p>
+                    </div>
+                    
+                    <div class="intro-section">
+                        <h3>🎯 핵심 서비스</h3>
+                        <div class="service-grid">
+                            <div class="service-item">
+                                <div class="service-icon">🎨</div>
+                                <h4>예술가 지원</h4>
+                                <p>체계적인 작품 관리와 스토리텔링을 통해 예술가의 성장을 돕습니다.</p>
+                            </div>
+                            <div class="service-item">
+                                <div class="service-icon">👁️</div>
+                                <h4>콜렉터 경험</h4>
+                                <p>작품의 배경 이야기와 함께하는 특별한 소장 경험을 제공합니다.</p>
+                            </div>
+                            <div class="service-item">
+                                <div class="service-icon">🤝</div>
+                                <h4>직접 소통</h4>
+                                <p>예술가와 콜렉터 간의 직접적인 대화와 교류를 가능하게 합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="intro-section">
+                        <h3>🌟 특별한 차별점</h3>
+                        <ul class="feature-list">
+                            <li>💡 작품의 창작 과정과 영감 스토리 공유</li>
+                            <li>🔒 안전하고 투명한 거래 시스템</li>
+                            <li>📈 데이터 기반 작품 가치 분석</li>
+                            <li>🎭 개인 맞춤형 큐레이션 서비스</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn primary" onclick="location.href='artist.html'">예술가로 시작하기</button>
+                <button class="modal-btn secondary" onclick="location.href='collector.html'">콜렉터로 시작하기</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
