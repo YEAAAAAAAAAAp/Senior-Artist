@@ -108,8 +108,8 @@
         /* 업그레이드된 Hero 스타일 */
         .hero {
             padding: 120px 0 100px;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%), 
-                        url('https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=1200&h=800&fit=crop&crop=entropy&auto=format&q=80');
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.85) 100%), 
+                        url('https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=1600&h=900&fit=crop&crop=entropy&auto=format&q=80');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -125,8 +125,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            opacity: 0.2;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
         }
 
         .hero-content {
@@ -187,13 +187,14 @@
 
         .hero-cta {
             display: flex;
-            gap: 16px;
+            gap: 20px;
             flex-wrap: wrap;
+            margin-top: 2rem;
         }
 
         .btn {
-            padding: 16px 32px;
-            border-radius: 12px;
+            padding: 18px 36px;
+            border-radius: 50px;
             font-weight: 600;
             font-size: 16px;
             text-decoration: none;
@@ -1646,7 +1647,7 @@
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <h1>시니어 작가의<br><span class="highlight">깊이 있는 예술 이야기</span>를<br>발견하세요</h1>
+                    <h1><span class="highlight">시니어 아티스트</span><br>전문 예술 플랫폼</h1>
                     <p class="hero-description">50년 이상의 경험과 철학이 담긴 특별한 작품들을 만나고,<br>작가와 직접 소통하며 의미 있는 컬렉션을 시작하세요</p>
                     <div class="hero-stats">
                         <div class="stat">
@@ -1664,10 +1665,10 @@
                     </div>
                     <div class="hero-cta">
                         <a href="#features" class="btn btn-primary" onclick="trackCTA('click', 'Hero_CTA', 'Explore_Features')">
-                            핵심 기능 체험하기
+                            작품 스토리 탐색하기
                         </a>
                         <a href="#gallery" class="btn btn-secondary" onclick="trackCTA('click', 'Hero_CTA', 'View_Gallery')">
-                            작품 갤러리 보기
+                            작품 갤러리
                         </a>
                     </div>
                 </div>
@@ -1768,14 +1769,14 @@
                         <div class="story-overlay">
                             <h4>작품 스토리</h4>
                             <p>"이 작품은 우리가 살아가는 공간과 시간에 대한 깊은 성찰을 담았습니다. 테이블 위의 소소한 일상이 곧 우리의 삶의 터전이라는 의미를 표현했어요."</p>
-                            <span class="artist-name">Gail Spaien (72세)</span>
+                            <span class="artist-name">김현숙 작가 (72세)</span>
                         </div>
                     </div>
                     <div class="artwork-content">
-                        <h3>Habitat, 2025</h3>
+                        <h3>일상의 철학</h3>
                         <p class="artwork-description">Mixed Media, 30x40cm, 2025년 작품</p>
                         <div class="artwork-meta">
-                            <span class="artwork-artist">Gail Spaien</span>
+                            <span class="artwork-artist">김현숙 작가</span>
                             <button class="chat-btn">1:1 채팅 문의</button>
                         </div>
                     </div>
@@ -1783,7 +1784,7 @@
                 
                 <div class="artwork-card">
                     <div class="artwork-image-container">
-                        <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80" alt="Traditional Landscape Painting" class="artwork-image" loading="lazy" />
+                        <img src="https://images.unsplash.com/photo-1596548438137-d51ea5c83d4d?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80" alt="Traditional Landscape Painting" class="artwork-image" loading="lazy" />
                         <div class="story-overlay">
                             <h4>작품 스토리</h4>
                             <p>"70년을 살아오며 느낀 자연의 소중함을 표현했습니다. 어린 시절 뛰놀던 들판의 기억이 붓끝에서 되살아났어요."</p>
@@ -1821,7 +1822,7 @@
                 
                 <div class="artwork-card">
                     <div class="artwork-image-container">
-                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80" alt="Traditional Korean Painting" class="artwork-image" loading="lazy" />
+                        <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80" alt="Traditional Korean Painting" class="artwork-image" loading="lazy" />
                         <div class="story-overlay">
                             <h4>작품 스토리</h4>
                             <p>"인생의 험난함과 아름다움을 산의 모습에 투영했습니다. 80년 동안 쌓인 지혜와 경험이 붓끝에 흘러나왔어요."</p>
@@ -1841,9 +1842,9 @@
             
             <div style="text-align: center; margin-top: 3rem;">
                 <div class="gallery-note">
-                    <h4>💡 실제 플랫폼 경험</h4>
-                    <p>위의 첫 번째 작품은 실제 갤러리에서 전시 중인 Gail Spaien 작가의 "Habitat" 작품입니다.<br>
-                    이처럼 실제 시니어 예술가들의 작품과 깊이 있는 스토리를 만나볼 수 있습니다.</p>
+                    <h4>🎨 시니어 아티스트 플랫폼</h4>
+                    <p>70세 이상 시니어 예술가들의 실제 작품과 깊이 있는 인생 스토리를 만나보세요.<br>
+                    각 작품에는 작가의 철학과 경험이 담겨 있어 더욱 의미 있는 컬렉션이 가능합니다.</p>
                 </div>
             </div>
         </div>

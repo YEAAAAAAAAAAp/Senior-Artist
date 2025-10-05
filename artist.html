@@ -112,8 +112,8 @@
 
         /* 업그레이드된 Artist Hero 스타일 */
         .artist-hero {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%), 
-                        url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&h=800&fit=crop&crop=entropy&auto=format&q=80');
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.85) 100%), 
+                        url('https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=1600&h=900&fit=crop&crop=entropy&auto=format&q=80');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -134,8 +134,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            opacity: 0.2;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
         }
 
         .artist-content {
@@ -941,11 +941,11 @@
         }
         
         .cta-button {
-            background: #0f172a;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
             color: #ffffff;
-            padding: 16px 32px;
+            padding: 18px 36px;
             border: none;
-            border-radius: 8px;
+            border-radius: 50px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
@@ -954,14 +954,14 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
             letter-spacing: -0.01em;
+            margin-top: 1.5rem;
         }
         
         .cta-button:hover {
-            background: #020617;
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.15);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
         }
         
         /* Right Side - Feature Showcase */
@@ -1529,14 +1529,14 @@
         /* Updated background images with high-quality artwork from Unsplash */
         .artwork-1 {
             background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), 
-                        url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80');
+                        url('https://images.unsplash.com/photo-1596548438137-d51ea5c83d4d?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80');
             background-size: cover;
             background-position: center;
         }
         
         .artwork-2 {
             background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), 
-                        url('https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80');
+                        url('https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80');
             background-size: cover;
             background-position: center;
         }
@@ -1750,7 +1750,7 @@
         <!-- Left Side - Artist Hero -->
         <div class="artist-hero">
             <div class="artist-content">
-                <h1>시니어 예술가를 위한<br>특별한 무대</h1>
+                <h1><span class="highlight">시니어 아티스트</span><br>예술가 전용 플랫폼</h1>
                 <p>당신의 작품과 스토리를<br>세상에 알리고 새로운 기회를 만나보세요</p>
                 
                 <ul class="artist-features">
@@ -1761,7 +1761,7 @@
                     <li>수수료 없는 작품 등록</li>
                 </ul>
                 
-                <button class="cta-button" onclick="openRegistration()">지금 작가 등록하기</button>
+                <button class="cta-button" onclick="openRegistration()">작가 등록하기</button>
             </div>
         </div>
         
