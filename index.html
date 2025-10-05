@@ -886,6 +886,44 @@
             font-size: 18px;
             padding: 20px 40px;
         }
+
+        /* Mobile Navigation */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #475569;
+        }
+
+        @media (max-width: 767px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                border-radius: 0 0 12px 12px;
+                padding: 20px;
+                gap: 1rem;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .nav {
+                position: relative;
+            }
+        }
     </style>
 </head>
 <body>
@@ -893,10 +931,12 @@
     <header class="header">
         <nav class="nav">
             <div class="logo">시니어 아티스트</div>
-            <ul class="nav-menu">
-                <li><a href="#" class="nav-link">소개</a></li>
-                <li><a href="#" class="nav-link">문의</a></li>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="artist.html" class="nav-link">예술가용</a></li>
+                <li><a href="collector.html" class="nav-link">콜렉터용</a></li>
+                <li><a href="#about" class="nav-link">소개</a></li>
             </ul>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기">☰</button>
         </nav>
     </header>
 
@@ -1107,6 +1147,20 @@
             if (e.key === 'Escape') {
                 closeForm();
             }
+        });
+        
+        // Mobile menu toggle
+        document.getElementById('mobileToggle')?.addEventListener('click', function() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking on links
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function() {
+                const navMenu = document.getElementById('navMenu');
+                navMenu.classList.remove('active');
+            });
         });
         
         // 핵심 KPI 이벤트 리스너 설정

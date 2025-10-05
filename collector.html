@@ -31,7 +31,7 @@
                 'custom_parameter_1': 'user_type',
                 'custom_parameter_2': 'funnel_stage'
             },
-            debug_mode: true,  // 개발 중 디버깅 활성화
+            debug_mode: true,
             send_page_view: true
         });
         
@@ -39,7 +39,6 @@
         function checkGA4Connection() {
             if (typeof gtag !== 'undefined' && window.dataLayer) {
                 console.log('✅ GA4 연결 성공: G-DE2ZNKWV2W');
-                // 연결 테스트 이벤트 발송
                 gtag('event', 'ga4_connection_test', {
                     'event_category': 'system',
                     'event_label': 'collector_page_loaded',
@@ -57,96 +56,7 @@
             setTimeout(checkGA4Connection, 1000);
         });
         
-        // PSF 검증을 위한 핵심 KPI 추적 함수들
-        function trackCTA(action, category = 'CTA', label = '') {
-            gtag('event', action, {
-                'event_category': category,
-                'event_label': label,
-                'value': 1,
-                'send_to': 'G-DE2ZNKWV2W'
-            });
-            
-            // PSF 핵심 메트릭 별도 추적
-            if (category === 'Feature_CTA') {
-                trackFunnelStep('feature_interaction', label);
-            } else if (category === 'Demo_Action') {
-                trackFunnelStep('demo_completion', label);
-            } else if (category === 'Hero_CTA') {
-                trackFunnelStep('hero_engagement', label);
-            }
-        }
-        
-        // PSF 퍼널 단계 추적
-        function trackFunnelStep(step_name, step_value) {
-            gtag('event', 'funnel_step', {
-                'funnel_name': 'collector_conversion',
-                'step_name': step_name,
-                'step_value': step_value,
-                'user_type': 'collector',
-                'page_type': 'collector_landing'
-            });
-        }
-        
-        // 사용자 인게이지먼트 품질 측정
-        function trackEngagement(engagement_type, engagement_value = 1) {
-            gtag('event', 'user_engagement', {
-                'engagement_type': engagement_type,
-                'engagement_value': engagement_value,
-                'page_title': document.title,
-                'page_location': window.location.href,
-                'user_type': 'collector'
-            });
-        }
-        
-        // 전환 의도 신호 추적
-        function trackConversionIntent(intent_type, intent_strength = 'medium') {
-            gtag('event', 'conversion_intent', {
-                'intent_type': intent_type,
-                'intent_strength': intent_strength,
-                'user_type': 'collector',
-                'timestamp': new Date().toISOString()
-            });
-        }
-        
-        let pageStartTime = new Date().getTime();
-        let lastActivityTime = new Date().getTime();
-        let maxScrollDepth = 0;
-        
-        function trackTimeOnPage() {
-            const currentTime = new Date().getTime();
-            const timeSpent = Math.round((currentTime - pageStartTime) / 1000);
-            gtag('event', 'page_dwell_time', {
-                'time_spent_seconds': timeSpent,
-                'page_title': document.title,
-                'page_location': window.location.href
-            });
-        }
-        
-        function trackScrollDepth() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercent = Math.round((scrollTop / docHeight) * 100);
-            
-            if (scrollPercent > maxScrollDepth) {
-                maxScrollDepth = scrollPercent;
-                if (maxScrollDepth >= 25 && maxScrollDepth < 50) {
-                    gtag('event', 'scroll_depth', { 'scroll_depth': '25%', 'page_title': document.title });
-                } else if (maxScrollDepth >= 50 && maxScrollDepth < 75) {
-                    gtag('event', 'scroll_depth', { 'scroll_depth': '50%', 'page_title': document.title });
-                } else if (maxScrollDepth >= 75 && maxScrollDepth < 100) {
-                    gtag('event', 'scroll_depth', { 'scroll_depth': '75%', 'page_title': document.title });
-                } else if (maxScrollDepth >= 100) {
-                    gtag('event', 'scroll_depth', { 'scroll_depth': '100%', 'page_title': document.title });
-                }
-            }
-        }
-        
-        function incrementUserAction() {
-            const currentActions = parseInt(sessionStorage.getItem('user_actions') || '0');
-            sessionStorage.setItem('user_actions', (currentActions + 1).toString());
-        }
-        
-        // 페이지 진입 추적
+        // GA4 이벤트 추적
         gtag('event', 'page_view', {
             'page_title': 'Collector Page',
             'page_location': window.location.href
@@ -166,1020 +76,11 @@
             line-height: 1.6;
             color: #1a1a1a;
             background: #fafafa;
-        }
-
-        /* 업그레이드된 Hero 스타일 */
-        .hero {
-            padding: 120px 0 100px;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.85) 100%), 
-                        url('https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=1600&h=900&fit=crop&crop=entropy&auto=format&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-            opacity: 0.3;
-        }
-
-        .hero-content {
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 60px;
-            align-items: center;
-            position: relative;
-            z-index: 2;
-        }
-
-        .hero-text h1 {
-            font-size: clamp(48px, 6vw, 64px);
-            font-weight: 800;
-            line-height: 1.15;
-            margin-bottom: 28px;
-            letter-spacing: -0.025em;
-        }
-
-        .highlight {
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-weight: 900;
-        }
-
-        .hero-description {
-            font-size: 22px;
-            color: #cbd5e1;
-            margin-bottom: 36px;
-            line-height: 1.65;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 50px;
-            padding: 8px 16px;
-            margin-bottom: 24px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #8b5cf6;
-        }
-
-        .badge-icon {
-            font-size: 16px;
-        }
-
-        .hero-stats {
-            display: flex;
-            gap: 40px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-
-        .stat {
-            text-align: center;
-            min-width: 100px;
-        }
-
-        .stat-number {
-            display: block;
-            font-size: 32px;
-            font-weight: 700;
-            color: #06b6d4;
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 4px;
-            padding: 16px 32px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 200px;
-        }
-
-        .btn-icon {
-            font-size: 20px;
-            margin-bottom: 4px;
-        }
-
-        .btn-subtitle {
-            font-size: 12px;
-            opacity: 0.9;
+            overflow-x: hidden;
             font-weight: 400;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            color: white;
-            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(139, 92, 246, 0.4);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-3px);
-            border-color: rgba(255, 255, 255, 0.25);
-        }
-
-        .trust-indicators {
-            display: flex;
-            gap: 24px;
-            margin-top: 32px;
-            flex-wrap: wrap;
-        }
-
-        .indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: #cbd5e1;
-        }
-
-        .trust-icon {
             font-size: 16px;
-        }
-
-        .featured-collection {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 24px;
-            max-width: 400px;
-        }
-
-        .collection-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .collection-badge {
-            background: linear-gradient(135deg, #f59e0b, #f97316);
-            color: white;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .artwork-sample {
-            position: relative;
-            height: 200px;
-            border-radius: 16px;
-            overflow: hidden;
-            margin-bottom: 16px;
-        }
-
-        .artwork-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            color: white;
-            padding: 20px;
-        }
-
-        .artwork-overlay h4 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .artwork-overlay p {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-bottom: 8px;
-        }
-
-        .artwork-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .price {
-            font-weight: 700;
-            color: #10b981;
-            font-size: 16px;
-        }
-
-        .status {
-            font-size: 12px;
-            background: rgba(245, 158, 11, 0.2);
-            color: #f59e0b;
-            padding: 4px 8px;
-            border-radius: 8px;
-        }
-
-        .story-btn {
-            background: rgba(139, 92, 246, 0.2);
-            border: 1px solid rgba(139, 92, 246, 0.4);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .story-btn:hover {
-            background: rgba(139, 92, 246, 0.3);
-            transform: translateY(-1px);
-        }
-
-        .collection-stats {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 16px;
-        }
-
-        .artist-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .artist-info img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-        }
-
-        .artist-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .artist-name {
-            font-weight: 600;
-            color: white;
-            font-size: 14px;
-        }
-
-        .artist-exp {
-            font-size: 12px;
-            color: #cbd5e1;
-        }
-
-        .collection-metrics {
-            display: flex;
-            gap: 16px;
-        }
-
-        .collection-metrics .metric {
-            font-size: 12px;
-            color: #94a3b8;
-        }
-
-        .hero-cta {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 2rem;
-        }
-
-        .btn {
-            padding: 18px 36px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 16px;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: none;
-            cursor: pointer;
-            letter-spacing: -0.01em;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            color: white;
-            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.25);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(139, 92, 246, 0.35);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-3px);
-            border-color: rgba(255, 255, 255, 0.25);
-        }
-
-        .hero-visual {
-            position: relative;
-        }
-
-        .hero-artwork-preview {
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .artwork-sample {
-            width: 100%;
-            height: 320px;
-            display: flex;
-            align-items: end;
-            padding: 24px;
-            position: relative;
-        }
-
-        .artwork-overlay {
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 12px;
-            color: white;
-            width: 100%;
-        }
-
-        .artwork-overlay h4 {
-            font-size: 18px;
-            margin-bottom: 4px;
-        }
-
-        .artwork-overlay p {
-            font-size: 14px;
-            color: #cbd5e1;
-            margin-bottom: 8px;
-        }
-
-        .story-indicator {
-            font-size: 12px;
-            color: #06b6d4;
-            background: rgba(6, 182, 212, 0.1);
-            padding: 4px 8px;
-            border-radius: 6px;
-            display: inline-block;
-        }
-
-        /* Gallery Section 스타일 */
-        .gallery-section {
-            padding: 120px 0;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 32px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .artwork-card {
-            background: white;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .artwork-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-        }
-
-        .artwork-image-container {
-            position: relative;
-            height: 250px;
-            overflow: hidden;
-        }
-
-        .artwork-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .artwork-card:hover .artwork-image {
-            transform: scale(1.05);
-        }
-
-        .story-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
-            color: white;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            opacity: 0;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(8px);
-        }
-
-        .artwork-card:hover .story-overlay {
-            opacity: 1;
-        }
-
-        .story-overlay h4 {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            color: #ffffff;
-        }
-
-        .story-overlay p {
-            font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 16px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .artist-name {
-            font-size: 12px;
-            font-weight: 600;
-            color: #06b6d4;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .artwork-content {
-            padding: 24px;
-        }
-
-        .artwork-content h3 {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #0f172a;
-        }
-
-        .artwork-description {
-            font-size: 14px;
-            color: #64748b;
-            margin-bottom: 16px;
-        }
-
-        .artwork-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .artwork-artist {
-            font-size: 14px;
-            font-weight: 600;
-            color: #475569;
-        }
-
-        .chat-btn {
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .chat-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-        }
-
-        .gallery-note {
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            border-radius: 16px;
-            padding: 24px;
-            margin-top: 48px;
-            text-align: center;
-        }
-
-        .gallery-note h4 {
-            font-size: 18px;
-            font-weight: 700;
-            color: #8b5cf6;
-            margin-bottom: 12px;
-        }
-
-        .gallery-note p {
-            color: #475569;
-            line-height: 1.6;
-        }
-
-        /* Core Features 스타일 */
-        .core-features {
-            padding: 120px 0;
-            background: white;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 80px;
-        }
-
-        .section-header h2 {
-            font-size: clamp(36px, 4vw, 48px);
-            font-weight: 700;
-            margin-bottom: 16px;
-            letter-spacing: -0.02em;
-        }
-
-        .section-header p {
-            font-size: 20px;
-            color: #64748b;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            font-size: clamp(36px, 4vw, 48px);
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 16px;
-            letter-spacing: -0.02em;
-            color: #0f172a;
-        }
-
-        .section-subtitle {
-            font-size: 20px;
-            color: #64748b;
-            text-align: center;
-            max-width: 600px;
-            margin: 0 auto 48px;
-            line-height: 1.6;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 32px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 40px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-            border-color: #d1d5db;
-        }
-
-        .primary-feature {
-            grid-column: 1 / -1;
-            grid-template-columns: auto 1fr;
-            display: grid;
-            gap: 40px;
-            align-items: center;
-        }
-
-        .feature-icon {
-            margin-bottom: 24px;
-        }
-
-        .icon-bg {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            margin: 0 auto;
-        }
-
-        .story-bg { background: linear-gradient(135deg, #8b5cf6, #a855f7); }
-        .safety-bg { background: linear-gradient(135deg, #059669, #10b981); }
-        .communication-bg { background: linear-gradient(135deg, #0ea5e9, #06b6d4); }
-
-        .feature-content h3 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #0f172a;
-        }
-
-        .feature-content p {
-            color: #64748b;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        .feature-benefits {
-            list-style: none;
-            margin-bottom: 32px;
-        }
-
-        .feature-benefits li {
-            padding: 8px 0;
-            color: #475569;
-            font-size: 15px;
-        }
-
-        .feature-cta-btn {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 15px;
-        }
-
-        .feature-cta-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.25);
-        }
-
-        /* Demo Modal 스타일 */
-        .demo-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.85);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            backdrop-filter: blur(8px);
-            padding: 20px;
-        }
-
-        .demo-modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 24px;
-            max-width: 700px;
-            width: 100%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            position: relative;
-        }
-
-        .modal-header {
-            padding: 24px 32px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h3 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #0f172a;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 32px;
-            color: #64748b;
-            cursor: pointer;
-            padding: 0;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: all 0.2s ease;
-        }
-
-        .close-btn:hover {
-            background: #f1f5f9;
-            color: #0f172a;
-        }
-
-        .modal-body {
-            padding: 32px;
-        }
-
-        .story-feed {
-            margin-bottom: 24px;
-        }
-
-        .story-item {
-            display: flex;
-            gap: 16px;
-            padding: 20px;
-            background: #f8fafc;
-            border-radius: 12px;
-            margin-bottom: 16px;
-        }
-
-        .story-item img {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-
-        .story-content h4 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #0f172a;
-        }
-
-        .story-content p {
-            color: #64748b;
-            line-height: 1.5;
-            margin-bottom: 12px;
-        }
-
-        .story-tags {
-            display: flex;
-            gap: 8px;
-        }
-
-        .tag {
-            background: #e0e7ff;
-            color: #3730a3;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .demo-description {
-            color: #64748b;
-            background: #f1f5f9;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 24px;
-            font-style: italic;
-        }
-
-        .safety-steps {
-            margin-bottom: 24px;
-        }
-
-        .step {
-            display: flex;
-            gap: 16px;
-            align-items: flex-start;
-            padding: 16px 0;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .step:last-child {
-            border-bottom: none;
-        }
-
-        .step-icon {
-            font-size: 24px;
-            min-width: 40px;
-        }
-
-        .step-content h4 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #0f172a;
-        }
-
-        .step-content p {
-            color: #64748b;
-        }
-
-        .chat-preview {
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 24px;
-        }
-
-        .chat-header {
-            background: #f8fafc;
-            padding: 16px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .artist-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #8b5cf6;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-
-        .artist-info h4 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 2px;
-        }
-
-        .status {
-            font-size: 12px;
-            color: #059669;
-        }
-
-        .chat-messages {
-            padding: 16px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .message {
-            margin-bottom: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            max-width: 80%;
-        }
-
-        .message.artist {
-            background: #f1f5f9;
-            color: #0f172a;
-        }
-
-        .message.user {
-            background: #8b5cf6;
-            color: white;
-            margin-left: auto;
-        }
-
-        .demo-actions {
-            text-align: center;
-        }
-
-        .demo-btn {
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .demo-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
-        }
-
-        /* 모바일 반응형 */
-        @media (max-width: 768px) {
-            .hero-content {
-                grid-template-columns: 1fr;
-                gap: 40px;
-                text-align: center;
-            }
-
-            .hero-stats {
-                justify-content: center;
-            }
-
-            .hero-cta {
-                justify-content: center;
-            }
-
-            .btn {
-                flex: 1;
-                min-width: 200px;
-                justify-content: center;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 24px;
-            }
-
-            .primary-feature {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .feature-card {
-                padding: 24px;
-            }
-
-            .modal-content {
-                width: 95%;
-                margin: 20px;
-            }
-
-            .modal-header {
-                padding: 20px;
-            }
-
-            .modal-body {
-                padding: 20px;
-            }
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 24px;
-            height: 100vh;
-            display: flex;
-            align-items: center;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         /* Header */
@@ -1211,7 +112,6 @@
             font-weight: 600;
             color: #1a1a1a;
             letter-spacing: -0.02em;
-            text-transform: none;
         }
         
         .back-btn {
@@ -1227,7 +127,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            letter-spacing: -0.01em;
         }
         
         .back-btn:hover {
@@ -1281,7 +180,14 @@
             font-weight: 700;
             line-height: 1.1;
             letter-spacing: -0.03em;
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
         }
         
         .collector-content p {
@@ -1290,7 +196,6 @@
             color: #475569;
             line-height: 1.5;
             font-weight: 400;
-            letter-spacing: -0.01em;
         }
         
         .collector-features {
@@ -1299,34 +204,26 @@
         }
         
         .collector-features li {
-            padding: 12px 0;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #334155;
+            padding: 8px 0;
+            color: #475569;
+            position: relative;
+            padding-left: 20px;
         }
         
-        .collector-features li::before {
+        .collector-features li:before {
             content: '✓';
-            background: #0f172a;
-            color: #ffffff;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 12px;
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
         }
         
         .cta-button {
-            background: #0f172a;
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
             color: #ffffff;
-            padding: 16px 32px;
+            padding: 18px 36px;
             border: none;
-            border-radius: 8px;
+            border-radius: 50px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
@@ -1335,467 +232,16 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
-            letter-spacing: -0.01em;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
         }
         
         .cta-button:hover {
-            background: #020617;
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.15);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
         }
         
-        .hero-stats {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-        
-        .stat-item {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 16px;
-            border-radius: 8px;
-            border: 1px solid #f1f5f9;
-            text-align: center;
-        }
-        
-        .stat-number {
-            font-size: 20px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 4px;
-            letter-spacing: -0.02em;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #64748b;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        /* Right Side - Feature Showcase */
-        .feature-showcase {
-            background: #ffffff;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 80px 60px;
-            border-left: 1px solid #f1f5f9;
-            overflow-y: auto;
-        }
-        
-        .feature-content {
-            max-width: 520px;
-            width: 100%;
-        }
-        
-        .feature-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .feature-header h2 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 12px;
-            letter-spacing: -0.02em;
-        }
-        
-        .feature-header p {
-            color: #64748b;
-            font-size: 16px;
-            letter-spacing: -0.01em;
-        }
-        
-        .feature-list {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-        
-        .feature-card {
-            background: #ffffff;
-            border: 1px solid #f1f5f9;
-            border-radius: 12px;
-            padding: 24px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: #0f172a;
-            transform: scaleY(0);
-            transform-origin: bottom;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-            border-color: #e2e8f0;
-        }
-        
-        .feature-card:hover::before {
-            transform: scaleY(1);
-        }
-        
-        .feature-icon {
-            width: 48px;
-            height: 48px;
-            background: #f8fafc;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-            font-size: 24px;
-            transition: all 0.3s ease;
-        }
-        
-        .feature-card:hover .feature-icon {
-            background: #0f172a;
-            color: #ffffff;
-            transform: scale(1.05);
-        }
-        
-        .feature-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 8px;
-            letter-spacing: -0.01em;
-        }
-        
-        .feature-description {
-            font-size: 14px;
-            color: #64748b;
-            line-height: 1.5;
-            margin-bottom: 16px;
-            letter-spacing: -0.01em;
-        }
-        
-        .feature-cta {
-            background: #0f172a;
-            color: #ffffff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            letter-spacing: -0.01em;
-        }
-        
-        .feature-cta:hover {
-            background: #020617;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
-        }
-        
-        .feature-cta:focus {
-            outline: 2px solid #0f172a;
-            outline-offset: 2px;
-        }
-
-        /* 모달 스타일 */
-        .demo-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .modal-content {
-            background-color: #fafafa;
-            margin: 5% auto;
-            padding: 40px;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes slideUp {
-            from { 
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .close {
-            color: #64748b;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            cursor: pointer;
-            transition: color 0.2s ease;
-        }
-
-        .close:hover {
-            color: #0f172a;
-        }
-
-        /* 작품 쇼케이스 스타일 */
-        .artwork-showcase {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-top: 30px;
-        }
-
-        .artwork-container {
-            position: relative;
-        }
-
-        .artwork-image {
-            width: 100%;
-            max-width: 300px;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        .artwork-image:hover {
-            transform: scale(1.05);
-        }
-
-        .artwork-tooltip {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-            margin-top: 10px;
-            z-index: 1001;
-        }
-
-        .artwork-tooltip h3 {
-            color: #0f172a;
-            margin: 0 0 15px 0;
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .artwork-description p {
-            margin: 8px 0;
-            line-height: 1.6;
-            color: #475569;
-            font-size: 14px;
-        }
-
-        .story-features {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .story-feature {
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 4px solid #0f172a;
-        }
-
-        .story-feature h4 {
-            margin: 0 0 10px 0;
-            color: #0f172a;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .story-feature p {
-            margin: 0;
-            color: #64748b;
-            line-height: 1.5;
-        }
-
-        /* 안전 거래 스타일 */
-        .safety-features {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        .safety-step {
-            background: #f8fafc;
-            padding: 25px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid #e2e8f0;
-        }
-
-        .step-number {
-            background: #0f172a;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        .safety-step h4 {
-            margin: 0 0 10px 0;
-            color: #0f172a;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .safety-step p {
-            margin: 0;
-            color: #64748b;
-            line-height: 1.5;
-            font-size: 14px;
-        }
-
-        /* 커뮤니케이션 스타일 */
-        .communication-features {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin-top: 30px;
-        }
-
-        .chat-preview {
-            background: #f8fafc;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #e2e8f0;
-        }
-
-        .chat-header {
-            background: #0f172a;
-            color: white;
-            padding: 15px 20px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .chat-messages {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .message {
-            max-width: 80%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .message.artist {
-            background: #e2e8f0;
-            color: #0f172a;
-            align-self: flex-start;
-        }
-
-        .message.collector {
-            background: #0f172a;
-            color: white;
-            align-self: flex-end;
-        }
-
-        .communication-benefits {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .benefit {
-            background: #f8fafc;
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 4px solid #0f172a;
-        }
-
-        .benefit h4 {
-            margin: 0 0 10px 0;
-            color: #0f172a;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .benefit p {
-            margin: 0;
-            color: #64748b;
-            line-height: 1.5;
-            font-size: 14px;
-        }
-
-        /* 반응형 디자인 */
-        @media (max-width: 768px) {
-            .artwork-showcase,
-            .safety-features,
-            .communication-features {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .modal-content {
-                margin: 10% auto;
-                padding: 30px 20px;
-                width: 95%;
-            }
-
-            .artwork-tooltip {
-                position: static;
-                margin-top: 20px;
-            }
-        }
-        
-        /* Right Side - Artwork Gallery */
-        .artwork-gallery {
+        /* Right Side - Featured Artworks */
+        .featured-artworks {
             background: #f8f9fa;
             display: flex;
             flex-direction: column;
@@ -1805,64 +251,64 @@
             gap: 1.5rem;
         }
         
-        .gallery-title {
+        .featured-title {
             text-align: center;
             margin-bottom: 1rem;
         }
         
-        .gallery-title h2 {
+        .featured-title h2 {
             font-size: 1.8rem;
             color: #2c3e50;
             margin-bottom: 0.5rem;
         }
         
-        .gallery-title p {
+        .featured-title p {
             color: #6c757d;
             font-size: 1rem;
         }
         
-        .featured-artworks {
+        .artworks-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            max-width: 500px;
+            gap: 24px;
+            max-width: 600px;
             width: 100%;
         }
         
-        .featured-card {
+        .artwork-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        .featured-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        .artwork-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
         }
         
-        .featured-image {
+        .artwork-image {
             width: 100%;
-            height: 150px;
+            height: 180px;
             background-size: cover;
             background-position: center;
             position: relative;
         }
         
-        /* Featured artwork images with enhanced SVG art */
-        .featured-1 {
+        .artwork-1 {
             background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), 
-                        url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxyYWRpYWxHcmFkaWVudCBpZD0ic3Vuc2V0R3JhZGllbnQiIGN4PSI1MCUiIGN5PSI0MCUiIHI9IjYwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNGRkM5NDc7c3RvcC1vcGFjaXR5OjEiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iNDAliIiBzdHlsZT0ic3RvcC1jb2xvcjojRkY2QjQ3O3N0b3Atb3BhY2l0eToxIiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNGRjJCN0I7c3RvcC1vcGFjaXR5OjEiIC8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogIDwvZGVmcz4KICA8IS0tIFN1bnNldCBza3kgLS0+CiAgPHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9InVybCgjc3Vuc2V0R3JhZGllbnQpIi8+CiAgPCEtLSBTdW4gLS0+CiAgPGNpcmNsZSBjeD0iNzAiIGN5PSI2MCIgcj0iMzAiIGZpbGw9IiNGRkY3OTEiIG9wYWNpdHk9IjAuOSIvPgogIDxjaXJjbGUgY3g9IjcwIiBjeT0iNjAiIHI9IjIwIiBmaWxsPSIjRkZDOTQ3Ii8+CiAgPCEtLSBDbG91ZHMgLS0+CiAgPGVsbGlwc2UgY3g9IjE1MCIgY3k9IjQwIiByeD0iNDAiIHJ5PSIxNSIgZmlsbD0iI0ZGRkZGRiIgb3BhY2l0eT0iMC44Ii8+CiAgPGVsbGlwc2UgY3g9IjI0MCIgY3k9IjMwIiByeD0iMzUiIHJ5PSIxMiIgZmlsbD0iI0ZGRkZGRiIgb3BhY2l0eT0iMC43Ii8+CiAgPCEtLSBNb3VudGFpbnMgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSIwLDIwMCA4MCwxMjAgMTYwLDIwMCIgZmlsbD0iIzMzNDE0RSIvPgogIDxwb2x5Z29uIHBvaW50cz0iMTIwLDIwMCAyMDAsMTAwIDI4MCwyMDAiIGZpbGw9IiM0MTQ1NGEiLz4KICA8IS0tIFJlZmxlY3Rpb24gaW4gd2F0ZXIgLS0+CiAgPHJlY3QgeD0iMCIgeT0iMTgwIiB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjNjlCM0Q5IiBvcGFjaXR5PSIwLjciLz4KICA8ZWxsaXBzZSBjeD0iNzAiIGN5PSIxODgiIHJ4PSIxNSIgcnk9IjUiIGZpbGw9IiNGRkM5NDciIG9wYWNpdHk9IjAuNiIvPgo8L3N2Zz4=');
+                        url('https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80');
             background-size: cover;
             background-position: center;
         }
         
-        .featured-2 {
+        .artwork-2 {
             background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), 
-                        url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ2FyZGVuR3JhZGllbnQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojRkY2Qjk0O3N0b3Atb3BhY2l0eToxIiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3R5bGU9InN0b3AtY29sb3I6I0Y0OEZCMTtzdG9wLW9wYWNpdHk6MSIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojRkY5OTcwO3N0b3Atb3BhY2l0eToxIiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPCEtLSBHYXJkZW4gYmFja2dyb3VuZCAtLT4KICA8cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0idXJsKCNnYXJkZW5HcmFkaWVudCkiLz4KICA8IS0tIEZsb3dlciBwZXRhbHMgLS0+CiAgPGNpcmNsZSBjeD0iMTUwIiBjeT0iMTAwIiByPSI0MCIgZmlsbD0iI0ZGNjk5NCIgb3BhY2l0eT0iMC44Ii8+CiAgPGVsbGlwc2UgY3g9IjEzMCIgY3k9IjgwIiByeD0iMjAiIHJ5PSIzNSIgZmlsbD0iI0ZGQkQ4RCIgb3BhY2l0eT0iMC45Ii8+CiAgPGVsbGlwc2UgY3g9IjE3MCIgY3k9IjgwIiByeD0iMjAiIHJ5PSIzNSIgZmlsbD0iI0ZGQkQ4RCIgb3BhY2l0eT0iMC45Ii8+CiAgPGVsbGlwc2UgY3g9IjEzMCIgY3k9IjEyMCIgcng9IjIwIiByeT0iMzUiIGZpbGw9IiNGRkJEOEQiIG9wYWNpdHk9IjAuOSIvPgogIDxlbGxpcHNlIGN4PSIxNzAiIGN5PSIxMjAiIHJ4PSIyMCIgcnk9IjM1IiBmaWxsPSIjRkZCRDhEIiBvcGFjaXR5PSIwLjkiLz4KICA8IS0tIEZsb3dlciBjZW50ZXIgLS0+CiAgPGNpcmNsZSBjeD0iMTUwIiBjeT0iMTAwIiByPSIxNSIgZmlsbD0iI0ZGRjc5MSIvPgogIDwhLS0gU21hbGwgZmxvd2VycyAtLT4KICA8Y2lyY2xlIGN4PSI4MCIgY3k9IjE1MCIgcj0iMTUiIGZpbGw9IiNGRjk5NzAiIG9wYWNpdHk9IjAuOCIvPgogIDxjaXJjbGUgY3g9IjIyMCIgY3k9IjE2MCIgcj0iMTIiIGZpbGw9IiNGNDhGQjEiIG9wYWNpdHk9IjAuNyIvPgogIDxjaXJjbGUgY3g9IjUwIiBjeT0iNjAiIHI9IjEwIiBmaWxsPSIjRkY2Qjk0IiBvcGFjaXR5PSIwLjkiLz4KICA8Y2lyY2xlIGN4PSIyNTAiIGN5PSI1MCIgcj0iOCIgZmlsbD0iI0ZGQkQ4RCIgb3BhY2l0eT0iMC44Ii8+CiAgPCEtLSBMZWF2ZXMgLS0+CiAgPGVsbGlwc2UgY3g9IjEyMCIgY3k9IjE0MCIgcng9IjE1IiByeT0iOCIgZmlsbD0iIzM0QTg1MyIgb3BhY2l0eT0iMC43IiB0cmFuc2Zvcm09InJvdGF0ZSg0NSAxMjAgMTQwKSIvPgogIDxlbGxpcHNlIGN4PSIxODAiIGN5PSIxMzAiIHJ4PSIxNSIgcnk9IjgiIGZpbGw9IiMzNEE4NTMiIG9wYWNpdHk9IjAuNyIgdHJhbnNmb3JtPSJyb3RhdGUoLTMwIDE4MCAxMzApIi8+Cjwvc3ZnPg==');
+                        url('https://images.unsplash.com/photo-1596548438137-d51ea5c83d4d?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80');
             background-size: cover;
             background-position: center;
         }
@@ -1873,9 +319,9 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 100%);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
             color: white;
-            padding: 1rem;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -1883,23 +329,24 @@
             text-align: center;
             opacity: 0;
             transition: all 0.3s ease;
-            backdrop-filter: blur(2px);
+            backdrop-filter: blur(8px);
         }
         
-        .featured-card:hover .story-overlay {
+        .artwork-card:hover .story-overlay {
             opacity: 1;
         }
         
         .story-overlay h4 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ffffff;
         }
         
         .story-overlay p {
-            font-size: 0.85rem;
+            font-size: 13px;
             line-height: 1.4;
-            opacity: 0.9;
+            color: rgba(255, 255, 255, 0.9);
         }
         
         .price-tag {
@@ -1952,6 +399,7 @@
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
+            position: relative;
         }
         
         .form-header {
@@ -1987,7 +435,7 @@
         
         .form-control:focus {
             outline: none;
-            border-color: #f093fb;
+            border-color: #667eea;
         }
         
         .checkbox-group {
@@ -2009,17 +457,17 @@
         }
         
         .checkbox-item:hover {
-            border-color: #f093fb;
+            border-color: #667eea;
         }
         
         .checkbox-item.selected {
-            border-color: #f093fb;
+            border-color: #667eea;
             background: #fdf2f8;
         }
         
         .submit-btn {
             width: 100%;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 14px;
             border: none;
@@ -2032,7 +480,7 @@
         
         .submit-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.3);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
         }
         
         .close-btn {
@@ -2057,6 +505,10 @@
                 grid-template-rows: 1fr 1fr;
             }
             
+            .collector-hero, .featured-artworks {
+                padding: 2rem 1rem;
+            }
+            
             .collector-content h1 {
                 font-size: 2rem;
             }
@@ -2065,12 +517,12 @@
                 font-size: 1rem;
             }
             
-            .featured-artworks {
+            .artworks-grid {
                 grid-template-columns: 1fr;
                 max-width: 300px;
             }
             
-            .featured-image {
+            .artwork-image {
                 height: 200px;
             }
             
@@ -2084,7 +536,7 @@
         }
         
         @media (max-width: 480px) {
-            .collector-hero, .artwork-gallery {
+            .collector-hero, .featured-artworks {
                 padding: 1rem;
             }
             
@@ -2097,6 +549,69 @@
                 font-size: 0.95rem;
             }
         }
+
+        /* Navigation */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 32px;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #6b7280;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            position: relative;
+            letter-spacing: -0.01em;
+        }
+        
+        .nav-link:hover {
+            color: #1a1a1a;
+        }
+        
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #475569;
+        }
+        
+        @media (max-width: 767px) {
+            .nav-menu {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(40px);
+                flex-direction: column;
+                gap: 0;
+                padding: 20px 0;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            }
+            
+            .nav-menu.active {
+                display: flex;
+            }
+            
+            .nav-link {
+                padding: 12px 24px;
+                width: 100%;
+                text-align: left;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
@@ -2105,765 +620,240 @@
         <nav class="nav">
             <div class="logo">시니어 아티스트</div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="#features" class="nav-link">핵심 기능</a></li>
-                <li><a href="#gallery" class="nav-link">작품 갤러리</a></li>
-                <li><a href="artist.html" class="nav-link">작가용</a></li>
+                <li><a href="artist.html" class="nav-link">예술가용</a></li>
+                <li><a href="collector.html" class="nav-link">콜렉터용</a></li>
+                <li><a href="index.html#about" class="nav-link">소개</a></li>
             </ul>
             <a href="index.html" class="back-btn">← 메인으로</a>
             <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기">☰</button>
         </nav>
     </header>
 
-    <!-- Enhanced Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <div class="hero-badge" data-aos="fade-up">
-                        <span class="badge-icon">🎨</span>
-                        <span class="badge-text">시니어 아티스트 전문 컬렉션</span>
-                    </div>
-                    <h1 data-aos="fade-up" data-aos-delay="200"><span class="highlight">시니어 아티스트</span><br>전문 예술 플랫폼</h1>
-                    <p class="hero-description" data-aos="fade-up" data-aos-delay="400">
-                        50년 이상의 경험과 철학이 담긴 특별한 작품들을 만나고,<br>
-                        작가와 직접 소통하며 의미 있는 컬렉션을 시작하세요
-                    </p>
-                    <div class="hero-stats" data-aos="fade-up" data-aos-delay="600">
-                        <div class="stat">
-                            <span class="stat-number">250+</span>
-                            <span class="stat-label">시니어 작가</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">1,200+</span>
-                            <span class="stat-label">작품 스토리</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">98%</span>
-                            <span class="stat-label">만족도</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-number">₩2.5억</span>
-                            <span class="stat-label">월 거래액</span>
-                        </div>
-                    </div>
-                    <div class="hero-cta" data-aos="fade-up" data-aos-delay="800">
-                        <a href="#features" class="btn btn-primary" onclick="trackCTA('hero_primary_click', 'Collector_Hero_CTA', 'Explore_Features'); trackConversionIntent('exploration_intent', 'high'); trackFunnelStep('hero_engagement', 'primary_cta');">
-                            <span class="btn-icon">🔍</span>
-                            작품 스토리 탐색하기
-                            <span class="btn-subtitle">1,200+ 작품 스토리</span>
-                        </a>
-                        <a href="#gallery" class="btn btn-secondary" onclick="trackCTA('hero_secondary_click', 'Collector_Hero_CTA', 'View_Gallery'); trackEngagement('gallery_exploration', 2); trackFunnelStep('hero_engagement', 'secondary_cta');">
-                            <span class="btn-icon">🖼️</span>
-                            작품 갤러리
-                        </a>
-                    </div>
-                    
-                    <!-- Trust Indicators -->
-                    <div class="trust-indicators" data-aos="fade-up" data-aos-delay="1000">
-                        <div class="indicator">
-                            <span class="trust-icon">🛡️</span>
-                            <span class="trust-text">작품 진품 보증</span>
-                        </div>
-                        <div class="indicator">
-                            <span class="trust-icon">📜</span>
-                            <span class="trust-text">정품 인증서</span>
-                        </div>
-                        <div class="indicator">
-                            <span class="trust-icon">🤝</span>
-                            <span class="trust-text">작가 직접 소통</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="hero-visual" data-aos="fade-left" data-aos-delay="600">
-                    <div class="hero-artwork-preview">
-                        <div class="featured-collection">
-                            <div class="collection-header">
-                                <span class="collection-badge">FEATURED COLLECTION</span>
-                            </div>
-                            <div class="artwork-sample" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <div class="artwork-overlay">
-                                    <h4>"인생의 색채"</h4>
-                                    <p>김영숙 작가 (72세) - 유화</p>
-                                    <div class="artwork-details">
-                                        <span class="price">₩450만원</span>
-                                        <span class="status">📍 전시 중</span>
-                                    </div>
-                                    <button class="story-btn" onclick="trackCTA('artwork_story_click', 'Featured_Artwork', 'Story_View'); trackEngagement('story_engagement', 3);">
-                                        💭 작품 스토리 보기
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="collection-stats">
-                                <div class="artist-info">
-                                    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><circle cx='20' cy='20' r='20' fill='%23059669'/><text x='20' y='25' text-anchor='middle' fill='white' font-size='14' font-weight='600'>김</text></svg>" alt="김영숙 작가">
-                                    <div class="artist-details">
-                                        <span class="artist-name">김영숙 작가</span>
-                                        <span class="artist-exp">50년 경력 • 개인전 15회</span>
-                                    </div>
-                                </div>
-                                <div class="collection-metrics">
-                                    <span class="metric">❤️ 127명이 좋아요</span>
-                                    <span class="metric">👀 245회 조회</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <!-- Left Side - Collector Hero -->
+        <div class="collector-hero">
+            <div class="collector-content">
+                <h1><span class="highlight">시니어 아티스트</span><br>콜렉터 전용 플랫폼</h1>
+                <p>깊이 있는 작품 스토리를 발견하고<br>작가와 직접 소통하며 특별한 컬렉션을 시작하세요</p>
+                
+                <ul class="collector-features">
+                    <li>작품 스토리 발견</li>
+                    <li>작가와 직접 소통</li>
+                    <li>안전한 거래 보장</li>
+                    <li>맞춤 작품 추천</li>
+                    <li>전문가 상담 서비스</li>
+                </ul>
+                
+                <button class="cta-button" onclick="openInterestForm()">관심 등록하기</button>
             </div>
         </div>
-    </section>
-
-    <!-- Core Features Section -->
-    <section id="features" class="section core-features">
-        <div class="container">
-            <div class="section-header">
-                <h2>콜렉터를 위한 3가지 핵심 기능</h2>
-                <p>안전하고 의미 있는 예술 수집을 위한 전문 도구들</p>
+        
+        <!-- Right Side - Featured Artworks -->
+        <div class="featured-artworks">
+            <div class="featured-title">
+                <h2>추천 작품</h2>
+                <p>시니어 작가들의 특별한 작품을 만나보세요</p>
             </div>
             
-            <div class="features-grid">
-                <!-- Feature 1: Story-based Discovery -->
-                <div class="feature-card primary-feature">
-                    <div class="feature-icon">
-                        <div class="icon-bg story-bg">🔍</div>
-                    </div>
-                    <div class="feature-content">
-                        <h3>스토리 기반 작품 탐색</h3>
-                        <p>작가의 인생 경험과 제작 과정이 담긴 깊이 있는 스토리를 통해 작품을 발견하세요. AI 추천으로 취향에 맞는 작품을 찾아드립니다.</p>
-                        <ul class="feature-benefits">
-                            <li>✨ 작가 서사 중심의 큐레이션</li>
-                            <li>🎯 개인 취향 기반 추천</li>
-                            <li>📖 제작 과정 상세 스토리</li>
-                        </ul>
-                        <button class="feature-cta-btn" onclick="openStoryDemo(); trackCTA('click', 'Feature_CTA', 'Story_Discovery')">
-                            스토리 탐색 체험하기 →
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Feature 2: Safe Transaction -->
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <div class="icon-bg safety-bg">🛡️</div>
-                    </div>
-                    <div class="feature-content">
-                        <h3>100% 안심 거래 시스템</h3>
-                        <p>에스크로 결제부터 작품 진위 검증까지, 안전한 거래를 위한 모든 장치가 준비되어 있습니다.</p>
-                        <ul class="feature-benefits">
-                            <li>💳 에스크로 안전 결제</li>
-                            <li>✅ 작가 신원 인증</li>
-                            <li>📋 표준 계약서 제공</li>
-                        </ul>
-                        <button class="feature-cta-btn" onclick="openSafetyDemo(); trackCTA('click', 'Feature_CTA', 'Safe_Transaction')">
-                            안심 거래 확인하기 →
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Feature 3: Direct Communication -->
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <div class="icon-bg communication-bg">💬</div>
-                    </div>
-                    <div class="feature-content">
-                        <h3>작가와 직접 소통</h3>
-                        <p>1:1 채팅을 통해 작가와 깊이 있는 대화를 나누고, 작품에 대한 궁금한 모든 것을 직접 물어보세요.</p>
-                        <ul class="feature-benefits">
-                            <li>💭 실시간 1:1 채팅</li>
-                            <li>📸 맞춤 작품 요청</li>
-                            <li>🚚 배송 일정 실시간 추적</li>
-                        </ul>
-                        <button class="feature-cta-btn" onclick="openCommunicationDemo(); trackCTA('click', 'Feature_CTA', 'Direct_Communication')">
-                            작가와 채팅하기 →
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Gallery Preview Section -->
-    <section id="gallery" class="section gallery-section">
-        <div class="container">
-            <h2 class="section-title">작품 스토리와 함께하는 특별한 갤러리</h2>
-            <p class="section-subtitle">각 작품에 마우스를 올려보세요. 작가의 깊은 이야기를 확인할 수 있습니다</p>
-            
-            <div class="gallery-grid">
+            <div class="artworks-grid">
                 <div class="artwork-card">
-                    <div class="artwork-image-container">
-                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80" alt="Abstract Mixed Media Artwork" class="artwork-image" loading="lazy" />
+                    <div class="artwork-image artwork-1">
+                        <div class="price-tag">₩450,000</div>
                         <div class="story-overlay">
-                            <h4>작품 스토리</h4>
-                            <p>"이 작품은 우리가 살아가는 공간과 시간에 대한 깊은 성찰을 담았습니다. 테이블 위의 소소한 일상이 곧 우리의 삶의 터전이라는 의미를 표현했어요."</p>
-                            <span class="artist-name">김현숙 작가 (72세)</span>
+                            <h4>인생의 세계</h4>
+                            <p>"72세의 나이에 처음 그려본 작품입니다. 오랫동안 마음에 담아둔 감정을 표현했습니다."</p>
                         </div>
                     </div>
-                    <div class="artwork-content">
-                        <h3>일상의 철학</h3>
-                        <p class="artwork-description">Mixed Media, 30x40cm, 2025년 작품</p>
-                        <div class="artwork-meta">
-                            <span class="artwork-artist">김현숙 작가</span>
-                            <button class="chat-btn">1:1 채팅 문의</button>
-                        </div>
+                    <div class="artwork-info">
+                        <h3>인생의 세계</h3>
+                        <p>김영수 작가 • 유화</p>
                     </div>
                 </div>
                 
                 <div class="artwork-card">
-                    <div class="artwork-image-container">
-                        <img src="https://images.unsplash.com/photo-1596548438137-d51ea5c83d4d?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80" alt="Traditional Landscape Painting" class="artwork-image" loading="lazy" />
+                    <div class="artwork-image artwork-2">
+                        <div class="price-tag">₩320,000</div>
                         <div class="story-overlay">
-                            <h4>작품 스토리</h4>
-                            <p>"70년을 살아오며 느낀 자연의 소중함을 표현했습니다. 어린 시절 뛰놀던 들판의 기억이 붓끝에서 되살아났어요."</p>
-                            <span class="artist-name">박미선 작가 (68세)</span>
+                            <h4>숲속의 기억</h4>
+                            <p>"어린 시절 뛰놀던 고향의 숲을 70년 만에 다시 그려보았습니다."</p>
                         </div>
                     </div>
-                    <div class="artwork-content">
-                        <h3>고향의 추억</h3>
-                        <p class="artwork-description">수채화, 45x60cm, 2025년 작품</p>
-                        <div class="artwork-meta">
-                            <span class="artwork-artist">박미선 작가</span>
-                            <button class="chat-btn">1:1 채팅 문의</button>
+                    <div class="artwork-info">
+                        <h3>숲속의 기억</h3>
+                        <p>박미선 작가 • 연필화</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interest Form Overlay -->
+    <div class="interest-overlay" id="interestOverlay">
+        <div class="interest-form">
+            <button class="close-btn" onclick="closeInterestForm()">&times;</button>
+            <div class="form-header">
+                <h3>콜렉터 관심 등록</h3>
+                <p>맞춤 작품을 추천받으세요</p>
+            </div>
+            
+            <form id="collectorForm">
+                <div class="form-group">
+                    <label for="collectorName">이름 *</label>
+                    <input type="text" id="collectorName" name="collectorName" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="collectorEmail">이메일 *</label>
+                    <input type="email" id="collectorEmail" name="collectorEmail" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="collectorPhone">연락처 *</label>
+                    <input type="tel" id="collectorPhone" name="collectorPhone" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>관심 분야 *</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item" data-value="painting">
+                            <input type="checkbox" value="painting"> 회화
+                        </div>
+                        <div class="checkbox-item" data-value="sculpture">
+                            <input type="checkbox" value="sculpture"> 조각
+                        </div>
+                        <div class="checkbox-item" data-value="calligraphy">
+                            <input type="checkbox" value="calligraphy"> 서예
+                        </div>
+                        <div class="checkbox-item" data-value="craft">
+                            <input type="checkbox" value="craft"> 공예
                         </div>
                     </div>
                 </div>
                 
-                <div class="artwork-card">
-                    <div class="artwork-image-container">
-                        <img src="https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80" alt="Contemporary Abstract Art" class="artwork-image" loading="lazy" />
-                        <div class="story-overlay">
-                            <h4>작품 스토리</h4>
-                            <p>"나이가 들어가며 보이는 세상의 아름다움을 표현했습니다. 젊었을 때는 보지 못했던 섬세한 감정들이 담겨 있어요."</p>
-                            <span class="artist-name">이정호 작가 (75세)</span>
-                        </div>
-                    </div>
-                    <div class="artwork-content">
-                        <h3>시간의 흔적</h3>
-                        <p class="artwork-description">아크릴, 50x70cm, 2025년 작품</p>
-                        <div class="artwork-meta">
-                            <span class="artwork-artist">이정호 작가</span>
-                            <button class="chat-btn">1:1 채팅 문의</button>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="budget">예산 범위</label>
+                    <select id="budget" name="budget" class="form-control">
+                        <option value="">선택해주세요</option>
+                        <option value="under-300">30만원 미만</option>
+                        <option value="300-500">30-50만원</option>
+                        <option value="500-1000">50-100만원</option>
+                        <option value="over-1000">100만원 이상</option>
+                    </select>
                 </div>
                 
-                <div class="artwork-card">
-                    <div class="artwork-image-container">
-                        <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80" alt="Traditional Korean Painting" class="artwork-image" loading="lazy" />
-                        <div class="story-overlay">
-                            <h4>작품 스토리</h4>
-                            <p>"인생의 험난함과 아름다움을 산의 모습에 투영했습니다. 80년 동안 쌓인 지혜와 경험이 붓끝에 흘러나왔어요."</p>
-                            <span class="artist-name">정한석 작가 (79세)</span>
-                        </div>
-                    </div>
-                    <div class="artwork-content">
-                        <h3>인생의 산맥</h3>
-                        <p class="artwork-description">한국화, 60x90cm, 2025년 작품</p>
-                        <div class="artwork-meta">
-                            <span class="artwork-artist">정한석 작가</span>
-                            <button class="chat-btn">1:1 채팅 문의</button>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="interests">관심사 및 취향</label>
+                    <textarea id="interests" name="interests" class="form-control" rows="3" placeholder="어떤 스타일이나 주제의 작품에 관심이 있으신가요?"></textarea>
                 </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 3rem;">
-                <div class="gallery-note">
-                    <h4>🎨 시니어 아티스트 플랫폼</h4>
-                    <p>70세 이상 시니어 예술가들의 실제 작품과 깊이 있는 인생 스토리를 만나보세요.<br>
-                    각 작품에는 작가의 철학과 경험이 담겨 있어 더욱 의미 있는 컬렉션이 가능합니다.</p>
-                </div>
-            </div>
+                
+                <button type="submit" class="submit-btn">관심 등록하기</button>
+            </form>
         </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="section features-section">
-        <div class="container">
-            <h2 class="section-title">콜렉터를 위한 특별한 탐색 기능</h2>
-            <p class="section-subtitle">시니어 예술가의 작품을 더 깊이 있게 탐색하고 소통하세요</p>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon" aria-hidden="true">🔍</div>
-                    <h3>스토리 기반 검색</h3>
-                    <p>작품의 제목이나 작가명뿐만 아니라 작품에 담긴 스토리와 테마로도 검색할 수 있어 원하는 감정과 의미를 담은 작품을 쉽게 찾을 수 있습니다.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon" aria-hidden="true">💬</div>
-                    <h3>실시간 1:1 채팅</h3>
-                    <p>마음에 든 작품을 발견하면 바로 작가와 1:1 채팅으로 연결됩니다. 작품에 대한 궁금한 점을 직접 물어보고 구매 상담을 받으세요.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon" aria-hidden="true">👤</div>
-                    <h3>작가 프로필 탐색</h3>
-                    <p>각 작가의 상세한 프로필과 예술 여정을 확인할 수 있습니다. 작가의 철학과 경험을 이해하면 작품을 더 깊이 감상할 수 있습니다.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon" aria-hidden="true">❤️</div>
-                    <h3>개인 맞춤 추천</h3>
-                    <p>관심 표시한 작품과 작가를 바탕으로 취향에 맞는 새로운 작품들을 추천해드립니다. 예상치 못한 아름다운 작품들을 발견하세요.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon" aria-hidden="true">📚</div>
-                    <h3>컬렉션 관리</h3>
-                    <p>관심 있는 작품들을 나만의 컬렉션으로 저장하고 관리할 수 있습니다. 위시리스트를 만들어 나중에 다시 확인해보세요.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon" aria-hidden="true">🔔</div>
-                    <h3>새 작품 알림</h3>
-                    <p>관심 있는 작가의 새로운 작품이 업로드되거나 선호하는 스타일의 작품이 등록되면 즉시 알림을 받을 수 있습니다.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Discovery Section -->
-    <section id="discovery" class="section discovery-section">
-        <div class="container">
-            <h2 class="section-title">3단계로 특별한 작품을 발견하세요</h2>
-            
-            <div class="discovery-steps">
-                <div class="discovery-step">
-                    <div class="step-number">1</div>
-                    <h3>갤러리 탐색</h3>
-                    <p>큐레이션된 시니어 예술가들의 작품을 둘러보며 마음에 드는 작품을 찾아보세요</p>
-                </div>
-                <div class="discovery-step">
-                    <div class="step-number">2</div>
-                    <h3>스토리 확인</h3>
-                    <p>작품에 마우스를 올려 작가의 깊은 이야기와 창작 배경을 확인하세요</p>
-                </div>
-                <div class="discovery-step">
-                    <div class="step-number">3</div>
-                    <h3>작가와 소통</h3>
-                    <p>1:1 채팅으로 작가와 직접 소통하며 작품에 대해 더 자세히 알아보세요</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section id="contact" class="section cta-section">
-        <div class="container">
-            <h2 class="section-title">콜렉션을 시작해보세요</h2>
-            <p class="section-subtitle">시니어 예술가들의 특별한 작품들을 가장 먼저 만나보세요</p>
-            
-            <div class="cta-form">
-                <form id="collectorForm">
-                    <div class="form-group">
-                        <label for="collectorName">성함 *</label>
-                        <input type="text" id="collectorName" name="collectorName" class="form-control" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">이메일 *</label>
-                        <input type="email" id="email" name="email" class="form-control" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="interest">관심 있는 예술 장르</label>
-                        <input type="text" id="interest" name="interest" class="form-control" placeholder="예: 수채화, 유화, 조각, 서예 등">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="budget">예산 범위 (선택사항)</label>
-                        <input type="text" id="budget" name="budget" class="form-control" placeholder="예: 50만원 이하, 100만원 대 등">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="message">어떤 작품을 찾고 계신가요?</label>
-                        <textarea id="message" name="message" class="form-control" placeholder="원하는 작품의 스타일이나 테마, 특별한 요청사항을 자유롭게 적어주세요"></textarea>
-                    </div>
-                    
-                    <button type="submit" class="submit-btn">콜렉터로 시작하기</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2024 시니어 아티스트. 모든 권리 보유.</p>
-            <div class="footer-links">
-                <a href="#privacy">개인정보처리방침</a>
-                <a href="#terms">이용약관</a>
-                <a href="index.html">메인으로</a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Toast Message -->
-    <div id="toast" class="toast" role="alert" aria-live="polite">
-        등록이 완료되었습니다! 곧 연락드리겠습니다.
     </div>
 
     <script>
-        // Core Feature Demo Functions
-        function openStoryDemo() {
-            // 스토리 기반 탐색 데모 모달
-            const modal = document.createElement('div');
-            modal.className = 'demo-modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>🔍 스토리 기반 작품 탐색</h3>
-                        <button class="close-btn" onclick="closeDemoModal()">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="demo-preview">
-                            <div class="story-feed">
-                                <div class="story-item">
-                                    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' fill='%238b5cf6'/><text x='50' y='55' text-anchor='middle' fill='white' font-size='16'>작품</text></svg>" alt="작품">
-                                    <div class="story-content">
-                                        <h4>"70년의 인생이 담긴 꽃밭"</h4>
-                                        <p>박순자 작가 (78세) - "어린 시절 할머니와 함께 가꾸던 꽃밭을 그리며, 잃어버린 시간을 되찾고 싶었어요..."</p>
-                                        <div class="story-tags">
-                                            <span class="tag">향수</span>
-                                            <span class="tag">자연</span>
-                                            <span class="tag">가족</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="demo-description">작가의 개인사와 작품 제작 과정이 하나의 스토리로 연결되어 더욱 깊이 있는 작품 발견이 가능합니다.</p>
-                        </div>
-                        <div class="demo-actions">
-                            <button class="demo-btn" onclick="trackCTA('click', 'Demo_Action', 'Story_Start')">스토리 탐색 시작하기</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
+        function openInterestForm() {
+            document.getElementById('interestOverlay').style.display = 'flex';
             
             // GA4 이벤트 추적
-            gtag('event', 'demo_view', {
-                'demo_type': 'story_exploration',
-                'feature_category': 'collector_core_feature'
-            });
-        }
-
-        function openSafetyDemo() {
-            // 안심 거래 데모 모달
-            const modal = document.createElement('div');
-            modal.className = 'demo-modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>🛡️ 100% 안심 거래 시스템</h3>
-                        <button class="close-btn" onclick="closeDemoModal()">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="safety-steps">
-                            <div class="step">
-                                <div class="step-icon">✅</div>
-                                <div class="step-content">
-                                    <h4>작가 신원 인증</h4>
-                                    <p>신분증 확인, 작품 이력 검증, 추천인 확인</p>
-                                </div>
-                            </div>
-                            <div class="step">
-                                <div class="step-icon">💳</div>
-                                <div class="step-content">
-                                    <h4>에스크로 안전 결제</h4>
-                                    <p>작품 수령 확인 후 결제 완료, 100% 구매자 보호</p>
-                                </div>
-                            </div>
-                            <div class="step">
-                                <div class="step-icon">📋</div>
-                                <div class="step-content">
-                                    <h4>법적 보장</h4>
-                                    <p>표준 계약서, 작품 진위 보증서, 반품 정책</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="demo-actions">
-                            <button class="demo-btn" onclick="trackCTA('click', 'Demo_Action', 'Safety_Start')">안전 거래 시작하기</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            
-            gtag('event', 'demo_view', {
-                'demo_type': 'safe_transaction',
-                'feature_category': 'collector_core_feature'
-            });
-        }
-
-        function openCommunicationDemo() {
-            // 작가 소통 데모 모달
-            const modal = document.createElement('div');
-            modal.className = 'demo-modal';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3>💬 작가와 직접 소통</h3>
-                        <button class="close-btn" onclick="closeDemoModal()">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="chat-preview">
-                            <div class="chat-header">
-                                <div class="artist-profile">
-                                    <div class="avatar">김</div>
-                                    <div class="artist-info">
-                                        <h4>김영숙 작가</h4>
-                                        <span class="status">🟢 현재 온라인</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="chat-messages">
-                                <div class="message artist">
-                                    <p>안녕하세요! 제 작품에 관심을 가져주셔서 감사합니다. 어떤 부분이 궁금하신가요?</p>
-                                </div>
-                                <div class="message user">
-                                    <p>작품의 제작 과정과 의미에 대해 더 자세히 알고 싶어요.</p>
-                                </div>
-                                <div class="message artist">
-                                    <p>이 작품은 제가 50년간 키워온 장미정원에서 영감을 받았어요. 매년 봄마다 피어나는 장미들을 보며...</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="demo-actions">
-                            <button class="demo-btn" onclick="trackCTA('click', 'Demo_Action', 'Communication_Start')">작가와 채팅 시작하기</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
-            
-            gtag('event', 'demo_view', {
-                'demo_type': 'direct_communication',
-                'feature_category': 'collector_core_feature'
-            });
-        }
-
-        function closeDemoModal() {
-            const modal = document.querySelector('.demo-modal');
-            if (modal) {
-                modal.remove();
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'interest_form_opened', {
+                    'event_category': 'engagement',
+                    'event_label': 'collector_interest',
+                    'value': 1
+                });
             }
         }
-
-        // Mobile menu toggle
-        const mobileToggle = document.getElementById('mobileToggle');
-        const navMenu = document.getElementById('navMenu');
-
-        mobileToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-            const isExpanded = navMenu.classList.contains('active');
-            mobileToggle.setAttribute('aria-expanded', isExpanded);
+        
+        function closeInterestForm() {
+            document.getElementById('interestOverlay').style.display = 'none';
+        }
+        
+        // Close form when clicking outside
+        document.getElementById('interestOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeInterestForm();
+            }
         });
-
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    const headerHeight = document.querySelector('.header').offsetHeight;
-                    const targetPosition = target.offsetTop - headerHeight;
-                    
-                    window.scrollTo({
-                        top: targetPosition,
-                        behavior: 'smooth'
-                    });
-                    
-                    // Close mobile menu if open
-                    navMenu.classList.remove('active');
-                    mobileToggle.setAttribute('aria-expanded', 'false');
-                }
+        
+        // Checkbox selection
+        document.querySelectorAll('.checkbox-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const checkbox = this.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked;
+                this.classList.toggle('selected', checkbox.checked);
             });
         });
-
-        // Collector form submission
-        const collectorForm = document.getElementById('collectorForm');
-        const toast = document.getElementById('toast');
-
-        collectorForm.addEventListener('submit', function(e) {
+        
+        // Form submission
+        document.getElementById('collectorForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             // Get form data
             const formData = new FormData(this);
+            const interests = Array.from(document.querySelectorAll('.checkbox-item input:checked')).map(cb => cb.value);
+            
             const data = {
                 collectorName: formData.get('collectorName'),
-                email: formData.get('email'),
-                interest: formData.get('interest') || '',
-                budget: formData.get('budget') || '',
-                message: formData.get('message') || ''
+                collectorEmail: formData.get('collectorEmail'),
+                collectorPhone: formData.get('collectorPhone'),
+                interests: interests,
+                budget: formData.get('budget'),
+                description: formData.get('interests') || ''
             };
-
-            // Basic validation
-            if (!data.collectorName || !data.email) {
-                alert('필수 항목을 모두 입력해주세요.');
+            
+            // Validation
+            if (!data.collectorName || !data.collectorEmail || !data.collectorPhone) {
+                alert('모든 필수 항목을 입력해주세요.');
                 return;
             }
-
+            
+            if (interests.length === 0) {
+                alert('관심 분야를 하나 이상 선택해주세요.');
+                return;
+            }
+            
             // Email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(data.email)) {
+            if (!emailRegex.test(data.collectorEmail)) {
                 alert('올바른 이메일 형식을 입력해주세요.');
                 return;
             }
-
-            // Show success toast
-            showToast();
             
-            // Reset form
-            this.reset();
-            
-            // In a real application, you would send the data to your server here
-            console.log('Collector form submitted:', data);
-        });
-
-        function showToast() {
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        // Header background change on scroll with parallax
-        window.addEventListener('scroll', () => {
-            const header = document.querySelector('.header');
-            const scrolled = window.scrollY;
-            
-            if (scrolled > 100) {
-                header.style.background = 'rgba(255, 255, 255, 0.95)';
-                header.style.backdropFilter = 'blur(20px)';
-            } else {
-                header.style.background = 'rgba(255, 255, 255, 0.95)';
-                header.style.backdropFilter = 'blur(20px)';
-            }
-            
-            // Parallax effect for hero section
-            const hero = document.querySelector('.hero');
-            if (hero) {
-                const speed = scrolled * 0.5;
-                hero.style.transform = `translateY(${speed}px)`;
-            }
-            
-            // KPI 추적을 위한 스크롤 이벤트
-            trackScrollDepth();
-            trackEngagement('scroll', Math.round(window.pageYOffset / 100));
-            lastActivityTime = new Date().getTime();
-        });
-        
-        // 핵심 KPI 이벤트 리스너 추가
-        window.addEventListener('load', function() {
-            gtag('event', 'page_load_complete', {
-                'page_title': document.title,
-                'page_location': window.location.href,
-                'load_time': performance.now()
-            });
-            lastActivityTime = new Date().getTime();
-        });
-        
-        // 마우스 움직임 추적
-        let mouseTimeout;
-        document.addEventListener('mousemove', function() {
-            clearTimeout(mouseTimeout);
-            mouseTimeout = setTimeout(() => {
-                trackEngagement('mouse_movement', 1);
-            }, 1000);
-            lastActivityTime = new Date().getTime();
-        });
-        
-        // 클릭 이벤트 추적
-        document.addEventListener('click', function(e) {
-            incrementUserAction();
-            trackEngagement('click', 1);
-            
-            if (e.target.classList.contains('feature-cta')) {
-                gtag('event', 'feature_interaction', {
-                    'feature_type': e.target.textContent.includes('체험') ? 'demo' : 'info',
-                    'feature_name': e.target.closest('.feature-card').querySelector('.feature-title').textContent
+            // GA4 이벤트 추적
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'collector_interest_submitted', {
+                    'event_category': 'conversion',
+                    'event_label': interests.join(','),
+                    'interests': interests,
+                    'budget_range': data.budget || 'not_specified'
                 });
             }
             
-            lastActivityTime = new Date().getTime();
+            // Success message and close form
+            alert('관심 등록이 완료되었습니다! 맞춤 작품을 추천해드리겠습니다.');
+            this.reset();
+            document.querySelectorAll('.checkbox-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            closeInterestForm();
+            
+            console.log('Collector interest:', data);
         });
         
-        // 페이지 떠나기 전 데이터 전송
-        window.addEventListener('beforeunload', function() {
-            trackTimeOnPage();
-            const sessionDuration = Math.round((new Date().getTime() - pageStartTime) / 1000);
-            
-            if (navigator.sendBeacon) {
-                const data = {
-                    event: 'page_exit',
-                    page_title: document.title,
-                    session_duration: sessionDuration,
-                    max_scroll_depth: maxScrollDepth,
-                    user_actions: parseInt(sessionStorage.getItem('user_actions') || '0')
-                };
-                
-                navigator.sendBeacon('https://www.google-analytics.com/collect', 
-                    `v=1&t=event&tid=G-DE2ZNKWV2W&cid=1&ec=engagement&ea=collector_page_exit&el=${JSON.stringify(data)}`);
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeInterestForm();
             }
         });
-
-        // Enhanced intersection observer with stagger animation
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }, index * 100); // Stagger effect
-                }
-            });
-        }, observerOptions);
-
-        // Observe elements for animation
-        document.querySelectorAll('.artwork-card, .feature-card, .discovery-step').forEach((el, index) => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = `opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.1}s, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.1}s`;
-            observer.observe(el);
-        });
-
-        // Enhanced artwork card interactions
-        document.querySelectorAll('.artwork-card').forEach(card => {
-            const overlay = card.querySelector('.story-overlay');
-            
-            card.addEventListener('mouseenter', () => {
-                card.style.transform = 'translateY(-12px) scale(1.02)';
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'translateY(0) scale(1)';
-            });
-        });
-
-        // Add floating animation to feature icons
-        document.querySelectorAll('.feature-icon, .step-number').forEach((icon, index) => {
-            icon.style.animation = `float 3s ease-in-out infinite ${index * 0.5}s`;
-        });
-
-        // CSS animation keyframes
-        const floatAnimation = `
-            @keyframes float {
-                0%, 100% { transform: translateY(0px); }
-                50% { transform: translateY(-10px); }
-            }
-        `;
         
-        const styleSheet = document.createElement('style');
-        styleSheet.textContent = floatAnimation;
-        document.head.appendChild(styleSheet);
-
         // Enhanced form interactions
         document.querySelectorAll('.form-control').forEach(input => {
             input.addEventListener('focus', function() {
                 this.parentElement.style.transform = 'scale(1.02)';
-                this.parentElement.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                this.parentElement.style.transition = 'transform 0.3s ease';
             });
             
             input.addEventListener('blur', function() {
@@ -2871,163 +861,31 @@
             });
         });
 
-        // Chat button interactions
-        document.querySelectorAll('.chat-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const artistName = this.closest('.artwork-card').querySelector('.artwork-artist').textContent;
-                alert(`${artistName}와의 채팅을 시작합니다. 곧 연결해드리겠습니다!`);
-            });
+        // Mobile menu toggle
+        document.getElementById('mobileToggle')?.addEventListener('click', function() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
         });
 
-        // 데모 모달 함수들
-        function showStorytellingDemo() {
-            document.getElementById('storytellingModal').style.display = 'block';
-        }
-
-        function showSafetyDemo() {
-            document.getElementById('safetyModal').style.display = 'block';
-        }
-
-        function showCommunicationDemo() {
-            document.getElementById('communicationModal').style.display = 'block';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        // 작품 세부 정보 표시
-        function showArtworkDetails() {
-            document.getElementById('artworkTooltip').style.display = 'block';
-            trackCTA('hover', 'Artwork_Interaction', 'Show_Details');
-        }
-
-        function hideArtworkDetails() {
-            document.getElementById('artworkTooltip').style.display = 'none';
-        }
-
-        // 모달 외부 클릭으로 닫기
-        window.onclick = function(event) {
-            const modals = ['storytellingModal', 'safetyModal', 'communicationModal'];
-            modals.forEach(modalId => {
-                const modal = document.getElementById(modalId);
-                if (event.target === modal) {
-                    modal.style.display = 'none';
+        // Scroll tracking for analytics
+        let maxScrollDepth = 0;
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = Math.round((scrollTop / docHeight) * 100);
+            
+            if (scrollPercent > maxScrollDepth) {
+                maxScrollDepth = scrollPercent;
+                if (typeof gtag !== 'undefined' && (maxScrollDepth === 25 || maxScrollDepth === 50 || maxScrollDepth === 75 || maxScrollDepth === 100)) {
+                    gtag('event', 'scroll_depth', {
+                        'scroll_depth': maxScrollDepth + '%',
+                        'page_title': document.title
+                    });
                 }
-            });
-        }
+            }
+        });
+
+        console.log('🎨 Collector page loaded successfully');
     </script>
-
-    <!-- 데모 모달들 -->
-    <div id="storytellingModal" class="demo-modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('storytellingModal')">&times;</span>
-            <h2>🔍 스토리 기반 탐색 체험</h2>
-            <div class="artwork-showcase">
-                <div class="artwork-container">
-                    <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAoADwDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP//Z" 
-                         alt="운율의 기품 작품" 
-                         class="artwork-image" 
-                         onmouseover="showArtworkDetails()" 
-                         onmouseout="hideArtworkDetails()">
-                    <div id="artworkTooltip" class="artwork-tooltip">
-                        <h3>윤혜진 - 운율의 기품</h3>
-                        <div class="artwork-description">
-                            <p>이 작품은 동양화의 전통적 기법과 현대적 감성을 조화롭게 융합한 작품입니다.</p>
-                            <p>세련된 먹의 농담과 우아한 선의 움직임으로 토끼의 생명력과 영민함을 표현했습니다.</p>
-                            <p>작가는 20년간 동양화 전통 기법을 연구하며 독자적인 화풍을 완성했습니다.</p>
-                            <p>작품 속 토끼는 민첩함과 지혜의 상징으로, 현대인의 삶에 대한 메타포를 담고 있습니다.</p>
-                            <p>배경의 여백은 동양 철학의 '무위자연' 사상을 반영하여 관람자의 상상력을 자극합니다.</p>
-                            <p>정교한 붓놀림과 절제된 색채는 작가만의 미학적 완성도를 보여줍니다.</p>
-                            <p>이 작품은 2024년 개인전에서 첫 공개되어 큰 호평을 받았습니다.</p>
-                            <p>전통 한지와 천연 안료를 사용하여 시간이 지날수록 깊어지는 색감을 자랑합니다.</p>
-                            <p>작품의 크기는 30cm x 40cm로 개인 소장에 적합한 규모입니다.</p>
-                            <p>현재 작가의 대표작 중 하나로 인정받고 있으며, 투자 가치도 높게 평가되고 있습니다.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="story-features">
-                    <div class="story-feature">
-                        <h4>🎨 작가 스토리</h4>
-                        <p>20년 경력의 동양화가 윤혜진의 철학과 예술관을 깊이 있게 만나보세요.</p>
-                    </div>
-                    <div class="story-feature">
-                        <h4>🔍 제작 과정</h4>
-                        <p>전통 기법부터 완성까지, 작품이 탄생하는 전 과정을 상세히 공개합니다.</p>
-                    </div>
-                    <div class="story-feature">
-                        <h4>📖 작품 해석</h4>
-                        <p>작품에 담긴 의미와 상징을 전문가 해설과 함께 이해할 수 있습니다.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="safetyModal" class="demo-modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('safetyModal')">&times;</span>
-            <h2>🛡️ 안심 거래 시스템</h2>
-            <div class="safety-features">
-                <div class="safety-step">
-                    <div class="step-number">1</div>
-                    <h4>에스크로 거래</h4>
-                    <p>구매대금을 제3자가 보관하여 작품 수령 후 결제가 완료됩니다.</p>
-                </div>
-                <div class="safety-step">
-                    <div class="step-number">2</div>
-                    <h4>작가 검증</h4>
-                    <p>학력, 경력, 수상내역을 철저히 검증한 작가만 플랫폼에 입점합니다.</p>
-                </div>
-                <div class="safety-step">
-                    <div class="step-number">3</div>
-                    <h4>표준계약서</h4>
-                    <p>법무팀이 검토한 표준계약서로 구매자와 작가 모두를 보호합니다.</p>
-                </div>
-                <div class="safety-step">
-                    <div class="step-number">4</div>
-                    <h4>보험 옵션</h4>
-                    <p>배송 중 손상이나 분실에 대비한 보험 서비스를 제공합니다.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="communicationModal" class="demo-modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal('communicationModal')">&times;</span>
-            <h2>💬 즉시 소통·견적 시스템</h2>
-            <div class="communication-features">
-                <div class="chat-preview">
-                    <div class="chat-header">윤혜진 작가와의 대화</div>
-                    <div class="chat-messages">
-                        <div class="message artist">
-                            <p>안녕하세요! 작품에 관심 가져주셨네요.</p>
-                        </div>
-                        <div class="message collector">
-                            <p>토끼 작품이 정말 인상적이에요. 커스텀 제작도 가능한가요?</p>
-                        </div>
-                        <div class="message artist">
-                            <p>네, 가능합니다. 원하시는 크기와 컨셉을 알려주시면 견적을 드릴게요.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="communication-benefits">
-                    <div class="benefit">
-                        <h4>⚡ 실시간 대화</h4>
-                        <p>작가와 즉시 소통하여 궁금한 점을 빠르게 해결</p>
-                    </div>
-                    <div class="benefit">
-                        <h4>💰 맞춤 견적</h4>
-                        <p>크기, 재료, 기법에 따른 정확한 견적 제공</p>
-                    </div>
-                    <div class="benefit">
-                        <h4>📅 일정 관리</h4>
-                        <p>제작부터 배송까지 전 과정 일정 공유</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 </html>
