@@ -858,7 +858,7 @@
                     <li>콜렉터와 직접 소통</li>
                 </ul>
                 
-                <button class="cta-button" onclick="openRegistration()">작가 등록하기</button>
+                <button class="cta-button" onclick="trackCTA('artist_registration_signup', 'hero_section', '작가 등록하기'); openRegistration()">작가 등록하기</button>
             </div>
         </div>
         
@@ -871,7 +871,7 @@
             
             <div class="features-grid">
                 <!-- 포트폴리오 최적화 -->
-                <div class="feature-card" onclick="trackCTAClick('portfolio_optimization', 'artist', 'core_feature')">
+                <div class="feature-card" onclick="trackCTA('portfolio_optimization', 'artist_features', '포트폴리오 최적화')">
                     <div class="feature-icon">🎨</div>
                     <div class="feature-content">
                         <h3>포트폴리오 최적화</h3>
@@ -886,7 +886,7 @@
                 </div>
 
                 <!-- 거래 관리 -->
-                <div class="feature-card" onclick="trackCTAClick('transaction_management', 'artist', 'core_feature')">
+                <div class="feature-card" onclick="trackCTA('transaction_management', 'artist_features', '거래 관리')">
                     <div class="feature-icon">💳</div>
                     <div class="feature-content">
                         <h3>거래 관리</h3>
@@ -901,7 +901,7 @@
                 </div>
 
                 <!-- 고객 관계 관리 -->
-                <div class="feature-card" onclick="trackCTAClick('customer_management', 'artist', 'core_feature')">
+                <div class="feature-card" onclick="trackCTA('customer_management', 'artist_features', '고객 관리')">
                     <div class="feature-icon">👥</div>
                     <div class="feature-content">
                         <h3>고객 관계 관리</h3>
@@ -921,7 +921,7 @@
     <!-- Registration Form Overlay -->
     <div class="registration-overlay" id="registrationOverlay">
         <div class="registration-form">
-            <button class="close-btn" onclick="closeRegistration()">&times;</button>
+            <button class="close-btn" onclick="trackCTA('artist_form_close', 'registration_form', '폼 닫기'); closeRegistration()">&times;</button>
             <div class="form-header">
                 <h3>작가 등록하기</h3>
                 <p>예술가로 함께하세요</p>
@@ -1029,16 +1029,18 @@
                 return;
             }
             
-            // GA4 이벤트 추적
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'artist_registration_completed', {
-                    'event_category': 'conversion',
-                    'event_label': data.artStyle,
-                    'art_style': data.artStyle,
-                    'experience_years': data.experience,
-                    'age_group': data.artistAge >= 65 ? '65+' : '50-64'
-                });
-            }
+            // GA4 이벤트 추적 - 표준화된 trackCTA 함수 사용
+            trackCTA('artist_registration_completed', 'registration_form', `작가 등록 완료 - ${data.artStyle}`);
+            
+            // 추가 상세 이벤트
+            gtag('event', 'artist_conversion', {
+                'event_category': 'conversion',
+                'event_label': data.artStyle,
+                'art_style': data.artStyle,
+                'experience_years': data.experience,
+                'age_group': data.artistAge >= 65 ? '65+' : '50-64',
+                'user_type': 'artist'
+            });
             
             // Success message and close form
             alert('작가 등록이 완료되었습니다! 검토 후 연락드리겠습니다.');
