@@ -10,158 +10,68 @@
     <meta property="og:type" content="website">
     <title>아티스트 - 당신의 예술 여정을 시작하세요</title>
     
-    <!-- Google Analytics 4 - 완전 재구성 -->
+    <!-- Google Analytics 4 - 기본 설정 (확실한 작동 보장) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
+        // 기본 dataLayer 설정
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
+        
+        // 현재 시간으로 초기화
         gtag('js', new Date());
-
-        // GA4 기본 설정
-        gtag('config', 'G-DE2ZNKWV2W', {
-            send_page_view: true,
-            enhanced_measurement: true,
-            page_title: document.title,
-            page_location: window.location.href
-        });
-
-        // 디버그 모드로 GA4 상태 확인
-        console.log('🔄 GA4 초기화 시작...');
-        console.log('📍 페이지:', window.location.href);
-        console.log('📝 제목:', document.title);
-
-        // 즉시 테스트 이벤트 전송 (GA4 연결 확인용)
-        gtag('event', 'ga4_test', {
-            event_category: 'system',
-            event_label: 'ga4_connection_test',
-            value: 1
-        });
-
-        // CTA 클릭 추적 함수
-        function trackCTA(action, element_id = '', button_text = '') {
-            const eventData = {
-                event_category: 'cta_interaction',
-                event_label: element_id || button_text,
-                button_text: button_text,
-                page_url: window.location.href,
-                timestamp: new Date().toISOString()
-            };
-            
-            gtag('event', action, eventData);
-            
-            // 콘솔에 로그 출력 (디버깅용)
-            console.log('🎯 CTA 이벤트 전송:', action, eventData);
-            
-            // dataLayer 확인
-            console.log('📊 dataLayer:', window.dataLayer);
+        
+        // GA4 측정 ID 설정 (가장 간단한 형태)
+        gtag('config', 'G-DE2ZNKWV2W');
+        
+        // 디버그 정보 출력
+        console.log('� GA4 로딩 시작 - ID: G-DE2ZNKWV2W');
+        console.log('🌍 현재 URL:', window.location.href);
+        console.log('🏷️ 페이지 제목:', document.title);
+        
+        // 즉시 확인 가능한 테스트 이벤트 전송
+        setTimeout(function() {
+            gtag('event', 'test_connection', {
+                'custom_parameter': 'test_value',
+                'debug_timestamp': new Date().toISOString()
+            });
+            console.log('🧪 테스트 이벤트 전송 완료');
+        }, 1000);
+        
+        // 매우 간단한 클릭 추적 함수
+        function simpleTrack(eventName, details) {
+            gtag('event', eventName, {
+                'event_category': 'user_interaction',
+                'event_label': details || 'no_details',
+                'timestamp': new Date().toISOString()
+            });
+            console.log('📊 이벤트 전송:', eventName, details);
         }
-
-        // 트래픽 소스 추적
-        function trackTrafficSource() {
-            const referrer = document.referrer;
-            const urlParams = new URLSearchParams(window.location.search);
-            
-            const trafficData = {
-                event_category: 'traffic_source',
-                referrer: referrer || 'direct',
-                utm_source: urlParams.get('utm_source') || 'none',
-                utm_medium: urlParams.get('utm_medium') || 'none',
-                utm_campaign: urlParams.get('utm_campaign') || 'none'
-            };
-            
-            gtag('event', 'traffic_analysis', trafficData);
-            console.log('🚦 트래픽 소스 추적:', trafficData);
-        }
-
-        // 페이지 상호작용 추적
-        function trackPageInteraction(interaction_type, details = {}) {
-            const interactionData = {
-                event_category: 'page_interaction',
-                interaction_type: interaction_type,
-                page_url: window.location.href,
-                ...details
-            };
-            
-            gtag('event', 'page_interaction', interactionData);
-            console.log('👆 페이지 상호작용:', interaction_type, interactionData);
-        }
-
-        // 페이지 로드 완료 시 실행
+        
+        // 페이지 로드 완료 시 추가 테스트
         window.addEventListener('load', function() {
-            console.log('✅ 페이지 로드 완료 - GA4 이벤트 전송 시작');
+            console.log('✅ 페이지 로드 완료');
             
-            // 트래픽 소스 분석
-            trackTrafficSource();
-            
-            // 페이지 로드 완료 이벤트
-            gtag('event', 'page_load_complete', {
-                event_category: 'performance',
-                load_time: performance.now(),
-                page_url: window.location.href
+            // 로드 완료 이벤트
+            gtag('event', 'page_loaded', {
+                'event_category': 'page_timing',
+                'event_label': 'load_complete'
             });
             
-            // 스크롤 추적 설정
-            let maxScrollDepth = 0;
-            window.addEventListener('scroll', function() {
-                const scrollTop = window.pageYOffset;
-                const docHeight = document.body.scrollHeight - window.innerHeight;
-                const scrollPercent = Math.round((scrollTop / docHeight) * 100);
-                
-                if (scrollPercent > maxScrollDepth && scrollPercent % 25 === 0) {
-                    maxScrollDepth = scrollPercent;
-                    gtag('event', 'scroll_depth', {
-                        event_category: 'engagement',
-                        scroll_depth: scrollPercent,
-                        page_url: window.location.href
-                    });
-                    console.log('📜 스크롤 깊이:', scrollPercent + '%');
-                }
-            });
-        });
-
-        // DOM 로드 완료 시 실행
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 DOM 로드 완료 - 이벤트 리스너 설정');
-            
-            // 모든 링크에 클릭 추적 추가
-            document.querySelectorAll('a, button').forEach(function(element) {
-                element.addEventListener('click', function(e) {
-                    const elementText = this.textContent.trim();
-                    const elementId = this.id || this.className;
-                    
-                    trackCTA('element_click', elementId, elementText);
-                });
-            });
-
-            // 즉시 페이지 방문 이벤트 전송
-            gtag('event', 'page_visit', {
-                event_category: 'engagement',
-                page_title: document.title,
-                page_location: window.location.href,
-                visitor_id: 'visitor_' + Date.now()
-            });
-
-            // 5초 후 재확인 이벤트
+            // 3초 후 생존 확인 이벤트
             setTimeout(function() {
-                gtag('event', 'engagement_5s', {
-                    event_category: 'engagement',
-                    event_label: '5_second_engagement',
-                    page_title: document.title
+                gtag('event', 'user_alive', {
+                    'event_category': 'engagement',
+                    'event_label': '3_second_check'
                 });
-                console.log('⏰ 5초 참여 이벤트 전송');
-            }, 5000);
+                console.log('💓 3초 생존 확인 이벤트 전송');
+            }, 3000);
         });
-
-        // 페이지 떠나기 전 마지막 이벤트
-        window.addEventListener('beforeunload', function() {
-            gtag('event', 'page_exit', {
-                event_category: 'engagement',
-                page_title: document.title,
-                session_duration: Math.round((Date.now() - performance.timing.navigationStart) / 1000)
-            });
-        });
-
-        console.log('✅ GA4 초기화 완료: G-DE2ZNKWV2W');
+        
+        console.log('🚀 GA4 스크립트 로딩 완료');
+    </script>
+            
+        console.log('� GA4 스크립트 로딩 완료');
+    </script>
     </script>
     
     <style>
@@ -1243,7 +1153,7 @@
             }, 10);
             
             // 모달 열기 이벤트 추적
-            trackCTA('modal_open', 'engagement', 'about_modal');
+            simpleTrack('modal_open', 'about_modal');
             
             // ESC 키로 모달 닫기
             document.addEventListener('keydown', handleEscKey);
@@ -1264,7 +1174,7 @@
             modal.removeEventListener('click', handleOutsideClick);
             
             // 모달 닫기 이벤트 추적
-            trackCTA('modal_close', 'engagement', 'about_modal');
+            simpleTrack('modal_close', 'about_modal');
         }
 
         function handleEscKey(event) {
@@ -1406,9 +1316,9 @@
         <nav class="nav">
             <div class="logo">아티스트</div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="artist.html" class="nav-link">예술가용</a></li>
-                <li><a href="collector.html" class="nav-link">콜렉터용</a></li>
-                <li><a href="#" class="nav-link" onclick="openAboutModal()">소개</a></li>
+                <li><a href="artist.html" class="nav-link" onclick="simpleTrack('nav_artist', '예술가용 메뉴')">예술가용</a></li>
+                <li><a href="collector.html" class="nav-link" onclick="simpleTrack('nav_collector', '콜렉터용 메뉴')">콜렉터용</a></li>
+                <li><a href="#" class="nav-link" onclick="openAboutModal(); simpleTrack('nav_about', '소개 메뉴')">소개</a></li>
             </ul>
             <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기">☰</button>
         </nav>
@@ -1431,14 +1341,14 @@
                     <div class="choice-icon">🎨</div>
                     <h3>예술가</h3>
                     <p>3가지 핵심 기능으로 작품 활동을<br>체계적으로 관리하고 성장시키세요</p>
-                    <a href="artist.html" class="choice-btn" onclick="trackCTA('artist_path_select', 'artist_path', '작가 기능 체험하기')">작가 기능 체험하기</a>
+                    <a href="artist.html" class="choice-btn" onclick="simpleTrack('artist_click', '작가 기능 체험하기')">작가 기능 체험하기</a>
                 </div>
                 
                 <div class="choice-card">
                     <div class="choice-icon">👁️</div>
                     <h3>콜렉터</h3>
                     <p>스토리텔링 기반으로 작품을 탐색하고<br>안전하게 소장할 수 있어요</p>
-                    <a href="collector.html" class="choice-btn" onclick="trackCTA('collector_path_select', 'collector_path', '컬렉션 기능 체험하기')">컬렉션 기능 체험하기</a>
+                    <a href="collector.html" class="choice-btn" onclick="simpleTrack('collector_click', '컬렉션 기능 체험하기')">컬렉션 기능 체험하기</a>
                 </div>
             </div>
         </div>
@@ -1691,8 +1601,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn primary" onclick="location.href='artist.html'">예술가로 시작하기</button>
-                <button class="modal-btn secondary" onclick="location.href='collector.html'">콜렉터로 시작하기</button>
+                <button class="modal-btn primary" onclick="simpleTrack('modal_artist_start', '예술가로 시작하기'); location.href='artist.html'">예술가로 시작하기</button>
+                <button class="modal-btn secondary" onclick="simpleTrack('modal_collector_start', '콜렉터로 시작하기'); location.href='collector.html'">콜렉터로 시작하기</button>
             </div>
         </div>
     </div>
