@@ -239,6 +239,46 @@
             font-weight: bold;
         }
         
+        /* Hero Artwork Preview */
+        .hero-artwork-preview {
+            margin: 24px 0;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(139, 127, 115, 0.2);
+        }
+        
+        .artwork-sample {
+            text-align: center;
+        }
+        
+        .artwork-preview-info {
+            margin-top: 12px;
+        }
+        
+        .artwork-preview-info h4 {
+            font-size: 16px;
+            color: #3c2415;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        
+        .artwork-preview-info p {
+            font-size: 12px;
+            color: #6b5b4d;
+            margin-bottom: 8px;
+        }
+        
+        .price-preview {
+            background: linear-gradient(135deg, #8b7f73, #ac9e8f);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
         .cta-button {
             background: linear-gradient(135deg, #8b5cf6, #06b6d4);
             color: #ffffff;
@@ -261,8 +301,8 @@
             box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
         }
         
-        /* Right Side - Featured Artworks */
-        .featured-artworks {
+        /* Right Side - Collector Features */
+        .collector-features {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -280,23 +320,100 @@
             margin-bottom: 1rem;
         }
         
-        .featured-title h2 {
+        .features-header h2 {
             font-size: 1.8rem;
             color: #2c3e50;
             margin-bottom: 0.5rem;
         }
         
-        .featured-title p {
+        .features-header p {
             color: #6c757d;
             font-size: 1rem;
         }
         
-        .artworks-grid {
+        .features-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 24px;
-            max-width: 600px;
+            max-width: 500px;
             width: 100%;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 255, 255, 0.25);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        
+        .feature-content h3 {
+            font-size: 1.4rem;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .feature-content p {
+            color: #6c757d;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        
+        .feature-benefits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .benefit-tag {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature-btn {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .feature-btn:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.15) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
         }
         
         .artwork-card {
@@ -318,23 +435,10 @@
         .artwork-image {
             width: 100%;
             height: 280px;
+            background-color: #f1f5f9;
             background-size: cover;
             background-position: center;
             position: relative;
-        }
-        
-        .artwork-1 {
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
-                        url('https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80');
-            background-size: cover;
-            background-position: center;
-        }
-        
-        .artwork-2 {
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
-                        url('https://images.unsplash.com/photo-1596548438137-d51ea5c83d4d?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80');
-            background-size: cover;
-            background-position: center;
         }
         
         .story-overlay {
@@ -530,7 +634,7 @@
                 grid-template-rows: 1fr 1fr;
             }
             
-            .collector-hero, .featured-artworks {
+            .collector-hero, .collector-features {
                 padding: 2rem 1rem;
             }
             
@@ -542,13 +646,13 @@
                 font-size: 1rem;
             }
             
-            .artworks-grid {
+            .features-grid {
                 grid-template-columns: 1fr;
                 max-width: 300px;
             }
             
-            .artwork-image {
-                height: 200px;
+            .feature-card {
+                padding: 16px;
             }
             
             .checkbox-group {
@@ -561,7 +665,7 @@
         }
         
         @media (max-width: 480px) {
-            .collector-hero, .featured-artworks {
+            .collector-hero, .collector-features {
                 padding: 1rem;
             }
             
@@ -662,59 +766,78 @@
                 <h1><span class="highlight">시니어 아티스트</span><br>콜렉터 전용 플랫폼</h1>
                 <p>깊이 있는 작품 스토리를 발견하고<br>작가와 직접 소통하며 특별한 컬렉션을 시작하세요</p>
                 
+                <!-- Featured Artwork Preview -->
+                <div class="hero-artwork-preview">
+                    <div class="artwork-sample">
+                        <img src="https://images.unsplash.com/photo-1533158326339-7f3cf2404354?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80" alt="시간이 머문 자리" style="width: 100%; height: 200px; object-fit: cover; border-radius: 12px;">
+                        <div class="artwork-preview-info">
+                            <h4>시간이 머문 자리</h4>
+                            <p>이정숙 작가 (78세) • 유화 • 50호</p>
+                            <span class="price-preview">₩1,200,000</span>
+                        </div>
+                    </div>
+                </div>
+                
                 <ul class="collector-features">
                     <li>작품 스토리 발견</li>
                     <li>작가와 직접 소통</li>
                     <li>안전한 거래 보장</li>
-                    <li>맞춤 작품 추천</li>
-                    <li>전문가 상담 서비스</li>
                 </ul>
                 
                 <button class="cta-button" onclick="openInterestForm()">관심 등록하기</button>
             </div>
         </div>
         
-        <!-- Right Side - Featured Artworks -->
-        <div class="featured-artworks">
-            <div class="featured-title">
-                <h2>추천 작품</h2>
-                <p>시니어 작가들의 특별한 작품을 만나보세요</p>
+        <!-- Right Side - Core Features for Collectors -->
+        <div class="collector-features">
+            <div class="features-header">
+                <h2>콜렉터를 위한 핵심 기능</h2>
+                <p>안전하고 특별한 예술 수집 경험을 제공합니다</p>
             </div>
             
-            <div class="artworks-grid">
-                <div class="artwork-card">
-                    <div class="artwork-image artwork-1">
-                        <div class="price-tag">₩1,200,000</div>
-                        <div class="story-overlay">
-                            <h4>시간이 머문 자리</h4>
-                            <p>"80년을 살아오며 마주한 수많은 순간들을 하나의 캔버스에 담았습니다.<br>
-                            기쁨과 슬픔, 희망과 절망이 모두 어우러진 인생의 진정한 모습입니다.<br>
-                            늦은 나이에 시작한 그림이지만, 이제야 진짜 제 이야기를 할 수 있게 되었습니다.<br>
-                            이 작품을 보는 분들도 각자의 인생을 돌아보는 시간을 가지셨으면 합니다.<br>
-                            예술은 나이를 초월한 영혼의 언어라는 것을 믿습니다."</p>
+            <div class="features-grid">
+                <!-- 스토리 기반 탐색 -->
+                <div class="feature-card" onclick="trackCTAClick('story_exploration', 'collector', 'core_feature')">
+                    <div class="feature-icon">📖</div>
+                    <div class="feature-content">
+                        <h3>스토리 기반 탐색</h3>
+                        <p>작가의 인생 서사가 담긴 작품을 발견하고<br>AI 추천으로 당신만의 취향을 찾아보세요</p>
+                        <div class="feature-benefits">
+                            <span class="benefit-tag">작가 서사 중심</span>
+                            <span class="benefit-tag">취향 필터·추천</span>
+                            <span class="benefit-tag">AI 개인화</span>
                         </div>
-                    </div>
-                    <div class="artwork-info">
-                        <h3>시간이 머문 자리</h3>
-                        <p>이정숙 작가 (78세) • 유화 • 50호</p>
+                        <button class="feature-btn">탐색하기</button>
                     </div>
                 </div>
-                
-                <div class="artwork-card">
-                    <div class="artwork-image artwork-2">
-                        <div class="price-tag">₩850,000</div>
-                        <div class="story-overlay">
-                            <h4>꿈을 키우는 손</h4>
-                            <p>"손자와 함께 만든 도자기 작품입니다.<br>
-                            젊은 시절 배우지 못했던 예술을 70세에 시작하여 지금까지 15년째 작업하고 있습니다.<br>
-                            흙을 만지며 느끼는 생명력과 창조의 기쁨은 나이를 잊게 합니다.<br>
-                            이 작품은 세대를 이어가는 사랑과 꿈의 결정체입니다.<br>
-                            나이는 숫자일 뿐, 꿈에는 끝이 없다는 것을 보여드리고 싶습니다."</p>
+
+                <!-- 안심 거래 -->
+                <div class="feature-card" onclick="trackCTAClick('secure_transaction', 'collector', 'core_feature')">
+                    <div class="feature-icon">🛡️</div>
+                    <div class="feature-content">
+                        <h3>안심 거래</h3>
+                        <p>에스크로와 표준계약서로 안전한 거래<br>검증된 작가들과 신뢰할 수 있는 구매 경험</p>
+                        <div class="feature-benefits">
+                            <span class="benefit-tag">에스크로 보호</span>
+                            <span class="benefit-tag">표준계약서</span>
+                            <span class="benefit-tag">작가 검증·리뷰</span>
                         </div>
+                        <button class="feature-btn">안전보장 확인</button>
                     </div>
-                    <div class="artwork-info">
-                        <h3>꿈을 키우는 손</h3>
-                        <p>박창석 작가 (85세) • 도자기 • 중형</p>
+                </div>
+
+                <!-- 즉시 소통·견적 -->
+                <div class="feature-card" onclick="trackCTAClick('instant_communication', 'collector', 'core_feature')">
+                    <div class="feature-icon">💬</div>
+                    <div class="feature-content">
+                        <h3>즉시 소통·견적</h3>
+                        <p>작가와 직접 1:1 채팅으로 소통하고<br>맞춤형 견적과 예약을 실시간으로 받아보세요</p>
+                        <div class="feature-benefits">
+                            <span class="benefit-tag">1:1 실시간 채팅</span>
+                            <span class="benefit-tag">맞춤 견적</span>
+                            <span class="benefit-tag">즉시 예약</span>
+                        </div>
+                        <button class="feature-btn">채팅 시작</button>
                     </div>
                 </div>
             </div>
@@ -917,6 +1040,25 @@
                 }
             }
         });
+
+        // CTA 클릭 추적 함수
+        function trackCTAClick(feature_name, user_type, category) {
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'cta_click', {
+                    'feature_name': feature_name,
+                    'user_type': user_type,
+                    'category': category,
+                    'page_title': document.title,
+                    'timestamp': new Date().toISOString()
+                });
+                
+                console.log('🎯 CTA Tracked:', {
+                    feature: feature_name,
+                    user: user_type,
+                    category: category
+                });
+            }
+        }
 
         console.log('🎨 Collector page loaded successfully');
     </script>

@@ -239,6 +239,87 @@
             font-weight: bold;
         }
         
+        /* Hero Artwork Preview */
+        .hero-artwork-preview {
+            margin: 24px 0;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(139, 127, 115, 0.2);
+        }
+        
+        .artwork-sample {
+            text-align: center;
+            position: relative;
+        }
+        
+        .artwork-image-container {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .story-tooltip {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(60, 36, 21, 0.9) 100%);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: left;
+        }
+        
+        .artwork-image-container:hover .story-tooltip {
+            opacity: 1;
+        }
+        
+        .story-tooltip h5 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+        
+        .story-tooltip p {
+            font-size: 11px;
+            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .artwork-preview-info {
+            margin-top: 12px;
+        }
+        
+        .artwork-preview-info h4 {
+            font-size: 16px;
+            color: #3c2415;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        
+        .artwork-preview-info p {
+            font-size: 12px;
+            color: #6b5b4d;
+            margin-bottom: 8px;
+        }
+        
+        .price-preview {
+            background: linear-gradient(135deg, #8b7f73, #ac9e8f);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
         .cta-button {
             background: linear-gradient(135deg, #8b5cf6, #06b6d4);
             color: #ffffff;
@@ -261,8 +342,8 @@
             box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
         }
         
-        /* Right Side - Artwork Showcase */
-        .artwork-showcase {
+        /* Right Side - Core Features */
+        .core-features {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.9) 100%);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -280,98 +361,96 @@
             margin-bottom: 1rem;
         }
         
-        .showcase-title h2 {
+        .features-header h2 {
             font-size: 1.8rem;
             color: #2c3e50;
             margin-bottom: 0.5rem;
         }
         
-        .showcase-title p {
+        .features-header p {
             color: #6c757d;
             font-size: 1rem;
         }
         
-        .artwork-grid {
+        .features-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 32px;
+            gap: 24px;
             max-width: 500px;
             width: 100%;
         }
         
-        .artwork-card {
+        .feature-card {
             background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             cursor: pointer;
             border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .artwork-card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-        }
-        
-        .artwork-image {
-            width: 100%;
-            height: 320px;
-            background-size: cover;
-            background-position: center;
-            position: relative;
-        }
-        
-        .artwork-1 {
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
-                        url('https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80');
-            background-size: cover;
-            background-position: center;
-        }
-        
-        .artwork-2 {
-            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
-                        url('https://images.unsplash.com/photo-1596548438137-d51ea5c83d4d?w=800&h=600&fit=crop&crop=entropy&auto=format&q=80');
-            background-size: cover;
-            background-position: center;
-        }
-        
-        .story-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
-            color: white;
-            padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            gap: 16px;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
             text-align: center;
-            opacity: 0;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(8px);
+            margin-bottom: 8px;
         }
         
-        .artwork-card:hover .story-overlay {
-            opacity: 1;
-        }
-        
-        .story-overlay h4 {
-            font-size: 18px;
-            font-weight: 700;
+        .feature-content h3 {
+            font-size: 1.4rem;
+            color: #2c3e50;
             margin-bottom: 12px;
-            color: #ffffff;
+            font-weight: 600;
         }
         
-        .story-overlay p {
-            font-size: 12px;
+        .feature-content p {
+            color: #6c757d;
+            font-size: 0.95rem;
             line-height: 1.5;
-            color: rgba(255, 255, 255, 0.95);
-            text-align: center;
+            margin-bottom: 16px;
+        }
+        
+        .feature-benefits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .benefit-tag {
+            background: linear-gradient(135deg, #8b7f73, #ac9e8f);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .feature-btn {
+            background: linear-gradient(135deg, #8b7f73 0%, #6b6158 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .feature-btn:hover {
+            background: linear-gradient(135deg, #6b6158 0%, #54514a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 127, 115, 0.3);
         }
         
         .artwork-info {
@@ -491,7 +570,7 @@
                 grid-template-rows: 1fr 1fr;
             }
             
-            .artist-hero, .artwork-showcase {
+            .artist-hero, .core-features {
                 padding: 2rem 1rem;
             }
             
@@ -503,13 +582,13 @@
                 font-size: 1rem;
             }
             
-            .artwork-grid {
+            .features-grid {
                 grid-template-columns: 1fr;
                 max-width: 300px;
             }
             
-            .artwork-image {
-                height: 200px;
+            .feature-card {
+                padding: 16px;
             }
             
             .registration-form {
@@ -518,7 +597,7 @@
         }
         
         @media (max-width: 480px) {
-            .artist-hero, .artwork-showcase {
+            .artist-hero, .core-features {
                 padding: 1rem;
             }
             
@@ -619,57 +698,84 @@
                 <h1><span class="highlight">시니어 아티스트</span><br>예술가 전용 플랫폼</h1>
                 <p>당신의 작품과 스토리를<br>세상에 알리고 새로운 기회를 만나보세요</p>
                 
+                <!-- Featured Artwork Preview -->
+                <div class="hero-artwork-preview">
+                    <div class="artwork-sample">
+                        <div class="artwork-image-container">
+                            <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80" alt="꿈을 키우는 손" style="width: 100%; height: 200px; object-fit: cover; border-radius: 12px;">
+                            <div class="story-tooltip">
+                                <h5>작가의 이야기</h5>
+                                <p>"손자와 함께 만든 도자기 작품입니다. 젊은 시절 배우지 못했던 예술을 70세에 시작하여 지금까지 15년째 작업하고 있습니다. 흙을 만지며 느끼는 생명력과 창조의 기쁨은 나이를 잊게 합니다."</p>
+                            </div>
+                        </div>
+                        <div class="artwork-preview-info">
+                            <h4>꿈을 키우는 손</h4>
+                            <p>박창석 작가 (85세) • 도자기 • 중형</p>
+                            <span class="price-preview">₩850,000</span>
+                        </div>
+                    </div>
+                </div>
+                
                 <ul class="artist-features">
                     <li>간편한 작품 업로드</li>
                     <li>작품 스토리 공유</li>
                     <li>콜렉터와 직접 소통</li>
-                    <li>온라인 전시 기회</li>
-                    <li>수수료 없는 작품 등록</li>
                 </ul>
                 
                 <button class="cta-button" onclick="openRegistration()">작가 등록하기</button>
             </div>
         </div>
         
-        <!-- Right Side - Artwork Showcase -->
-        <div class="artwork-showcase">
-            <div class="showcase-title">
-                <h2>시니어 작가들의 작품</h2>
-                <p>깊이 있는 이야기가 담긴 작품들을 만나보세요</p>
+        <!-- Right Side - Core Features -->
+        <div class="core-features">
+            <div class="features-header">
+                <h2>시니어 예술가를 위한 핵심 기능</h2>
+                <p>당신의 예술가 여정을 지원하는 전문 도구들</p>
             </div>
             
-            <div class="artwork-grid">
-                <div class="artwork-card">
-                    <div class="artwork-image artwork-1">
-                        <div class="story-overlay">
-                            <h4>늦은 오후의 정원</h4>
-                            <p>"75세가 되어서야 붓을 들었습니다.<br>
-                            손자와 함께 가꾼 작은 정원에서 매일 변화하는 빛의 아름다움을 담으려 합니다.<br>
-                            젊은 시절 바쁜 일상에 묻혀 놓쳤던 계절의 변화,<br>
-                            이제는 하나하나 놓치고 싶지 않습니다.<br>
-                            인생 후반기에 찾은 새로운 꿈이자 희망입니다."</p>
+            <div class="features-grid">
+                <!-- 포트폴리오 최적화 -->
+                <div class="feature-card" onclick="trackCTAClick('portfolio_optimization', 'artist', 'core_feature')">
+                    <div class="feature-icon">🎨</div>
+                    <div class="feature-content">
+                        <h3>포트폴리오 최적화</h3>
+                        <p>작품 큐레이션부터 스토리텔링까지<br>SEO 최적화로 더 많은 사람들에게 노출되세요</p>
+                        <div class="feature-benefits">
+                            <span class="benefit-tag">작품 큐레이션</span>
+                            <span class="benefit-tag">스토리텔링</span>
+                            <span class="benefit-tag">SEO 최적화</span>
                         </div>
-                    </div>
-                    <div class="artwork-info">
-                        <h3>늦은 오후의 정원</h3>
-                        <p>박영희 작가 (75세) • 수채화 • 50호</p>
+                        <button class="feature-btn">시작하기</button>
                     </div>
                 </div>
-                
-                <div class="artwork-card">
-                    <div class="artwork-image artwork-2">
-                        <div class="story-overlay">
-                            <h4>고향의 기억</h4>
-                            <p>"60년 전 떠난 고향의 모습을 기억 속에서 되살려 그렸습니다.<br>
-                            이제는 없어진 초가집과 논밭, 그리고 어머니의 뒷모습까지.<br>
-                            세월이 흘러 모든 것이 변했지만, 마음속 고향은 그대로입니다.<br>
-                            이 그림을 통해 젊은 세대에게도 우리의 아름다운 과거를 전하고 싶습니다.<br>
-                            그리움이 예술이 되어 영원히 남기를 바랍니다."</p>
+
+                <!-- 거래 관리 -->
+                <div class="feature-card" onclick="trackCTAClick('transaction_management', 'artist', 'core_feature')">
+                    <div class="feature-icon">💳</div>
+                    <div class="feature-content">
+                        <h3>거래 관리</h3>
+                        <p>가격부터 배송까지 모든 거래 과정을<br>자동화된 시스템으로 편리하게 관리하세요</p>
+                        <div class="feature-benefits">
+                            <span class="benefit-tag">가격·일정 관리</span>
+                            <span class="benefit-tag">견적 시스템</span>
+                            <span class="benefit-tag">결제·배송 자동화</span>
                         </div>
+                        <button class="feature-btn">시작하기</button>
                     </div>
-                    <div class="artwork-info">
-                        <h3>고향의 기억</h3>
-                        <p>김철수 작가 (82세) • 유화 • 40호</p>
+                </div>
+
+                <!-- 고객 관계 관리 -->
+                <div class="feature-card" onclick="trackCTAClick('customer_management', 'artist', 'core_feature')">
+                    <div class="feature-icon">👥</div>
+                    <div class="feature-content">
+                        <h3>고객 관계 관리</h3>
+                        <p>컬렉터 데이터베이스와 취향 분석을 통해<br>맞춤형 추천과 깊이있는 소통을 경험하세요</p>
+                        <div class="feature-benefits">
+                            <span class="benefit-tag">컬렉터 DB</span>
+                            <span class="benefit-tag">취향 분析</span>
+                            <span class="benefit-tag">맞춤 추천·소통</span>
+                        </div>
+                        <button class="feature-btn">시작하기</button>
                     </div>
                 </div>
             </div>
@@ -848,6 +954,25 @@
                 }
             }
         });
+
+        // CTA 클릭 추적 함수
+        function trackCTAClick(feature_name, user_type, category) {
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'cta_click', {
+                    'feature_name': feature_name,
+                    'user_type': user_type,
+                    'category': category,
+                    'page_title': document.title,
+                    'timestamp': new Date().toISOString()
+                });
+                
+                console.log('🎯 CTA Tracked:', {
+                    feature: feature_name,
+                    user: user_type,
+                    category: category
+                });
+            }
+        }
 
         console.log('🎨 Artist page loaded successfully');
     </script>
