@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="시니어 예술가를 위한 전용 플랫폼. 작품을 업로드하고 스토리를 공유하며 콜렉터와 직접 소통하세요.">
-    <meta name="keywords" content="시니어 예술가, 작품 업로드, 예술 스토리, 작가 등록, 온라인 전시">
-    <meta property="og:title" content="시니어 아티스트 - 예술가 전용 플랫폼">
+    <meta name="description" content="예술가를 위한 전용 플랫폼. 작품을 업로드하고 스토리를 공유하며 콜렉터와 직접 소통하세요.">
+    <meta name="keywords" content="예술가, 작품 업로드, 예술 스토리, 작가 등록, 온라인 전시">
+    <meta property="og:title" content="아티스트 - 예술가 전용 플랫폼">
     <meta property="og:description" content="당신의 작품과 스토리를 세상에 알리고 새로운 기회를 만나보세요.">
     <meta property="og:type" content="website">
-    <title>시니어 아티스트 - 예술가 전용 플랫폼</title>
+    <title>아티스트 - 예술가 전용 플랫폼</title>
     
     <!-- Preload critical images for performance -->
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&h=800&fit=crop&crop=entropy&auto=format&q=80">
@@ -24,7 +24,7 @@
 
         // GA4 기본 설정 - Artist Page
         gtag('config', 'G-DE2ZNKWV2W', {
-            page_title: 'Senior Artist - Artist Portal',
+            page_title: 'Artist - Artist Portal',
             page_location: window.location.href,
             send_page_view: true,
             enhanced_measurement: true,
@@ -40,7 +40,7 @@
             
             // Artist 페이지뷰 전송
             gtag('event', 'page_view', {
-                page_title: 'Senior Artist - Artist Portal',
+                page_title: 'Artist - Artist Portal',
                 page_location: window.location.href,
                 content_group1: 'artist_page',
                 user_category: 'artist_visitor'
@@ -721,7 +721,7 @@
     <!-- Header -->
     <header class="header">
         <nav class="nav">
-            <div class="logo">시니어 아티스트</div>
+            <div class="logo">아티스트</div>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="artist.html" class="nav-link">예술가용</a></li>
                 <li><a href="collector.html" class="nav-link">콜렉터용</a></li>
@@ -737,7 +737,7 @@
         <!-- Left Side - Artist Hero -->
         <div class="artist-hero">
             <div class="artist-content">
-                <h1><span class="highlight">시니어 아티스트</span><br>예술가 전용 플랫폼</h1>
+                <h1><span class="highlight">아티스트</span><br>예술가 전용 플랫폼</h1>
                 <p>당신의 작품과 스토리를<br>세상에 알리고 새로운 기회를 만나보세요</p>
                 
                 <!-- Featured Artwork Preview -->
@@ -771,7 +771,7 @@
         <!-- Right Side - Core Features -->
         <div class="core-features">
             <div class="features-header">
-                <h2>시니어 예술가를 위한 핵심 기능</h2>
+                <h2>예술가를 위한 핵심 기능</h2>
                 <p>당신의 예술가 여정을 지원하는 전문 도구들</p>
             </div>
             
@@ -830,7 +830,7 @@
             <button class="close-btn" onclick="closeRegistration()">&times;</button>
             <div class="form-header">
                 <h3>작가 등록하기</h3>
-                <p>시니어 예술가로 함께하세요</p>
+                <p>예술가로 함께하세요</p>
             </div>
             
             <form id="artistForm">
@@ -924,7 +924,7 @@
             }
             
             if (data.artistAge < 50) {
-                alert('시니어 예술가 플랫폼은 만 50세 이상만 등록 가능합니다.');
+                alert('아티스트 플랫폼은 만 50세 이상만 등록 가능합니다.');
                 return;
             }
             

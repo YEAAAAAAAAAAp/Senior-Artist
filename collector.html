@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="콜렉터를 위한 전용 플랫폼. 시니어 예술가의 깊이 있는 작품 스토리를 발견하고 직접 소통하세요.">
-    <meta name="keywords" content="콜렉터, 예술 작품, 작품 스토리, 시니어 예술가, 예술 수집">
-    <meta property="og:title" content="시니어 아티스트 - 콜렉터 전용 플랫폼">
-    <meta property="og:description" content="시니어 예술가의 깊이 있는 작품 스토리를 발견하고 의미 있는 작품을 만나보세요.">
+    <meta name="description" content="콜렉터를 위한 전용 플랫폼. 예술가의 깊이 있는 작품 스토리를 발견하고 직접 소통하세요.">
+    <meta name="keywords" content="콜렉터, 예술 작품, 작품 스토리, 예술가, 예술 수집">
+    <meta property="og:title" content="아티스트 - 콜렉터 전용 플랫폼">
+    <meta property="og:description" content="예술가의 깊이 있는 작품 스토리를 발견하고 의미 있는 작품을 만나보세요.">
     <meta property="og:type" content="website">
-    <title>시니어 아티스트 - 콜렉터 전용 플랫폼</title>
+    <title>아티스트 - 콜렉터 전용 플랫폼</title>
     
     <!-- Preload critical images for performance -->
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=1200&h=800&fit=crop&crop=entropy&auto=format&q=80">
@@ -24,7 +24,7 @@
 
         // GA4 기본 설정 - Collector Page
         gtag('config', 'G-DE2ZNKWV2W', {
-            page_title: 'Senior Artist - Collector Portal',
+            page_title: 'Artist - Collector Portal',
             page_location: window.location.href,
             send_page_view: true,
             enhanced_measurement: true,
@@ -40,7 +40,7 @@
             
             // Collector 페이지뷰 전송
             gtag('event', 'page_view', {
-                page_title: 'Senior Artist - Collector Portal',
+                page_title: 'Artist - Collector Portal',
                 page_location: window.location.href,
                 content_group1: 'collector_page',
                 user_category: 'collector_visitor'
@@ -789,7 +789,7 @@
     <!-- Header -->
     <header class="header">
         <nav class="nav">
-            <div class="logo">시니어 아티스트</div>
+            <div class="logo">아티스트</div>
             <ul class="nav-menu" id="navMenu">
                 <li><a href="artist.html" class="nav-link">예술가용</a></li>
                 <li><a href="collector.html" class="nav-link">콜렉터용</a></li>
@@ -838,18 +838,18 @@
             </div>
             
             <div class="features-grid">
-                <!-- 스토리 기반 탐색 -->
-                <div class="feature-card" onclick="trackCTAClick('story_exploration', 'collector', 'core_feature')">
-                    <div class="feature-icon">📖</div>
+                <!-- AI 기반 스토리 탐색 -->
+                <div class="feature-card" onclick="trackCTAClick('ai_story_exploration', 'collector', 'core_feature')">
+                    <div class="feature-icon">🤖</div>
                     <div class="feature-content">
-                        <h3>스토리 기반 탐색</h3>
-                        <p>작가의 인생 서사가 담긴 작품을 발견하고<br>AI 추천으로 당신만의 취향을 찾아보세요</p>
+                        <h3>AI 기반 스토리 탐색</h3>
+                        <p>머신러닝으로 분석한 작가의 인생 서사와<br>당신의 취향을 매칭하여 완벽한 작품을 추천합니다</p>
                         <div class="feature-benefits">
-                            <span class="benefit-tag">작가 서사 중심</span>
-                            <span class="benefit-tag">취향 필터·추천</span>
-                            <span class="benefit-tag">AI 개인화</span>
+                            <span class="benefit-tag">AI 작품 매칭</span>
+                            <span class="benefit-tag">개인 취향 학습</span>
+                            <span class="benefit-tag">스마트 추천</span>
                         </div>
-                        <button class="feature-btn">탐색하기</button>
+                        <button class="feature-btn">AI 추천 받기</button>
                     </div>
                 </div>
 
