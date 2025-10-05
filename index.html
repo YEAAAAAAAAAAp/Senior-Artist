@@ -68,69 +68,6 @@
         
         console.log('✅ GA4 초기화 완료: G-DE2ZNKWV2W');
     </script>
-            
-            console.log(`📊 고급 CTA 추적: ${action} - ${category} - ${label}`, ctaData);
-        }
-        
-        // 페이지 로드 시 GA4 초기화
-        window.addEventListener('load', function() {
-            setTimeout(initializeGA4, 500);
-        });
-
-        // 사용자 참여도 추적
-        function trackEngagement(engagement_type, engagement_value = 1) {
-            gtag('event', 'user_engagement', {
-                engagement_type: engagement_type,
-                engagement_value: engagement_value,
-                page_title: document.title,
-                page_location: window.location.href,
-                user_type: 'visitor'
-            });
-        }
-        
-        // 전환 의도 신호 추적
-        function trackConversionIntent(intent_type, intent_strength = 'medium') {
-            gtag('event', 'conversion_intent', {
-                intent_type: intent_type,
-                intent_strength: intent_strength,
-                user_type: 'visitor',
-                timestamp: new Date().toISOString()
-            });
-        }
-        
-        // 세션 품질 추적
-        function trackSessionQuality() {
-            const timeSpent = Math.round((Date.now() - sessionStartTime) / 1000);
-            const actions = parseInt(sessionStorage.getItem('user_actions') || '0');
-            
-            let sessionQuality = 'low';
-            if (actions >= 3 && timeSpent >= 60) {
-                sessionQuality = 'high';
-            } else if (actions >= 2 || timeSpent >= 30) {
-                sessionQuality = 'medium';
-            }
-            
-            gtag('event', 'session_quality', {
-                'quality_level': sessionQuality,
-                'user_actions': actions,
-                'session_duration': timeSpent
-            });
-        }
-        
-        // 사용자 행동 카운터
-        function incrementUserAction() {
-            const currentActions = parseInt(sessionStorage.getItem('user_actions') || '0');
-            sessionStorage.setItem('user_actions', (currentActions + 1).toString());
-        }
-        
-        // 페이지뷰 추적
-        function trackPageView(page_title, page_location) {
-            gtag('event', 'page_view', {
-                'page_title': page_title,
-                'page_location': page_location
-            });
-        }
-    </script>
     
     <style>
         /* CSS Reset */
@@ -1200,39 +1137,8 @@
         
         // 향상된 CTA 추적
         function enhancedTrackCTA(action, category, label) {
-            sessionKPI.ctaClicks++;
-            sessionKPI.interactions++;
-            
-            gtag('event', 'enhanced_cta_click', {
-                event_category: category,
-                event_action: action,
-                event_label: label,
-                session_cta_count: sessionKPI.ctaClicks,
-                session_interactions: sessionKPI.interactions,
-                time_to_click: Math.round((Date.now() - sessionKPI.startTime) / 1000)
-            });
         }
         
-        // 페이지 이탈 시 세션 요약
-        window.addEventListener('beforeunload', function() {
-            const sessionDuration = Math.round((Date.now() - sessionKPI.startTime) / 1000);
-            gtag('event', 'session_summary', {
-                event_category: 'engagement',
-                session_duration_seconds: sessionDuration,
-                total_interactions: sessionKPI.interactions,
-                cta_clicks: sessionKPI.ctaClicks,
-                max_scroll_depth: sessionKPI.maxScrollDepth,
-                engagement_quality: sessionKPI.interactions > 2 ? 'high' : sessionKPI.interactions > 0 ? 'medium' : 'low'
-            });
-        });
-        
-        // 초기화
-        document.addEventListener('DOMContentLoaded', function() {
-            trackUserRetention();
-            trackTrafficSource();
-            initAdvancedAnalytics();
-        });
-
         // About Modal Functions
         function openAboutModal() {
             const modal = document.getElementById('aboutModal');
@@ -1242,11 +1148,7 @@
             }, 10);
             
             // 모달 열기 이벤트 추적
-            gtag('event', 'modal_open', {
-                event_category: 'engagement',
-                event_label: 'about_modal',
-                modal_type: 'service_introduction'
-            });
+            trackCTA('modal_open', 'engagement', 'about_modal');
             
             // ESC 키로 모달 닫기
             document.addEventListener('keydown', handleEscKey);
@@ -1267,10 +1169,7 @@
             modal.removeEventListener('click', handleOutsideClick);
             
             // 모달 닫기 이벤트 추적
-            gtag('event', 'modal_close', {
-                event_category: 'engagement',
-                event_label: 'about_modal'
-            });
+            trackCTA('modal_close', 'engagement', 'about_modal');
         }
 
         function handleEscKey(event) {
