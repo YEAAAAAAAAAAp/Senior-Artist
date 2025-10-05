@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="시니어 예술가와 콜렉터를 연결하는 작품 스토리 마켓플레이스. 작품의 이야기를 공유하고 직접 소통하세요.">
+    <meta name="keywords" content="시니어 예술가, 콜렉터, 작품 스토리, 예술 마켓플레이스, 작가 등록">
+    <meta property="og:title" content="시니어 예술가 마켓플레이스 - 작품 스토리를 만나보세요">
+    <meta property="og:description" content="시니어 예술가와 콜렉터를 연결하는 특별한 공간. 작품의 깊은 이야기를 공유하고 직접 소통하세요.">
+    <meta property="og:type" content="website">
+    <title>시니어 아티스트 - 당신의 예술 여정을 시작하세요</title>
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-DE2ZNKWV2W', {
+            // Enhanced measurement 설정
+            enhanced_measurement: true,
+            engagement_time_msec: 10000, // 10초 이상 체류시 참여로 간주
+            session_timeout: 1800 // 30분 세션 타임아웃
+        });
+        
+        // 핵심 KPI 추적 함수들
+        
+        // CTA 추적 함수 (기존)
+        function trackCTA(action, category = 'CTA', label = '') {
+            gtag('event', action, {
+                'event_category': category,
+                'event_label': label,
+                'value': 1,
+                'send_to': 'G-DE2ZNKWV2W'
+            });
+        }
+        
+        // 사용자 참여도 추적
+        function trackEngagement(engagement_type, engagement_value = 1) {
+            gtag('event', 'user_engagement', {
+                'engagement_type': engagement_type,
+                'engagement_value': engagement_value,
+                'page_title': document.title,
+                'page_location': window.location.href
+            });
+        }
+        
+        // 체류 시간 추적
+        let pageStartTime = new Date().getTime();
+        let lastActivityTime = new Date().getTime();
+        let totalEngagementTime = 0;
+        
+        function trackTimeOnPage() {
+            const currentTime = new Date().getTime();
+            const timeSpent = Math.round((currentTime - pageStartTime) / 1000);
+            
+            gtag('event', 'page_dwell_time', {
+                'time_spent_seconds': timeSpent,
+                'page_title': document.title,
+                'page_location': window.location.href
+            });
+        }
+        
+        // 스크롤 깊이 추적
+        let maxScrollDepth = 0;
+        function trackScrollDepth() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = Math.round((scrollTop / docHeight) * 100);
+            
+            if (scrollPercent > maxScrollDepth) {
+                maxScrollDepth = scrollPercent;
+                
+                // 25%, 50%, 75%, 100% 지점에서 이벤트 발생
+                if (maxScrollDepth >= 25 && maxScrollDepth < 50) {
+                    gtag('event', 'scroll_depth', {
+                        'scroll_depth': '25%',
+                        'page_title': document.title
+                    });
+                } else if (maxScrollDepth >= 50 && maxScrollDepth < 75) {
+                    gtag('event', 'scroll_depth', {
+                        'scroll_depth': '50%',
+                        'page_title': document.title
+                    });
+                } else if (maxScrollDepth >= 75 && maxScrollDepth < 100) {
+                    gtag('event', 'scroll_depth', {
+                        'scroll_depth': '75%',
+                        'page_title': document.title
+                    });
+                } else if (maxScrollDepth >= 100) {
+                    gtag('event', 'scroll_depth', {
+                        'scroll_depth': '100%',
+                        'page_title': document.title
+                    });
+                }
+            }
+        }
+        
+        // 세션 질 추적
+        function trackSessionQuality() {
+            const actions = parseInt(sessionStorage.getItem('user_actions') || '0');
+            const timeSpent = Math.round((new Date().getTime() - pageStartTime) / 1000);
+            
+            let sessionQuality = 'low';
+            if (actions >= 3 && timeSpent >= 60) {
+                sessionQuality = 'high';
+            } else if (actions >= 2 || timeSpent >= 30) {
+                sessionQuality = 'medium';
+            }
+            
+            gtag('event', 'session_quality', {
+                'quality_level': sessionQuality,
+                'user_actions': actions,
+                'session_duration': timeSpent
+            });
+        }
+        
+        // 사용자 행동 카운터
+        function incrementUserAction() {
+            const currentActions = parseInt(sessionStorage.getItem('user_actions') || '0');
+            sessionStorage.setItem('user_actions', (currentActions + 1).toString());
+        }
+        
+        // 페이지뷰 추적
+        function trackPageView(page_title, page_location) {
+            gtag('event', 'page_view', {
+                'page_title': page_title,
+                'page_location': page_location
+            });
+        }
+    </script>
+    
+    <style>
+        /* CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fafafa;
+            overflow-x: hidden;
+            font-weight: 400;
+            height: 100vh;
+            overflow-y: hidden;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+            letter-spacing: -0.02em;
+            text-transform: none;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 32px;
+            align-items: center;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: #6b7280;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            position: relative;
+            letter-spacing: -0.01em;
+        }
+        
+        .nav-link:hover {
+            color: #1a1a1a;
+        }
+        
+        .nav-cta {
+            background: #1a1a1a;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            letter-spacing: -0.01em;
+        }
+        
+        .nav-cta:hover {
+            background: #000000;
+            transform: translateY(-1px);
+        }
+        
+        .nav-cta:focus {
+            outline: 2px solid #0f172a;
+            outline-offset: 2px;
+        }
+        
+        /* Main Layout */
+        .main-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100vh;
+            gap: 0;
+        }
+        
+        /* Left Side - Hero Content */
+        .hero-content {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 60px;
+            color: #0f172a;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80"><rect width="80" height="80" fill="%23f8fafc"/><circle cx="40" cy="40" r="0.5" fill="%23e2e8f0" opacity="0.4"/></svg>');
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .hero-text {
+            max-width: 520px;
+            text-align: left;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .hero-text h1 {
+            font-size: clamp(42px, 5vw, 58px);
+            margin-bottom: 24px;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.04em;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        .hero-text p {
+            font-size: 20px;
+            margin-bottom: 32px;
+            color: #475569;
+            line-height: 1.5;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 200px;
+            justify-content: center;
+            letter-spacing: -0.01em;
+        }
+        
+        .btn-primary {
+            background: #0f172a;
+            color: #ffffff;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+        }
+        
+        .btn-primary:hover {
+            background: #020617;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.15);
+        }
+        
+        .btn-primary:focus {
+            outline: 2px solid #0f172a;
+            outline-offset: 2px;
+        }
+        
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #ffffff;
+            color: #0f172a;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+        
+        /* Right Side - Choice Grid */
+        .choice-section {
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 60px;
+            border-left: 1px solid #f1f5f9;
+        }
+        
+        .choice-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            max-width: 420px;
+            width: 100%;
+        }
+        
+        .choice-card {
+            background: #ffffff;
+            padding: 32px;
+            border-radius: 12px;
+            border: 1px solid #f1f5f9;
+            text-decoration: none;
+            color: #0f172a;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+        
+        .choice-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: #0f172a;
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .choice-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: #e2e8f0;
+        }
+        
+        .choice-card:hover::before {
+            transform: scaleY(1);
+        }
+        
+        .choice-icon {
+            width: 48px;
+            height: 48px;
+            background: #f8fafc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        .choice-card:hover .choice-icon {
+            background: #0f172a;
+            color: #ffffff;
+            transform: scale(1.05);
+        }
+        
+        .choice-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #0f172a;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+        
+        .choice-card p {
+            color: #64748b;
+            font-size: 15px;
+            margin-bottom: 16px;
+            line-height: 1.6;
+            letter-spacing: -0.01em;
+        }
+        
+        .choice-btn {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
+            letter-spacing: -0.01em;
+        }
+        
+        .choice-btn:hover {
+            background: #020617;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.2);
+        }
+        
+        .choice-btn:focus {
+            outline: 2px solid #0f172a;
+            outline-offset: 2px;
+        }
+        
+        .choice-btn:active {
+            transform: translateY(-1px);
+        }
+        
+        /* CTA Form Overlay */
+        .cta-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .cta-overlay.active {
+            opacity: 1;
+        }
+        
+        .cta-form {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 480px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(15, 23, 42, 0.25);
+            border: 1px solid #f1f5f9;
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .cta-overlay.active .cta-form {
+            transform: scale(1);
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .form-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+        
+        .form-header p {
+            color: #64748b;
+            font-size: 16px;
+            letter-spacing: -0.01em;
+        }
+        
+        .form-header h3 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .radio-item {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 8px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .radio-item:hover {
+            border-color: #3498db;
+        }
+        
+        .radio-item.selected {
+            border-color: #3498db;
+            background: #f0f8ff;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+        
+        .close-btn:hover {
+            color: #2c3e50;
+        }
+        
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .main-wrapper {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 1fr;
+            }
+            
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-text p {
+                font-size: 1rem;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .choice-grid {
+                gap: 1rem;
+            }
+            
+            .choice-card {
+                padding: 1.5rem;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .cta-form {
+                padding: 1.5rem;
+            }
+            
+            /* Gallery Mobile Styles */
+            .gallery-container {
+                padding: 0 20px;
+            }
+            
+            .gallery-header h2 {
+                font-size: 32px;
+            }
+            
+            .artwork-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .artwork-item {
+                margin: 0 auto;
+                max-width: 350px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 15px;
+            }
+            
+            .hero-content, .choice-section {
+                padding: 1rem;
+            }
+            
+            .hero-text h1 {
+                font-size: 1.8rem;
+            }
+            
+            .btn {
+                padding: 14px 24px;
+                font-size: 0.95rem;
+            }
+        }
+        
+        /* Gallery Section - Artsy Style */
+        .gallery-section {
+            padding: 100px 0;
+            background: #fafafa;
+        }
+        
+        .gallery-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+        
+        .gallery-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .gallery-header h2 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+            letter-spacing: -0.03em;
+        }
+        
+        .gallery-header p {
+            font-size: 20px;
+            color: #64748b;
+            letter-spacing: -0.01em;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .artwork-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-bottom: 80px;
+        }
+        
+        .artwork-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .artwork-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .artwork-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .artwork-item:hover .artwork-image {
+            transform: scale(1.05);
+        }
+        
+        .artwork-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 30px;
+            color: white;
+        }
+        
+        .artwork-item:hover .artwork-overlay {
+            opacity: 1;
+        }
+        
+        .artwork-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+        
+        .artwork-artist {
+            font-size: 16px;
+            color: #e2e8f0;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        
+        .artwork-description {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #f8fafc;
+            opacity: 0.9;
+        }
+        
+        .artwork-price {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #0f172a;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .gallery-cta {
+            text-align: center;
+            margin-top: 60px;
+        }
+        
+        .gallery-cta .btn {
+            font-size: 18px;
+            padding: 20px 40px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">시니어 아티스트</div>
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link">소개</a></li>
+                <li><a href="#" class="nav-link">문의</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <!-- Left Side - Hero Content -->
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>시니어 예술가와<br>콜렉터를 연결합니다</h1>
+                <p>깊이 있는 작품 스토리와 함께<br>특별한 예술 경험을 시작하세요</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-primary" onclick="openForm(); trackCTA('click', 'Main_CTA', 'Start_Now')">지금 시작하기</button>
+                    <a href="#" class="btn btn-secondary" onclick="trackCTA('click', 'Main_CTA', 'Learn_More')">더 알아보기</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Side - Choice Cards -->
+        <div class="choice-section">
+            <div class="choice-grid">
+                <div class="choice-card">
+                    <div class="choice-icon">🎨</div>
+                    <h3>시니어 예술가</h3>
+                    <p>3가지 핵심 기능으로 작품 활동을<br>체계적으로 관리하고 성장시키세요</p>
+                    <a href="artist.html" class="choice-btn" onclick="trackCTA('click', 'User_Path', 'Artist_Path')">작가 기능 체험하기</a>
+                </div>
+                
+                <div class="choice-card">
+                    <div class="choice-icon">👁️</div>
+                    <h3>콜렉터</h3>
+                    <p>스토리텔링 기반으로 작품을 탐색하고<br>안전하게 소장할 수 있어요</p>
+                    <a href="collector.html" class="choice-btn" onclick="trackCTA('click', 'User_Path', 'Collector_Path')">컬렉션 기능 체험하기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section">
+        <div class="gallery-container">
+            <div class="gallery-header">
+                <h2>Featured Artworks</h2>
+                <p>시니어 예술가들의 깊이 있는 작품 세계를 만나보세요</p>
+            </div>
+            
+            <div class="artwork-grid">
+                <div class="artwork-item" onclick="trackCTA('click', 'Gallery', 'Artwork_View_Urban_Solitude')">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgo8ZGVmcz4KPGF1ZGF0aUdyYWRpZW50IGlkPSJncmFkMSI+CjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMyYTJhM2EiLz4KPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjNGM1MjZhIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPGVsbGlwc2UgY3g9IjEwMCIgY3k9IjEwMCIgcng9IjUwIiByeT0iNzAiIGZpbGw9IiNmZmI0NjYiIG9wYWNpdHk9IjAuNyIvPgo8cG9seWdvbiBwb2ludHM9IjI1MCA4MCAzMzAgMTUwIDIwMCAxODAiIGZpbGw9IiMzNGQ0YWEiIG9wYWNpdHk9IjAuNiIvPgo8Y2lyY2xlIGN4PSIzMDAiIGN5PSI2MCIgcj0iMzAiIGZpbGw9IiNmZDczOTciIG9wYWNpdHk9IjAuOCIvPgo8L3N2Zz4K" alt="Urban Solitude by 김현민" class="artwork-image" />
+                    <div class="artwork-price">2,800,000원</div>
+                    <div class="artwork-overlay">
+                        <div class="artwork-title">Urban Solitude</div>
+                        <div class="artwork-artist">김현민 (67세)</div>
+                        <div class="artwork-description">
+                            "도시 속 고독한 순간들을 추상적 형태로 표현했습니다. 40년간 서울을 바라본 시니어의 시선이 담긴 작품입니다."
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="artwork-item" onclick="trackCTA('click', 'Gallery', 'Artwork_View_Memories_Garden')">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2dyYWQyKSIvPgo8ZGVmcz4KPGF1ZGF0aUdyYWRpZW50IGlkPSJncmFkMiI+CjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM2ZWY0ODMiLz4KPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTBlNzNjIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI0MCIgZmlsbD0iI2Y5NzMxNiIgb3BhY2l0eT0iMC43Ii8+CjxjaXJjbGUgY3g9IjMwMCIgY3k9IjIwMCIgcj0iNjAiIGZpbGw9IiNlYzQ4OTkiIG9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMjAwIDUwIEwyNTAgMTUwIEwxNTAgMTgwIFoiIGZpbGw9IiNmZWY5ZTciIG9wYWNpdHk9IjAuOCIvPgo8L3N2Zz4K" alt="Memories of Spring Garden by 박순자" class="artwork-image" />
+                    <div class="artwork-price">1,950,000원</div>
+                    <div class="artwork-overlay">
+                        <div class="artwork-title">Memories of Spring Garden</div>
+                        <div class="artwork-artist">박순자 (73세)</div>
+                        <div class="artwork-description">
+                            "어린 시절 할머니 댁 뜰에서 뛰놀던 기억을 화폭에 담았습니다. 생생한 색채로 그리운 봄날의 향수를 표현했어요."
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="artwork-item" onclick="trackCTA('click', 'Gallery', 'Artwork_View_Time_Flow')">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2dyYWQzKSIvPgo8ZGVmcz4KPGF1ZGF0aUdyYWRpZW50IGlkPSJncmFkMyI+CjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmMTRkNWYiLz4KPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZjkzOGFkIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPGVsbGlwc2UgY3g9IjIwMCIgY3k9IjE1MCIgcng9IjEyMCIgcnk9IjgwIiBmaWxsPSIjZGRkNmZlIiBvcGFjaXR5PSIwLjciLz4KPHJlY3QgeD0iMTAwIiB5PSI1MCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSI0MCIgZmlsbD0iI2Y5N2Y0ZiIgb3BhY2l0eT0iMC42Ii8+CjxjaXJjbGUgY3g9IjMwMCIgY3k9IjEwMCIgcj0iMzAiIGZpbGw9IiNmZWM5NGMiIG9wYWNpdHk9IjAuOCIvPgo8L3N2Zz4K" alt="Time Flow by 이정수" class="artwork-image" />
+                    <div class="artwork-price">3,200,000원</div>
+                    <div class="artwork-overlay">
+                        <div class="artwork-title">Time Flow</div>
+                        <div class="artwork-artist">이정수 (69세)</div>
+                        <div class="artwork-description">
+                            "시간의 흐름과 변화를 기하학적 패턴으로 시각화했습니다. 30년간 물리학을 연구한 경험이 예술로 승화된 작품입니다."
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="artwork-item" onclick="trackCTA('click', 'Gallery', 'Artwork_View_Silent_Dialogue')">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2dyYWQ0KSIvPgo8ZGVmcz4KPGF1ZGF0aUdyYWRpZW50IGlkPSJncmFkNCI+CjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzNzQxNTEiLz4KPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMWYyOTM3Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPGNpcmNsZSBjeD0iMTUwIiBjeT0iMTIwIiByPSI1MCIgZmlsbD0iI2ZkYjcxNCIgb3BhY2l0eT0iMC44Ii8+CjxjaXJjbGUgY3g9IjI3MCIgY3k9IjE4MCIgcj0iNDAiIGZpbGw9IiNmYjdmODUiIG9wYWNpdHk9IjAuNyIvPgo8cmVjdCB4PSIyMDAiIHk9IjcwIiB3aWR0aD0iODAiIGhlaWdodD0iNjAiIGZpbGw9IiM2YjczZmYiIG9wYWNpdHk9IjAuNiIvPgo8L3N2Zz4K" alt="Silent Dialogue by 최은영" class="artwork-image" />
+                    <div class="artwork-price">1,750,000원</div>
+                    <div class="artwork-overlay">
+                        <div class="artwork-title">Silent Dialogue</div>
+                        <div class="artwork-artist">최은영 (71세)</div>
+                        <div class="artwork-description">
+                            "말없는 대화의 순간들을 색과 형태로 표현했습니다. 오랜 세월 사람들과 나눈 깊은 소통의 감정을 담아냈어요."
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="gallery-cta">
+                <a href="collector.html" class="btn btn-primary" onclick="trackCTA('click', 'Gallery_CTA', 'View_All_Artworks')">
+                    더 많은 작품 보기 →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Form Overlay -->
+    <div class="cta-overlay" id="ctaOverlay">
+        <div class="cta-form">
+            <button class="close-btn" onclick="closeForm()">&times;</button>
+            <div class="form-header">
+                <h3>사전 등록하기</h3>
+                <p>정식 오픈 시 우선 연락드립니다</p>
+            </div>
+            
+            <form id="leadForm">
+                <div class="form-group">
+                    <label for="name">이름 *</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">이메일 *</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>관심 분야 *</label>
+                    <div class="radio-group">
+                        <div class="radio-item" onclick="selectRadio('artist')">
+                            <input type="radio" id="artist" name="userType" value="artist" required>
+                            <label for="artist">예술가</label>
+                        </div>
+                        <div class="radio-item" onclick="selectRadio('collector')">
+                            <input type="radio" id="collector" name="userType" value="collector" required>
+                            <label for="collector">콜렉터</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">등록하기</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openForm() {
+            document.getElementById('ctaOverlay').style.display = 'flex';
+        }
+        
+        function closeForm() {
+            document.getElementById('ctaOverlay').style.display = 'none';
+        }
+        
+        function selectRadio(type) {
+            document.querySelectorAll('.radio-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            document.getElementById(type).checked = true;
+        }
+        
+        // Close form when clicking outside
+        document.getElementById('ctaOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeForm();
+            }
+        });
+        
+        // Form submission
+        document.getElementById('leadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                userType: formData.get('userType')
+            };
+            
+            // Simple validation
+            if (!data.name || !data.email || !data.userType) {
+                alert('모든 필수 항목을 입력해주세요.');
+                return;
+            }
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(data.email)) {
+                alert('올바른 이메일 형식을 입력해주세요.');
+                return;
+            }
+            
+            // Track form submission
+            trackCTA('submit', 'Form', `Lead_${data.userType}`);
+            
+            // Success message and close form
+            alert('등록이 완료되었습니다! 곧 연락드리겠습니다.');
+            this.reset();
+            document.querySelectorAll('.radio-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            closeForm();
+            
+            console.log('Form submitted:', data);
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeForm();
+            }
+        });
+        
+        // 핵심 KPI 이벤트 리스너 설정
+        window.addEventListener('load', function() {
+            // 페이지 로드 완료 추적
+            gtag('event', 'page_load_complete', {
+                'page_title': document.title,
+                'page_location': window.location.href,
+                'load_time': performance.now()
+            });
+            
+            // 사용자 활동 추적 시작
+            lastActivityTime = new Date().getTime();
+        });
+        
+        // 스크롤 이벤트 리스너
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                trackScrollDepth();
+                trackEngagement('scroll', Math.round(window.pageYOffset / 100));
+            }, 100);
+            
+            lastActivityTime = new Date().getTime();
+        });
+        
+        // 마우스 움직임 추적
+        let mouseTimeout;
+        document.addEventListener('mousemove', function() {
+            clearTimeout(mouseTimeout);
+            mouseTimeout = setTimeout(() => {
+                trackEngagement('mouse_movement', 1);
+            }, 1000);
+            
+            lastActivityTime = new Date().getTime();
+        });
+        
+        // 클릭 이벤트 추적
+        document.addEventListener('click', function(e) {
+            incrementUserAction();
+            trackEngagement('click', 1);
+            
+            // 특별한 요소들에 대한 추가 추적
+            if (e.target.classList.contains('choice-btn')) {
+                gtag('event', 'user_path_selection', {
+                    'path_type': e.target.textContent.includes('작가') ? 'artist' : 'collector',
+                    'button_text': e.target.textContent
+                });
+            }
+            
+            if (e.target.classList.contains('cta-button')) {
+                gtag('event', 'cta_interaction', {
+                    'cta_type': 'primary',
+                    'cta_text': e.target.textContent
+                });
+            }
+            
+            lastActivityTime = new Date().getTime();
+        });
+        
+        // 포커스/블러 이벤트로 사용자 활성도 추적
+        window.addEventListener('focus', function() {
+            trackEngagement('page_focus', 1);
+            lastActivityTime = new Date().getTime();
+        });
+        
+        window.addEventListener('blur', function() {
+            trackEngagement('page_blur', 1);
+            trackTimeOnPage();
+        });
+        
+        // 페이지 떠나기 전 최종 데이터 전송
+        window.addEventListener('beforeunload', function() {
+            trackTimeOnPage();
+            trackSessionQuality();
+            
+            // Beacon API로 안전한 데이터 전송
+            if (navigator.sendBeacon) {
+                const data = {
+                    event: 'page_exit',
+                    page_title: document.title,
+                    page_location: window.location.href,
+                    session_duration: Math.round((new Date().getTime() - pageStartTime) / 1000),
+                    max_scroll_depth: maxScrollDepth,
+                    user_actions: parseInt(sessionStorage.getItem('user_actions') || '0')
+                };
+                
+                navigator.sendBeacon('https://www.google-analytics.com/collect', 
+                    `v=1&t=event&tid=G-DE2ZNKWV2W&cid=1&ec=engagement&ea=page_exit&el=${JSON.stringify(data)}`);
+            }
+        });
+        
+        // 비활성 사용자 감지 (30초 동안 활동 없음)
+        setInterval(function() {
+            const now = new Date().getTime();
+            const timeSinceLastActivity = now - lastActivityTime;
+            
+            if (timeSinceLastActivity > 30000) { // 30초
+                trackEngagement('user_inactive', Math.round(timeSinceLastActivity / 1000));
+            }
+        }, 30000);
+        
+        // 주기적 세션 체크 (5분마다)
+        setInterval(function() {
+            trackSessionQuality();
+            trackTimeOnPage();
+        }, 300000);
+    </script>
+</body>
+</html>
+
+

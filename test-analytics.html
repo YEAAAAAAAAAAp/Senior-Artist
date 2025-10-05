@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Test Dashboard</title>
+    <style>
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            color: #0f172a;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        
+        .test-section h2 {
+            color: #0f172a;
+            margin-bottom: 20px;
+        }
+        
+        .test-button {
+            background: #0f172a;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            margin: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .test-button:hover {
+            background: #1e293b;
+            transform: translateY(-1px);
+        }
+        
+        .test-result {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            border-left: 4px solid #0f172a;
+        }
+        
+        .success { border-left-color: #16a34a; background: #f0fdf4; }
+        .error { border-left-color: #dc2626; background: #fef2f2; }
+        .warning { border-left-color: #ca8a04; background: #fffbeb; }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .metric-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            font-size: 14px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 Analytics 테스트 대시보드</h1>
+        <p>시니어 아티스트 플랫폼의 GA4 추적 시스템을 테스트합니다.</p>
+        
+        <!-- CTA 추적 테스트 -->
+        <div class="test-section">
+            <h2>📊 CTA 추적 테스트</h2>
+            <p>다양한 CTA 버튼 클릭을 시뮬레이션하여 GA4 이벤트 발생을 확인합니다.</p>
+            
+            <button class="test-button" onclick="testCTA('Artist_Path')">작가 경로 CTA 테스트</button>
+            <button class="test-button" onclick="testCTA('Collector_Path')">콜렉터 경로 CTA 테스트</button>
+            
+            <!-- 콜렉터 핵심 기능 CTA -->
+            <h3 style="margin: 20px 0 10px 0; color: #8b5cf6;">콜렉터 핵심 기능</h3>
+            <button class="test-button" onclick="testCollectorFeature('Story_Discovery')">🔍 스토리 기반 탐색</button>
+            <button class="test-button" onclick="testCollectorFeature('Safe_Transaction')">🛡️ 안심 거래 시스템</button>
+            <button class="test-button" onclick="testCollectorFeature('Direct_Communication')">💬 작가와 직접 소통</button>
+            
+            <!-- 작가 핵심 기능 CTA -->
+            <h3 style="margin: 20px 0 10px 0; color: #f59e0b;">작가 핵심 기능</h3>
+            <button class="test-button" onclick="testArtistFeature('Portfolio_Optimization')">🎨 AI 포트폴리오 최적화</button>
+            <button class="test-button" onclick="testArtistFeature('Transaction_Management')">💳 스마트 거래 관리</button>
+            <button class="test-button" onclick="testArtistFeature('Customer_Management')">👥 콜렉터 관계 관리</button>
+            
+            <!-- 데모 모달 테스트 -->
+            <h3 style="margin: 20px 0 10px 0; color: #059669;">데모 모달 상호작용</h3>
+            <button class="test-button" onclick="testDemoModal('demo_view')">📱 데모 모달 조회</button>
+            <button class="test-button" onclick="testDemoModal('demo_action')">⚡ 데모 액션 실행</button>
+            
+            <!-- 고급 이벤트 추적 -->
+            <h3 style="margin: 20px 0 10px 0; color: #ef4444;">고급 이벤트 추적</h3>
+            <button class="test-button" onclick="testAdvancedTracking()">🔬 사용자 여정 & 기능 비교</button>
+            
+            <div id="ctaResults" class="test-result"></div>
+        </div>
+        
+        <!-- 사용자 참여도 테스트 -->
+        <div class="test-section">
+            <h2>👥 사용자 참여도 테스트</h2>
+            <p>스크롤, 마우스 움직임, 클릭 등 사용자 참여 행동을 테스트합니다.</p>
+            
+            <button class="test-button" onclick="testScrollDepth()">스크롤 깊이 테스트</button>
+            <button class="test-button" onclick="testEngagement()">참여도 테스트</button>
+            <button class="test-button" onclick="testSessionQuality()">세션 품질 테스트</button>
+            
+            <div id="engagementResults" class="test-result"></div>
+        </div>
+        
+        <!-- 페이지 성능 테스트 -->
+        <div class="test-section">
+            <h2>⚡ 페이지 성능 테스트</h2>
+            <p>로딩 시간, 체류 시간 등 성능 관련 지표를 측정합니다.</p>
+            
+            <button class="test-button" onclick="testPagePerformance()">페이지 성능 측정</button>
+            <button class="test-button" onclick="testLoadTimes()">로딩 시간 테스트</button>
+            
+            <div id="performanceResults" class="test-result"></div>
+        </div>
+        
+        <!-- 실시간 메트릭스 -->
+        <div class="test-section">
+            <h2>📈 실시간 메트릭스</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value" id="sessionDuration">0초</div>
+                    <div class="metric-label">세션 지속 시간</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="userActions">0개</div>
+                    <div class="metric-label">사용자 액션</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="scrollDepth">0%</div>
+                    <div class="metric-label">최대 스크롤 깊이</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="pageViews">1</div>
+                    <div class="metric-label">페이지뷰</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 에러 로그 -->
+        <div class="test-section">
+            <h2>🐛 에러 로그</h2>
+            <div id="errorLog" class="test-result error" style="display: none;"></div>
+            <div id="noErrors" class="test-result success">현재 에러가 없습니다 ✅</div>
+        </div>
+    </div>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-DE2ZNKWV2W', {
+            enhanced_measurement: true,
+            engagement_time_msec: 10000,
+            session_timeout: 1800
+        });
+        
+        // 테스트 시작 시간
+        const testStartTime = new Date().getTime();
+        let testActions = 0;
+        let maxTestScrollDepth = 0;
+        
+        // CTA 추적 함수
+        function trackCTA(action, category = 'CTA', label = '') {
+            gtag('event', action, {
+                'event_category': category,
+                'event_label': label,
+                'value': 1,
+                'send_to': 'G-DE2ZNKWV2W'
+            });
+        }
+        
+        // 참여도 추적 함수
+        function trackEngagement(engagement_type, engagement_value = 1) {
+            gtag('event', 'user_engagement', {
+                'engagement_type': engagement_type,
+                'engagement_value': engagement_value,
+                'page_title': document.title,
+                'page_location': window.location.href
+            });
+        }
+        
+        // 테스트 함수들
+        function testCTA(type) {
+            trackCTA('click', 'Test_CTA', type);
+            testActions++;
+            updateMetrics();
+            
+            document.getElementById('ctaResults').innerHTML = `
+                <div class="success">✅ CTA 이벤트 발생: ${type}</div>
+                <div>이벤트 카테고리: Test_CTA</div>
+                <div>이벤트 라벨: ${type}</div>
+                <div>발생 시간: ${new Date().toLocaleTimeString()}</div>
+            `;
+        }
+        
+        function testScrollDepth() {
+            // 가상 스크롤 깊이 시뮬레이션
+            const depths = ['25%', '50%', '75%', '100%'];
+            const randomDepth = depths[Math.floor(Math.random() * depths.length)];
+            
+            gtag('event', 'scroll_depth', {
+                'scroll_depth': randomDepth,
+                'page_title': document.title
+            });
+            
+            maxTestScrollDepth = parseInt(randomDepth);
+            updateMetrics();
+            
+            document.getElementById('engagementResults').innerHTML = `
+                <div class="success">✅ 스크롤 깊이 이벤트 발생: ${randomDepth}</div>
+                <div>측정 깊이: ${randomDepth}</div>
+                <div>발생 시간: ${new Date().toLocaleTimeString()}</div>
+            `;
+        }
+        
+        function testEngagement() {
+            const engagementTypes = ['click', 'hover', 'scroll', 'focus'];
+            const randomType = engagementTypes[Math.floor(Math.random() * engagementTypes.length)];
+            
+            trackEngagement(randomType, Math.floor(Math.random() * 10) + 1);
+            testActions++;
+            updateMetrics();
+            
+            document.getElementById('engagementResults').innerHTML = `
+                <div class="success">✅ 참여도 이벤트 발생: ${randomType}</div>
+                <div>참여 유형: ${randomType}</div>
+                <div>발생 시간: ${new Date().toLocaleTimeString()}</div>
+            `;
+        }
+        
+        function testSessionQuality() {
+            const currentTime = new Date().getTime();
+            const sessionDuration = Math.round((currentTime - testStartTime) / 1000);
+            
+            let quality = 'low';
+            if (testActions >= 3 && sessionDuration >= 60) {
+                quality = 'high';
+            } else if (testActions >= 2 || sessionDuration >= 30) {
+                quality = 'medium';
+            }
+            
+            gtag('event', 'session_quality', {
+                'quality_level': quality,
+                'user_actions': testActions,
+                'session_duration': sessionDuration
+            });
+            
+            document.getElementById('engagementResults').innerHTML = `
+                <div class="success">✅ 세션 품질 측정 완료</div>
+                <div>품질 레벨: ${quality}</div>
+                <div>사용자 액션: ${testActions}개</div>
+                <div>세션 지속시간: ${sessionDuration}초</div>
+            `;
+        }
+        
+        function testPagePerformance() {
+            const loadTime = performance.now();
+            const navigation = performance.getEntriesByType('navigation')[0];
+            
+            gtag('event', 'page_load_complete', {
+                'page_title': document.title,
+                'page_location': window.location.href,
+                'load_time': loadTime
+            });
+            
+            document.getElementById('performanceResults').innerHTML = `
+                <div class="success">✅ 페이지 성능 측정 완료</div>
+                <div>페이지 로드 시간: ${loadTime.toFixed(2)}ms</div>
+                <div>DOM 로드 시간: ${navigation ? navigation.domContentLoadedEventEnd.toFixed(2) : 'N/A'}ms</div>
+                <div>측정 시간: ${new Date().toLocaleTimeString()}</div>
+            `;
+        }
+        
+        function testLoadTimes() {
+            const resources = performance.getEntriesByType('resource');
+            const totalResources = resources.length;
+            const avgLoadTime = resources.reduce((sum, resource) => sum + resource.duration, 0) / totalResources;
+            
+            document.getElementById('performanceResults').innerHTML = `
+                <div class="success">✅ 리소스 로딩 분석 완료</div>
+                <div>총 리소스: ${totalResources}개</div>
+                <div>평균 로딩 시간: ${avgLoadTime.toFixed(2)}ms</div>
+                <div>분석 시간: ${new Date().toLocaleTimeString()}</div>
+            `;
+        }
+
+        // 새로운 핵심 기능 CTA 테스트 함수들
+        function testCollectorFeature(featureType) {
+            testActions++;
+            
+            trackCTA('click', 'Feature_CTA', featureType);
+            
+            // 데모 조회 이벤트 시뮬레이션
+            gtag('event', 'demo_view', {
+                'demo_type': featureType.toLowerCase(),
+                'feature_category': 'collector_core_feature',
+                'user_segment': 'collector'
+            });
+            
+            const featureNames = {
+                'Story_Discovery': '스토리 기반 탐색',
+                'Safe_Transaction': '안심 거래 시스템',
+                'Direct_Communication': '작가와 직접 소통'
+            };
+            
+            document.getElementById('ctaResults').innerHTML = `
+                <div class="success">✅ 콜렉터 기능 CTA 테스트 완료</div>
+                <div>기능: ${featureNames[featureType]}</div>
+                <div>이벤트: Feature_CTA + demo_view</div>
+                <div>카테고리: collector_core_feature</div>
+                <div>테스트 시간: ${new Date().toLocaleTimeString()}</div>
+            `;
+        }
+
+        function testArtistFeature(featureType) {
+            testActions++;
+            
+            trackCTA('click', 'Feature_CTA', featureType);
+            
+            // 데모 조회 이벤트 시뮬레이션
+            gtag('event', 'demo_view', {
+                'demo_type': featureType.toLowerCase(),
+                'feature_category': 'artist_core_feature',
+                'user_segment': 'artist'
+            });
+            
+            const featureNames = {
+                'Portfolio_Optimization': 'AI 포트폴리오 최적화',
+                'Transaction_Management': '스마트 거래 관리',
+                'Customer_Management': '콜렉터 관계 관리'
+            };
+            
+            document.getElementById('ctaResults').innerHTML = `
+                <div class="success">✅ 작가 기능 CTA 테스트 완료</div>
+                <div>기능: ${featureNames[featureType]}</div>
+                <div>이벤트: Feature_CTA + demo_view</div>
+                <div>카테고리: artist_core_feature</div>
+                <div>테스트 시간: ${new Date().toLocaleTimeString()}</div>
+            `;
+        }
+
+        function testDemoModal(eventType) {
+            testActions++;
+            
+            if (eventType === 'demo_view') {
+                gtag('event', 'demo_view', {
+                    'demo_type': 'feature_exploration',
+                    'interaction_type': 'modal_open',
+                    'engagement_level': 'high'
+                });
+                
+                document.getElementById('ctaResults').innerHTML = `
+                    <div class="success">✅ 데모 모달 조회 테스트 완료</div>
+                    <div>이벤트: demo_view</div>
+                    <div>상호작용: modal_open</div>
+                    <div>참여도: high</div>
+                    <div>테스트 시간: ${new Date().toLocaleTimeString()}</div>
+                `;
+            } else if (eventType === 'demo_action') {
+                gtag('event', 'demo_action', {
+                    'action_type': 'feature_start',
+                    'conversion_intent': 'high',
+                    'funnel_stage': 'consideration'
+                });
+                
+                document.getElementById('ctaResults').innerHTML = `
+                    <div class="success">✅ 데모 액션 실행 테스트 완료</div>
+                    <div>이벤트: demo_action</div>
+                    <div>액션: feature_start</div>
+                    <div>전환 의도: high</div>
+                    <div>퍼널 단계: consideration</div>
+                    <div>테스트 시간: ${new Date().toLocaleTimeString()}</div>
+                `;
+            }
+        }
+
+        // 고급 이벤트 추적 함수
+        function testAdvancedTracking() {
+            testActions++;
+            
+            // 사용자 여정 추적
+            gtag('event', 'user_journey', {
+                'journey_stage': 'feature_exploration',
+                'page_sequence': ['landing', 'artist_features', 'demo_interaction'],
+                'total_engagement_time': Math.floor((new Date().getTime() - testStartTime) / 1000),
+                'interaction_depth': 'deep'
+            });
+            
+            // 기능 비교 이벤트
+            gtag('event', 'feature_comparison', {
+                'compared_features': ['portfolio_optimization', 'transaction_management', 'customer_management'],
+                'comparison_duration': 45,
+                'primary_interest': 'portfolio_optimization'
+            });
+            
+            document.getElementById('ctaResults').innerHTML = `
+                <div class="success">✅ 고급 이벤트 추적 테스트 완료</div>
+                <div>사용자 여정: feature_exploration</div>
+                <div>기능 비교: 3개 기능</div>
+                <div>참여 깊이: deep</div>
+                <div>테스트 시간: ${new Date().toLocaleTimeString()}</div>
+            `;
+        }
+        
+        // 실시간 메트릭스 업데이트
+        function updateMetrics() {
+            const currentTime = new Date().getTime();
+            const sessionDuration = Math.round((currentTime - testStartTime) / 1000);
+            
+            document.getElementById('sessionDuration').textContent = `${sessionDuration}초`;
+            document.getElementById('userActions').textContent = `${testActions}개`;
+            document.getElementById('scrollDepth').textContent = `${maxTestScrollDepth}%`;
+        }
+        
+        // 주기적 메트릭스 업데이트
+        setInterval(updateMetrics, 1000);
+        
+        // 에러 감지
+        window.addEventListener('error', function(e) {
+            document.getElementById('noErrors').style.display = 'none';
+            document.getElementById('errorLog').style.display = 'block';
+            document.getElementById('errorLog').innerHTML += `
+                <div>❌ JavaScript 에러: ${e.message}</div>
+                <div>파일: ${e.filename}:${e.lineno}</div>
+                <div>시간: ${new Date().toLocaleTimeString()}</div>
+                <hr>
+            `;
+        });
+        
+        // 초기 로드 이벤트
+        window.addEventListener('load', function() {
+            gtag('event', 'test_dashboard_loaded', {
+                'page_title': document.title,
+                'load_time': performance.now()
+            });
+        });
+    </script>
+</body>
+</html>
