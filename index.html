@@ -10,20 +10,50 @@
     <meta property="og:type" content="website">
     <title>시니어 아티스트 - 당신의 예술 여정을 시작하세요</title>
     
-    <!-- Google Analytics -->
+    <!-- Google Analytics 4 - Enhanced Configuration -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
+        
+        // Enhanced GA4 Configuration with Debug Mode
         gtag('config', 'G-DE2ZNKWV2W', {
-            // Enhanced measurement 설정
             enhanced_measurement: true,
-            engagement_time_msec: 10000, // 10초 이상 체류시 참여로 간주
-            session_timeout: 1800 // 30분 세션 타임아웃
+            engagement_time_msec: 10000,
+            session_timeout: 1800,
+            page_title: 'Main Landing Page',
+            custom_map: {
+                'custom_parameter_1': 'user_type',
+                'custom_parameter_2': 'funnel_stage'
+            },
+            debug_mode: true,  // 개발 중 디버깅 활성화
+            send_page_view: true
         });
         
-        // 핵심 KPI 추적 함수들
+        // GA4 연결 상태 확인 함수
+        function checkGA4Connection() {
+            if (typeof gtag !== 'undefined' && window.dataLayer) {
+                console.log('✅ GA4 연결 성공: G-DE2ZNKWV2W');
+                // 연결 테스트 이벤트 발송
+                gtag('event', 'ga4_connection_test', {
+                    'event_category': 'system',
+                    'event_label': 'main_page_loaded',
+                    'value': 1
+                });
+                return true;
+            } else {
+                console.error('❌ GA4 연결 실패');
+                return false;
+            }
+        }
+        
+        // 페이지 로드 시 연결 확인
+        window.addEventListener('load', function() {
+            setTimeout(checkGA4Connection, 1000);
+        });
+        
+        // PSF 검증을 위한 핵심 KPI 추적 함수들
         
         // CTA 추적 함수 (기존)
         function trackCTA(action, category = 'CTA', label = '') {
@@ -33,6 +63,24 @@
                 'value': 1,
                 'send_to': 'G-DE2ZNKWV2W'
             });
+            
+            // PSF 핵심 메트릭 별도 추적
+            if (category === 'User_Path') {
+                trackFunnelStep('path_selection', label);
+            } else if (category === 'Gallery_Interaction') {
+                trackFunnelStep('content_engagement', label);
+            }
+        }
+        
+        // PSF 퍼널 단계 추적
+        function trackFunnelStep(step_name, step_value) {
+            gtag('event', 'funnel_step', {
+                'funnel_name': 'main_conversion',
+                'step_name': step_name,
+                'step_value': step_value,
+                'user_type': 'unknown',
+                'page_type': 'main_landing'
+            });
         }
         
         // 사용자 참여도 추적
@@ -41,7 +89,18 @@
                 'engagement_type': engagement_type,
                 'engagement_value': engagement_value,
                 'page_title': document.title,
-                'page_location': window.location.href
+                'page_location': window.location.href,
+                'user_type': 'unknown'
+            });
+        }
+        
+        // 전환 의도 신호 추적
+        function trackConversionIntent(intent_type, intent_strength = 'medium') {
+            gtag('event', 'conversion_intent', {
+                'intent_type': intent_type,
+                'intent_strength': intent_strength,
+                'user_type': 'unknown',
+                'timestamp': new Date().toISOString()
             });
         }
         

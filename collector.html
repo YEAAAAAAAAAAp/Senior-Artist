@@ -14,19 +14,50 @@
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=1200&h=800&fit=crop&crop=entropy&auto=format&q=80">
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80">
     
-    <!-- Google Analytics -->
+    <!-- Google Analytics 4 - Enhanced Configuration -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
+        
+        // Enhanced GA4 Configuration with Debug Mode
         gtag('config', 'G-DE2ZNKWV2W', {
             enhanced_measurement: true,
             engagement_time_msec: 10000,
-            session_timeout: 1800
+            session_timeout: 1800,
+            page_title: 'Collector Landing Page',
+            custom_map: {
+                'custom_parameter_1': 'user_type',
+                'custom_parameter_2': 'funnel_stage'
+            },
+            debug_mode: true,  // 개발 중 디버깅 활성화
+            send_page_view: true
         });
         
-        // 핵심 KPI 추적 함수들
+        // GA4 연결 상태 확인 함수
+        function checkGA4Connection() {
+            if (typeof gtag !== 'undefined' && window.dataLayer) {
+                console.log('✅ GA4 연결 성공: G-DE2ZNKWV2W');
+                // 연결 테스트 이벤트 발송
+                gtag('event', 'ga4_connection_test', {
+                    'event_category': 'system',
+                    'event_label': 'collector_page_loaded',
+                    'value': 1
+                });
+                return true;
+            } else {
+                console.error('❌ GA4 연결 실패');
+                return false;
+            }
+        }
+        
+        // 페이지 로드 시 연결 확인
+        window.addEventListener('load', function() {
+            setTimeout(checkGA4Connection, 1000);
+        });
+        
+        // PSF 검증을 위한 핵심 KPI 추적 함수들
         function trackCTA(action, category = 'CTA', label = '') {
             gtag('event', action, {
                 'event_category': category,
@@ -34,14 +65,46 @@
                 'value': 1,
                 'send_to': 'G-DE2ZNKWV2W'
             });
+            
+            // PSF 핵심 메트릭 별도 추적
+            if (category === 'Feature_CTA') {
+                trackFunnelStep('feature_interaction', label);
+            } else if (category === 'Demo_Action') {
+                trackFunnelStep('demo_completion', label);
+            } else if (category === 'Hero_CTA') {
+                trackFunnelStep('hero_engagement', label);
+            }
         }
         
+        // PSF 퍼널 단계 추적
+        function trackFunnelStep(step_name, step_value) {
+            gtag('event', 'funnel_step', {
+                'funnel_name': 'collector_conversion',
+                'step_name': step_name,
+                'step_value': step_value,
+                'user_type': 'collector',
+                'page_type': 'collector_landing'
+            });
+        }
+        
+        // 사용자 인게이지먼트 품질 측정
         function trackEngagement(engagement_type, engagement_value = 1) {
             gtag('event', 'user_engagement', {
                 'engagement_type': engagement_type,
                 'engagement_value': engagement_value,
                 'page_title': document.title,
-                'page_location': window.location.href
+                'page_location': window.location.href,
+                'user_type': 'collector'
+            });
+        }
+        
+        // 전환 의도 신호 추적
+        function trackConversionIntent(intent_type, intent_strength = 'medium') {
+            gtag('event', 'conversion_intent', {
+                'intent_type': intent_type,
+                'intent_strength': intent_strength,
+                'user_type': 'collector',
+                'timestamp': new Date().toISOString()
             });
         }
         
@@ -161,14 +224,34 @@
             line-height: 1.65;
         }
 
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 50px;
+            padding: 8px 16px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #8b5cf6;
+        }
+
+        .badge-icon {
+            font-size: 16px;
+        }
+
         .hero-stats {
             display: flex;
             gap: 40px;
             margin-bottom: 40px;
+            flex-wrap: wrap;
         }
 
         .stat {
             text-align: center;
+            min-width: 100px;
         }
 
         .stat-number {
@@ -184,6 +267,213 @@
             color: #94a3b8;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+        }
+
+        .btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 4px;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .btn-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .btn-subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            color: white;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        .trust-indicators {
+            display: flex;
+            gap: 24px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        .trust-icon {
+            font-size: 16px;
+        }
+
+        .featured-collection {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 400px;
+        }
+
+        .collection-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .collection-badge {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .artwork-sample {
+            position: relative;
+            height: 200px;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .artwork-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            padding: 20px;
+        }
+
+        .artwork-overlay h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .artwork-overlay p {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .artwork-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .price {
+            font-weight: 700;
+            color: #10b981;
+            font-size: 16px;
+        }
+
+        .status {
+            font-size: 12px;
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            padding: 4px 8px;
+            border-radius: 8px;
+        }
+
+        .story-btn {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .story-btn:hover {
+            background: rgba(139, 92, 246, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .collection-stats {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 16px;
+        }
+
+        .artist-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .artist-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .artist-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .artist-name {
+            font-weight: 600;
+            color: white;
+            font-size: 14px;
+        }
+
+        .artist-exp {
+            font-size: 12px;
+            color: #cbd5e1;
+        }
+
+        .collection-metrics {
+            display: flex;
+            gap: 16px;
+        }
+
+        .collection-metrics .metric {
+            font-size: 12px;
+            color: #94a3b8;
         }
 
         .hero-cta {
@@ -1824,14 +2114,21 @@
         </nav>
     </header>
 
-    <!-- Hero Section -->
+    <!-- Enhanced Hero Section -->
     <section class="hero">
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <h1><span class="highlight">시니어 아티스트</span><br>전문 예술 플랫폼</h1>
-                    <p class="hero-description">50년 이상의 경험과 철학이 담긴 특별한 작품들을 만나고,<br>작가와 직접 소통하며 의미 있는 컬렉션을 시작하세요</p>
-                    <div class="hero-stats">
+                    <div class="hero-badge" data-aos="fade-up">
+                        <span class="badge-icon">🎨</span>
+                        <span class="badge-text">시니어 아티스트 전문 컬렉션</span>
+                    </div>
+                    <h1 data-aos="fade-up" data-aos-delay="200"><span class="highlight">시니어 아티스트</span><br>전문 예술 플랫폼</h1>
+                    <p class="hero-description" data-aos="fade-up" data-aos-delay="400">
+                        50년 이상의 경험과 철학이 담긴 특별한 작품들을 만나고,<br>
+                        작가와 직접 소통하며 의미 있는 컬렉션을 시작하세요
+                    </p>
+                    <div class="hero-stats" data-aos="fade-up" data-aos-delay="600">
                         <div class="stat">
                             <span class="stat-number">250+</span>
                             <span class="stat-label">시니어 작가</span>
@@ -1844,23 +2141,70 @@
                             <span class="stat-number">98%</span>
                             <span class="stat-label">만족도</span>
                         </div>
+                        <div class="stat">
+                            <span class="stat-number">₩2.5억</span>
+                            <span class="stat-label">월 거래액</span>
+                        </div>
                     </div>
-                    <div class="hero-cta">
-                        <a href="#features" class="btn btn-primary" onclick="trackCTA('click', 'Hero_CTA', 'Explore_Features')">
+                    <div class="hero-cta" data-aos="fade-up" data-aos-delay="800">
+                        <a href="#features" class="btn btn-primary" onclick="trackCTA('hero_primary_click', 'Collector_Hero_CTA', 'Explore_Features'); trackConversionIntent('exploration_intent', 'high'); trackFunnelStep('hero_engagement', 'primary_cta');">
+                            <span class="btn-icon">🔍</span>
                             작품 스토리 탐색하기
+                            <span class="btn-subtitle">1,200+ 작품 스토리</span>
                         </a>
-                        <a href="#gallery" class="btn btn-secondary" onclick="trackCTA('click', 'Hero_CTA', 'View_Gallery')">
+                        <a href="#gallery" class="btn btn-secondary" onclick="trackCTA('hero_secondary_click', 'Collector_Hero_CTA', 'View_Gallery'); trackEngagement('gallery_exploration', 2); trackFunnelStep('hero_engagement', 'secondary_cta');">
+                            <span class="btn-icon">🖼️</span>
                             작품 갤러리
                         </a>
                     </div>
+                    
+                    <!-- Trust Indicators -->
+                    <div class="trust-indicators" data-aos="fade-up" data-aos-delay="1000">
+                        <div class="indicator">
+                            <span class="trust-icon">🛡️</span>
+                            <span class="trust-text">작품 진품 보증</span>
+                        </div>
+                        <div class="indicator">
+                            <span class="trust-icon">📜</span>
+                            <span class="trust-text">정품 인증서</span>
+                        </div>
+                        <div class="indicator">
+                            <span class="trust-icon">🤝</span>
+                            <span class="trust-text">작가 직접 소통</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="hero-visual">
+                <div class="hero-visual" data-aos="fade-left" data-aos-delay="600">
                     <div class="hero-artwork-preview">
-                        <div class="artwork-sample" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                            <div class="artwork-overlay">
-                                <h4>"인생의 색채"</h4>
-                                <p>김영숙 작가 (72세)</p>
-                                <span class="story-indicator">💭 작품 스토리 보기</span>
+                        <div class="featured-collection">
+                            <div class="collection-header">
+                                <span class="collection-badge">FEATURED COLLECTION</span>
+                            </div>
+                            <div class="artwork-sample" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <div class="artwork-overlay">
+                                    <h4>"인생의 색채"</h4>
+                                    <p>김영숙 작가 (72세) - 유화</p>
+                                    <div class="artwork-details">
+                                        <span class="price">₩450만원</span>
+                                        <span class="status">📍 전시 중</span>
+                                    </div>
+                                    <button class="story-btn" onclick="trackCTA('artwork_story_click', 'Featured_Artwork', 'Story_View'); trackEngagement('story_engagement', 3);">
+                                        💭 작품 스토리 보기
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="collection-stats">
+                                <div class="artist-info">
+                                    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><circle cx='20' cy='20' r='20' fill='%23059669'/><text x='20' y='25' text-anchor='middle' fill='white' font-size='14' font-weight='600'>김</text></svg>" alt="김영숙 작가">
+                                    <div class="artist-details">
+                                        <span class="artist-name">김영숙 작가</span>
+                                        <span class="artist-exp">50년 경력 • 개인전 15회</span>
+                                    </div>
+                                </div>
+                                <div class="collection-metrics">
+                                    <span class="metric">❤️ 127명이 좋아요</span>
+                                    <span class="metric">👀 245회 조회</span>
+                                </div>
                             </div>
                         </div>
                     </div>
