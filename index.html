@@ -11,154 +11,120 @@
     <title>시니어 아티스트 - 당신의 예술 여정을 시작하세요</title>
     
     <!-- Google Analytics 4 - Enhanced Configuration -->
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        
-        // Enhanced GA4 Configuration with Debug Mode
+
+        // GA4 기본 설정
         gtag('config', 'G-DE2ZNKWV2W', {
+            page_title: 'Senior Artist - Main Landing',
+            page_location: window.location.href,
+            send_page_view: true,
+            // Enhanced 측정 활성화
             enhanced_measurement: true,
-            engagement_time_msec: 10000,
-            session_timeout: 1800,
-            page_title: 'Main Landing Page',
+            // 커스텀 매개변수 설정
             custom_map: {
-                'custom_parameter_1': 'user_type',
-                'custom_parameter_2': 'funnel_stage'
-            },
-            debug_mode: true,  // 개발 중 디버깅 활성화
-            send_page_view: true
-        });
-        
-        // GA4 연결 상태 확인 함수
-        function checkGA4Connection() {
-            if (typeof gtag !== 'undefined' && window.dataLayer) {
-                console.log('✅ GA4 연결 성공: G-DE2ZNKWV2W');
-                // 연결 테스트 이벤트 발송
-                gtag('event', 'ga4_connection_test', {
-                    'event_category': 'system',
-                    'event_label': 'main_page_loaded',
-                    'value': 1
-                });
-                return true;
-            } else {
-                console.error('❌ GA4 연결 실패');
-                return false;
+                'user_type': 'user_category',
+                'page_section': 'content_group1'
             }
-        }
-        
-        // 페이지 로드 시 연결 확인
-        window.addEventListener('load', function() {
-            setTimeout(checkGA4Connection, 1000);
         });
-        
-        // PSF 검증을 위한 핵심 KPI 추적 함수들
-        
-        // CTA 추적 함수 (기존)
-        function trackCTA(action, category = 'CTA', label = '') {
+
+        // GA4 연결 확인 및 초기화
+        function initializeGA4() {
+            console.log('🔄 GA4 초기화 중...');
+            
+            // 페이지뷰 수동 전송 (확실한 추적을 위해)
+            gtag('event', 'page_view', {
+                page_title: 'Senior Artist - Main Landing',
+                page_location: window.location.href,
+                content_group1: 'main_page'
+            });
+
+            // 사용자 참여도 측정 시작
+            startEngagementTracking();
+            
+            console.log('✅ GA4 초기화 완료: G-DE2ZNKWV2W');
+        }
+
+        // 사용자 참여도 추적
+        let engagementStartTime = Date.now();
+        let scrollDepth = 0;
+        let maxScrollDepth = 0;
+
+        function startEngagementTracking() {
+            // 스크롤 깊이 추적
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                scrollDepth = Math.round((scrollTop / docHeight) * 100);
+                
+                if (scrollDepth > maxScrollDepth) {
+                    maxScrollDepth = scrollDepth;
+                    
+                    // 25%, 50%, 75%, 90% 스크롤 시 이벤트 전송
+                    if ([25, 50, 75, 90].includes(scrollDepth)) {
+                        gtag('event', 'scroll', {
+                            event_category: 'engagement',
+                            event_label: `${scrollDepth}%`,
+                            value: scrollDepth
+                        });
+                    }
+                }
+            });
+
+            // 페이지 이탈 시 체류시간 측정
+            window.addEventListener('beforeunload', function() {
+                const timeSpent = Math.round((Date.now() - engagementStartTime) / 1000);
+                gtag('event', 'timing_complete', {
+                    event_category: 'engagement',
+                    name: 'page_dwell_time',
+                    value: timeSpent
+                });
+            });
+        }
+
+        // 개선된 CTA 추적 함수
+        function trackCTA(action, category = 'cta_click', label = '') {
             gtag('event', action, {
-                'event_category': category,
-                'event_label': label,
-                'value': 1,
-                'send_to': 'G-DE2ZNKWV2W'
+                event_category: category,
+                event_label: label,
+                value: 1,
+                user_type: 'visitor',
+                page_section: 'main_landing'
             });
             
-            // PSF 핵심 메트릭 별도 추적
-            if (category === 'User_Path') {
-                trackFunnelStep('path_selection', label);
-            } else if (category === 'Gallery_Interaction') {
-                trackFunnelStep('content_engagement', label);
-            }
+            console.log(`📊 CTA 추적: ${action} - ${category} - ${label}`);
         }
         
-        // PSF 퍼널 단계 추적
-        function trackFunnelStep(step_name, step_value) {
-            gtag('event', 'funnel_step', {
-                'funnel_name': 'main_conversion',
-                'step_name': step_name,
-                'step_value': step_value,
-                'user_type': 'unknown',
-                'page_type': 'main_landing'
-            });
-        }
-        
+        // 페이지 로드 시 GA4 초기화
+        window.addEventListener('load', function() {
+            setTimeout(initializeGA4, 500);
+        });
+
         // 사용자 참여도 추적
         function trackEngagement(engagement_type, engagement_value = 1) {
             gtag('event', 'user_engagement', {
-                'engagement_type': engagement_type,
-                'engagement_value': engagement_value,
-                'page_title': document.title,
-                'page_location': window.location.href,
-                'user_type': 'unknown'
+                engagement_type: engagement_type,
+                engagement_value: engagement_value,
+                page_title: document.title,
+                page_location: window.location.href,
+                user_type: 'visitor'
             });
         }
         
         // 전환 의도 신호 추적
         function trackConversionIntent(intent_type, intent_strength = 'medium') {
             gtag('event', 'conversion_intent', {
-                'intent_type': intent_type,
-                'intent_strength': intent_strength,
-                'user_type': 'unknown',
-                'timestamp': new Date().toISOString()
+                intent_type: intent_type,
+                intent_strength: intent_strength,
+                user_type: 'visitor',
+                timestamp: new Date().toISOString()
             });
         }
-        
-        // 체류 시간 추적
-        let pageStartTime = new Date().getTime();
-        let lastActivityTime = new Date().getTime();
-        let totalEngagementTime = 0;
-        
-        function trackTimeOnPage() {
-            const currentTime = new Date().getTime();
-            const timeSpent = Math.round((currentTime - pageStartTime) / 1000);
-            
-            gtag('event', 'page_dwell_time', {
-                'time_spent_seconds': timeSpent,
-                'page_title': document.title,
-                'page_location': window.location.href
-            });
-        }
-        
-        // 스크롤 깊이 추적
-        let maxScrollDepth = 0;
-        function trackScrollDepth() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercent = Math.round((scrollTop / docHeight) * 100);
-            
-            if (scrollPercent > maxScrollDepth) {
-                maxScrollDepth = scrollPercent;
-                
-                // 25%, 50%, 75%, 100% 지점에서 이벤트 발생
-                if (maxScrollDepth >= 25 && maxScrollDepth < 50) {
-                    gtag('event', 'scroll_depth', {
-                        'scroll_depth': '25%',
-                        'page_title': document.title
-                    });
-                } else if (maxScrollDepth >= 50 && maxScrollDepth < 75) {
-                    gtag('event', 'scroll_depth', {
-                        'scroll_depth': '50%',
-                        'page_title': document.title
-                    });
-                } else if (maxScrollDepth >= 75 && maxScrollDepth < 100) {
-                    gtag('event', 'scroll_depth', {
-                        'scroll_depth': '75%',
-                        'page_title': document.title
-                    });
-                } else if (maxScrollDepth >= 100) {
-                    gtag('event', 'scroll_depth', {
-                        'scroll_depth': '100%',
-                        'page_title': document.title
-                    });
-                }
-            }
-        }
-        
-        // 세션 질 추적
-        function trackSessionQuality() {
-            const actions = parseInt(sessionStorage.getItem('user_actions') || '0');
-            const timeSpent = Math.round((new Date().getTime() - pageStartTime) / 1000);
+    </script>
             
             let sessionQuality = 'low';
             if (actions >= 3 && timeSpent >= 60) {
@@ -957,6 +923,87 @@
             }
         }
     </style>
+    
+    <!-- KPI 추적 강화 스크립트 -->
+    <script>
+        // 핵심 KPI 추적 시스템
+        let sessionKPI = {
+            startTime: Date.now(),
+            interactions: 0,
+            scrollEvents: 0,
+            ctaClicks: 0,
+            maxScrollDepth: 0
+        };
+        
+        // 사용자 유지율 측정
+        function trackUserRetention() {
+            const currentVisit = Date.now();
+            const lastVisit = localStorage.getItem('lastVisit');
+            
+            if (lastVisit) {
+                const daysSinceLastVisit = Math.floor((currentVisit - parseInt(lastVisit)) / (1000 * 60 * 60 * 24));
+                gtag('event', 'user_retention', {
+                    event_category: 'retention',
+                    days_since_last_visit: daysSinceLastVisit,
+                    visitor_type: 'returning'
+                });
+            } else {
+                gtag('event', 'user_retention', {
+                    event_category: 'retention',
+                    visitor_type: 'new'
+                });
+            }
+            localStorage.setItem('lastVisit', currentVisit.toString());
+        }
+        
+        // 트래픽 소스 분석
+        function trackTrafficSource() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const referrer = document.referrer;
+            
+            gtag('event', 'traffic_source_analysis', {
+                event_category: 'acquisition',
+                utm_source: urlParams.get('utm_source') || 'none',
+                utm_medium: urlParams.get('utm_medium') || 'none',
+                utm_campaign: urlParams.get('utm_campaign') || 'none',
+                referrer_domain: referrer ? new URL(referrer).hostname : 'direct'
+            });
+        }
+        
+        // 향상된 CTA 추적
+        function enhancedTrackCTA(action, category, label) {
+            sessionKPI.ctaClicks++;
+            sessionKPI.interactions++;
+            
+            gtag('event', 'enhanced_cta_click', {
+                event_category: category,
+                event_action: action,
+                event_label: label,
+                session_cta_count: sessionKPI.ctaClicks,
+                session_interactions: sessionKPI.interactions,
+                time_to_click: Math.round((Date.now() - sessionKPI.startTime) / 1000)
+            });
+        }
+        
+        // 페이지 이탈 시 세션 요약
+        window.addEventListener('beforeunload', function() {
+            const sessionDuration = Math.round((Date.now() - sessionKPI.startTime) / 1000);
+            gtag('event', 'session_summary', {
+                event_category: 'engagement',
+                session_duration_seconds: sessionDuration,
+                total_interactions: sessionKPI.interactions,
+                cta_clicks: sessionKPI.ctaClicks,
+                max_scroll_depth: sessionKPI.maxScrollDepth,
+                engagement_quality: sessionKPI.interactions > 2 ? 'high' : sessionKPI.interactions > 0 ? 'medium' : 'low'
+            });
+        });
+        
+        // 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            trackUserRetention();
+            trackTrafficSource();
+        });
+    </script>
 </head>
 <body>
     <!-- Header -->
@@ -980,8 +1027,8 @@
                 <h1>시니어 예술가와<br>콜렉터를 연결합니다</h1>
                 <p>깊이 있는 작품 스토리와 함께<br>특별한 예술 경험을 시작하세요</p>
                 <div class="cta-buttons">
-                    <button class="btn btn-primary" onclick="openForm(); trackCTA('click', 'Main_CTA', 'Start_Now')">지금 시작하기</button>
-                    <a href="#" class="btn btn-secondary" onclick="trackCTA('click', 'Main_CTA', 'Learn_More')">더 알아보기</a>
+                    <button class="btn btn-primary" onclick="openForm(); enhancedTrackCTA('start_now_click', 'main_cta', 'hero_section')">지금 시작하기</button>
+                    <a href="#" class="btn btn-secondary" onclick="enhancedTrackCTA('learn_more_click', 'main_cta', 'hero_section')">더 알아보기</a>
                 </div>
             </div>
         </div>
@@ -993,14 +1040,14 @@
                     <div class="choice-icon">🎨</div>
                     <h3>시니어 예술가</h3>
                     <p>3가지 핵심 기능으로 작품 활동을<br>체계적으로 관리하고 성장시키세요</p>
-                    <a href="artist.html" class="choice-btn" onclick="trackCTA('click', 'User_Path', 'Artist_Path')">작가 기능 체험하기</a>
+                    <a href="artist.html" class="choice-btn" onclick="enhancedTrackCTA('artist_path_select', 'user_journey', 'path_selection')">작가 기능 체험하기</a>
                 </div>
                 
                 <div class="choice-card">
                     <div class="choice-icon">👁️</div>
                     <h3>콜렉터</h3>
                     <p>스토리텔링 기반으로 작품을 탐색하고<br>안전하게 소장할 수 있어요</p>
-                    <a href="collector.html" class="choice-btn" onclick="trackCTA('click', 'User_Path', 'Collector_Path')">컬렉션 기능 체험하기</a>
+                    <a href="collector.html" class="choice-btn" onclick="enhancedTrackCTA('collector_path_select', 'user_journey', 'path_selection')">컬렉션 기능 체험하기</a>
                 </div>
             </div>
         </div>

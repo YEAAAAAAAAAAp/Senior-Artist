@@ -15,51 +15,93 @@
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80">
     
     <!-- Google Analytics 4 - Enhanced Configuration -->
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        
-        // Enhanced GA4 Configuration with Debug Mode
+
+        // GA4 기본 설정 - Collector Page
         gtag('config', 'G-DE2ZNKWV2W', {
+            page_title: 'Senior Artist - Collector Portal',
+            page_location: window.location.href,
+            send_page_view: true,
             enhanced_measurement: true,
-            engagement_time_msec: 10000,
-            session_timeout: 1800,
-            page_title: 'Collector Landing Page',
             custom_map: {
-                'custom_parameter_1': 'user_type',
-                'custom_parameter_2': 'funnel_stage'
-            },
-            debug_mode: true,
-            send_page_view: true
-        });
-        
-        // GA4 연결 상태 확인 함수
-        function checkGA4Connection() {
-            if (typeof gtag !== 'undefined' && window.dataLayer) {
-                console.log('✅ GA4 연결 성공: G-DE2ZNKWV2W');
-                gtag('event', 'ga4_connection_test', {
-                    'event_category': 'system',
-                    'event_label': 'collector_page_loaded',
-                    'value': 1
-                });
-                return true;
-            } else {
-                console.error('❌ GA4 연결 실패');
-                return false;
+                'user_type': 'user_category',
+                'page_section': 'content_group1'
             }
-        }
-        
-        // 페이지 로드 시 연결 확인
-        window.addEventListener('load', function() {
-            setTimeout(checkGA4Connection, 1000);
         });
+
+        // GA4 초기화 및 Collector 전용 추적
+        function initializeGA4Collector() {
+            console.log('🖼️ Collector 페이지 GA4 초기화...');
+            
+            // Collector 페이지뷰 전송
+            gtag('event', 'page_view', {
+                page_title: 'Senior Artist - Collector Portal',
+                page_location: window.location.href,
+                content_group1: 'collector_page',
+                user_category: 'collector_visitor'
+            });
+
+            // Collector 특화 참여도 추적
+            startCollectorEngagementTracking();
+            
+            console.log('✅ Collector GA4 초기화 완료');
+        }
+
+        // Collector 특화 참여도 추적
+        let artworkInteractionTime = {};
         
-        // GA4 이벤트 추적
-        gtag('event', 'page_view', {
-            'page_title': 'Collector Page',
-            'page_location': window.location.href
+        function startCollectorEngagementTracking() {
+            // 아트워크 갤러리 상호작용 추적
+            document.querySelectorAll('.artwork-item').forEach((artwork, index) => {
+                artwork.addEventListener('mouseenter', function() {
+                    artworkInteractionTime[index] = Date.now();
+                    gtag('event', 'artwork_browse_start', {
+                        event_category: 'collector_engagement',
+                        artwork_index: index,
+                        user_category: 'collector_visitor'
+                    });
+                });
+                
+                artwork.addEventListener('mouseleave', function() {
+                    if (artworkInteractionTime[index]) {
+                        const interactionDuration = Date.now() - artworkInteractionTime[index];
+                        gtag('event', 'artwork_browse_end', {
+                            event_category: 'collector_engagement',
+                            artwork_index: index,
+                            interaction_duration_ms: interactionDuration,
+                            user_category: 'collector_visitor'
+                        });
+                        delete artworkInteractionTime[index];
+                    }
+                });
+            });
+        }
+
+        // Collector CTA 추적 함수
+        function trackCTAClick(feature_name, user_type, category) {
+            gtag('event', 'cta_click', {
+                event_category: 'collector_cta',
+                feature_name: feature_name,
+                user_type: user_type,
+                cta_category: category,
+                page_section: 'collector_features'
+            });
+            
+            console.log('🎯 Collector CTA 추적:', {
+                feature: feature_name,
+                type: user_type,
+                category: category
+            });
+        }
+
+        // 페이지 로드 시 초기화
+        window.addEventListener('load', function() {
+            setTimeout(initializeGA4Collector, 500);
         });
     </script>
     
