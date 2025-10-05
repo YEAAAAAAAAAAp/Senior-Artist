@@ -216,7 +216,34 @@
         // 페이지 로드 시 초기화
         window.addEventListener('load', function() {
             setTimeout(initializeGA4Artist, 500);
+            
+            // 작품 호버 이벤트 추적 초기화
+            initArtworkHoverTracking();
         });
+        
+        // 작품 호버 이벤트 추적
+        function initArtworkHoverTracking() {
+            const artworkContainer = document.querySelector('.artwork-image-container');
+            if (artworkContainer) {
+                artworkContainer.addEventListener('mouseenter', function() {
+                    gtag('event', 'artwork_story_hover', {
+                        event_category: 'artist_engagement',
+                        artwork_name: '꿈을 키우는 손',
+                        artist_name: '박창석',
+                        user_category: 'artist_visitor'
+                    });
+                });
+                
+                artworkContainer.addEventListener('mouseleave', function() {
+                    gtag('event', 'artwork_story_hover_end', {
+                        event_category: 'artist_engagement',
+                        artwork_name: '꿈을 키우는 손',
+                        artist_name: '박창석',
+                        user_category: 'artist_visitor'
+                    });
+                });
+            }
+        }
     </script>
     
     <style>
@@ -829,10 +856,59 @@
                 display: block;
             }
         }
+        
+        /* 작품 호버 효과 */
+        .artwork-sample {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .artwork-sample:hover {
+            transform: translateY(-5px);
+        }
+        
+        .artwork-image-container {
+            position: relative;
+        }
+        
+        .artwork-hover-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(139, 92, 246, 0.95), rgba(6, 182, 212, 0.95));
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 12px;
+        }
+        
+        .artwork-image-container:hover .artwork-hover-overlay {
+            opacity: 1;
+        }
+        
+        .artwork-description {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .artwork-story {
+            font-size: 12px;
+            font-style: italic;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
-    <!-- BODY 시작 - 여기 위에 텍스트가 있으면 안됩니다 -->
     <!-- Header -->
     <header class="header">
         <nav class="nav">
@@ -860,14 +936,28 @@
                     <div class="artwork-sample">
                         <div class="artwork-image-container">
                             <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80" alt="꿈을 키우는 손" style="width: 100%; height: 200px; object-fit: cover; border-radius: 12px;">
+                            
+                            <!-- 호버 시 나타나는 작품 설명 -->
+                            <div class="artwork-hover-overlay">
+                                <div class="artwork-description">
+                                    <strong>작품 이야기</strong><br>
+                                    85세의 박창석 할아버지가 손자와 함께 그린 수채화입니다. 
+                                    70세에 늦깎이로 시작한 그림이지만, 15년간 꾸준히 붓을 잡으며 키워온 예술혼이 물감 속에 녹아있어요.
+                                    젊은 손자의 꿈과 할아버지의 지혜가 만나 탄생한 특별한 작품입니다.
+                                </div>
+                                <div class="artwork-story">
+                                    "나이가 들어도 꿈을 키울 수 있다는 걸 손자에게 보여주고 싶었어요." - 박창석 작가
+                                </div>
+                            </div>
+                            
                             <div class="story-tooltip">
                                 <h5>작가의 이야기</h5>
-                                <p>"손자와 함께 만든 도자기 작품입니다. 젊은 시절 배우지 못했던 예술을 70세에 시작하여 지금까지 15년째 작업하고 있습니다. 흙을 만지며 느끼는 생명력과 창조의 기쁨은 나이를 잊게 합니다."</p>
+                                <p>"손자와 함께 만든 수채화 작품입니다. 젊은 시절 배우지 못했던 예술을 70세에 시작하여 지금까지 15년째 작업하고 있습니다. 물감과 붓을 다루며 느끼는 생명력과 창조의 기쁨은 나이를 잊게 합니다."</p>
                             </div>
                         </div>
                         <div class="artwork-preview-info">
                             <h4>꿈을 키우는 손</h4>
-                            <p>박창석 작가 (85세) • 도자기 • 중형</p>
+                            <p>박창석 작가 (85세) • 수채화 • 중형</p>
                             <span class="price-preview">₩850,000</span>
                         </div>
                     </div>
