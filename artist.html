@@ -19,8 +19,7 @@
         // dataLayer 먼저 초기화
         window.dataLayer = window.dataLayer || [];
         
-        // 설정 변수 미리 정의
-        window.__GA_MEASUREMENT_ID__ = 'G-DE2ZNKWV2W';
+        // GTM 전용 설정
         window.__GTM_ID__ = 'GTM-594SVWKB';
         
         console.log('[TRACKING] 🚀 Initializing unified tracking system');
@@ -34,33 +33,7 @@
     })(window,document,'script','dataLayer','GTM-594SVWKB');</script>
     <!-- End Google Tag Manager -->
     
-    <!-- Google Analytics 4 - 기본 추적 활성화 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
-    <script>
-        // dataLayer가 이미 존재하므로 재초기화하지 않음
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        
-        // CTA 추적 최적화된 GA4 설정
-        gtag('config', 'G-DE2ZNKWV2W', { 
-            send_page_view: true,  
-            transport_type: 'beacon',
-            allow_enhanced_conversions: true,
-            anonymize_ip: false,
-            allow_google_signals: true,
-            debug_mode: true,
-            cookie_flags: 'SameSite=None;Secure',
-            // CTA 추적을 위한 향상된 설정
-            linker: {
-                domains: ['yeaaaaaaaaaap.github.io']
-            },
-            custom_map: {
-                'custom_parameter_1': 'cta_type',
-                'custom_parameter_2': 'cta_name', 
-                'custom_parameter_3': 'cta_location',
-                'custom_parameter_4': 'cta_context'
-            }
-        });
+    <!-- GTM 전용 설정 - GA4는 GTM을 통해서만 관리 -->
         
         console.log('[GA4] ✅ GA4 initialized with enhanced tracking');
         console.log('[GA4] 📊 Page view sent for:', window.location.href);
@@ -911,12 +884,13 @@
         function openRegistration() {
             document.getElementById('registrationOverlay').style.display = 'flex';
             
-            // GA4 이벤트 추적
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'registration_modal_opened', {
-                    'event_category': 'engagement',
-                    'event_label': 'artist_registration',
-                    'value': 1
+            // GTM 이벤트 추적
+            if (window.dataLayer) {
+                window.dataLayer.push({
+                    event: 'registration_modal_opened',
+                    event_category: 'engagement',
+                    event_label: 'artist_registration',
+                    value: 1
                 });
             }
         }
@@ -1110,7 +1084,6 @@
             }
         }
     </script>
-    <script src="js/ga-lite.js?v=202510070045"></script>
-    <script src="js/init-ga.js?v=202510070045"></script>
+    <script src="js/gtm-only.js?v=202510070050"></script>
 </body>
 </html>
