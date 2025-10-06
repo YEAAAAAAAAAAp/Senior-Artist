@@ -144,6 +144,101 @@ gtag('event', 'cta_click', {
 4. 이벤트 보고서에서 cta_click 이벤트를 확인하여 상세 데이터를 분석합니다.
 5. 탐색 메뉴에서 사용자 지정 보고서를 만들어 필요한 분석을 수행합니다.
 
+## 📊 전체 CTA 측정 목록
+
+아래는 GA4에서 개별적으로 측정 가능한 모든 CTA 요소의 상세 목록입니다. 각 요소는 `data-cta-name` 속성으로 고유하게 식별됩니다.
+
+### 1. index.html (메인 페이지)
+
+#### 네비게이션 영역
+| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 | 
+|----------|------|------|------|------------|
+| `nav_artist` | navigation | header | 예술가 페이지 링크 | cta_click |
+| `nav_collector` | navigation | header | 콜렉터 페이지 링크 | cta_click |
+| `nav_about` | navigation | header | 소개 모달 열기 | cta_click |
+| `mobile_menu_toggle` | navigation | header | 모바일 메뉴 토글 | cta_click |
+
+#### 히어로 섹션
+| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
+|----------|------|------|------|------------|
+| `artist_start` | primary | hero_section | 예술가 페이지로 이동 | cta_click |
+| `collector_start` | primary | hero_section | 콜렉터 페이지로 이동 | cta_click |
+| `gallery_view_more` | secondary | gallery_section | 갤러리 더 보기 | cta_click |
+
+#### 문의 모달
+| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
+|----------|------|------|------|------------|
+| `contact_form_close` | action | contact_modal | 문의 양식 닫기 | cta_click |
+| `contact_form_submit` | primary | contact_modal | 문의 양식 제출 | cta_click |
+
+#### 소개 모달
+| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
+|----------|------|------|------|------------|
+| `modal_artist_start` | primary | about_modal | 모달에서 예술가 페이지로 이동 | cta_click |
+| `modal_collector_start` | secondary | about_modal | 모달에서 콜렉터 페이지로 이동 | cta_click |
+
+### 2. artist.html (예술가 페이지)
+
+#### 네비게이션 영역
+| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
+|----------|------|------|------|------------|
+| `nav_artist` | navigation | header | 예술가 페이지 링크 | cta_click |
+| `nav_collector` | navigation | header | 콜렉터 페이지 링크 | cta_click |
+| `nav_about` | navigation | header | 소개 페이지 링크 | cta_click |
+| `back_to_main` | navigation | header | 메인 페이지로 돌아가기 | cta_click |
+| `mobile_menu_toggle` | navigation | header | 모바일 메뉴 토글 | cta_click |
+
+#### 메인 영역
+| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
+|----------|------|------|------|------------|
+| `portfolio_create` | primary | main_section | 등록 모달 열기 | cta_click |
+| `portfolio_feature_btn` | secondary | feature_section | 포트폴리오 기능 | cta_click |
+| `transaction_feature_btn` | secondary | feature_section | 거래 관리 기능 | cta_click |
+| `customer_feature_btn` | secondary | feature_section | 고객 관리 기능 | cta_click |
+
+#### 등록 모달
+| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
+|----------|------|------|------|------------|
+| `registration_close` | action | registration_modal | 등록 모달 닫기 | cta_click |
+| `artist_registration_submit` | primary | registration_modal | 예술가 등록 제출 | cta_click |
+
+### 3. collector.html (콜렉터 페이지)
+
+#### 네비게이션 영역
+| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
+|----------|------|------|------|------------|
+| `nav_artist` | navigation | header | 예술가 페이지 링크 | cta_click |
+| `nav_collector` | navigation | header | 콜렉터 페이지 링크 | cta_click |
+| `nav_about` | navigation | header | 소개 페이지 링크 | cta_click |
+| `back_to_main` | navigation | header | 메인 페이지로 돌아가기 | cta_click |
+| `mobile_menu_toggle` | navigation | header | 모바일 메뉴 토글 | cta_click |
+
+#### 메인 영역
+| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
+|----------|------|------|------|------------|
+| `interest_register` | primary | main_section | 관심 등록 모달 열기 | cta_click |
+| `taste_analysis_btn` | secondary | feature_section | 취향 분석 기능 | cta_click |
+| `transaction_guarantee_btn` | secondary | feature_section | 거래 보장 기능 | cta_click |
+| `artist_communication_btn` | secondary | feature_section | 작가 대화 기능 | cta_click |
+
+#### 관심 등록 모달
+| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
+|----------|------|------|------|------------|
+| `interest_form_close` | action | interest_modal | 관심 등록 모달 닫기 | cta_click |
+| `collector_interest_submit` | primary | interest_modal | 콜렉터 관심 등록 제출 | cta_click |
+
+### GA4 이벤트 매개변수
+
+모든 CTA 클릭은 동일한 `cta_click` 이벤트로 전송되지만, 다음 매개변수를 통해 구분됩니다:
+
+| 매개변수 | 설명 | 예시 |
+|---------|------|------|
+| `cta_name` | 위 표에 나열된 CTA 이름 | nav_artist, portfolio_create |
+| `cta_type` | CTA 유형 | primary, secondary, navigation, action |
+| `cta_location` | CTA가 위치한 영역 | header, hero_section, feature_section |
+| `cta_text` | 버튼 또는 링크 텍스트 | 예술가로 시작하기 |
+| `element_type` | HTML 요소 타입 | button, a |
+
 ---
 
 *최종 업데이트: 2025년 10월 7일*
