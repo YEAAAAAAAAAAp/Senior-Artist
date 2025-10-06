@@ -26,37 +26,51 @@
             'allow_google_signals': true
         });
         
-        // GA4 로딩 상태 디버깅 및 안전한 초기화
-        console.log('🔍 GA4 초기화 시작 (Collector 페이지)');
-        console.log('gtag 함수:', typeof gtag);
-        console.log('dataLayer:', window.dataLayer);
+        // GA4 스크립트 로딩 완료 대기
+        function waitForGA4() {
+            return new Promise((resolve) => {
+                if (typeof window.gtag === 'function' && window.gtag.toString().includes('google')) {
+                    resolve();
+                } else {
+                    setTimeout(() => waitForGA4().then(resolve), 100);
+                }
+            });
+        }
+        
+        // GA4 로딩 완료 후 실행
+        waitForGA4().then(() => {
+            console.log('✅ GA4 스크립트 로딩 완료 (Collector 페이지)');
+            console.log('gtag 함수:', typeof window.gtag);
+            
+            // 실제 GA4 gtag 함수로 교체
+            window.gtag = window.gtag || function(){dataLayer.push(arguments);};
+            
+            // 디버그 모드 활성화
+            window.gtag('config', 'G-DE2ZNKWV2W', {
+                'debug_mode': true
+            });
+            
+            // 강제 페이지뷰 전송
+            window.gtag('event', 'page_view', {
+                'page_title': document.title,
+                'page_location': window.location.href
+            });
+            
+            console.log('✅ GA4 초기화 및 페이지뷰 전송 완료 (Collector 페이지)');
+        });
         
         // 안전한 gtag 함수 래퍼
         function safeGtag() {
-            if (typeof gtag === 'function') {
-                gtag.apply(this, arguments);
+            if (typeof window.gtag === 'function' && window.gtag.toString().includes('google')) {
+                window.gtag.apply(this, arguments);
                 return true;
             } else {
-                console.warn('gtag 함수가 아직 로드되지 않음, 이벤트를 큐에 저장');
-                // dataLayer에 직접 추가하여 나중에 처리
+                console.warn('GA4 gtag 함수가 아직 로드되지 않음, 이벤트를 큐에 저장');
                 window.dataLayer = window.dataLayer || [];
                 window.dataLayer.push(arguments);
                 return false;
             }
         }
-        
-        // 즉시 테스트 이벤트 전송 (안전한 방식)
-        setTimeout(function() {
-            if (safeGtag('event', 'page_load_test', {
-                'event_category': 'debug',
-                'page_title': document.title,
-                'page_type': 'collector'
-            })) {
-                console.log('✅ Collector 페이지 테스트 이벤트 전송 완료');
-            } else {
-                console.log('⏳ gtag 로딩 대기 중, 이벤트 큐에 저장됨');
-            }
-        }, 2000);
     </script>
     
 
@@ -1134,11 +1148,14 @@
                 console.log('✅ 신규 사용자 추적 준비 완료 (Collector 페이지)');
             }
             
-            // 안전한 gtag 호출
-            if (safeGtag('event', 'user_retention', eventData)) {
+            // GA4 gtag 직접 호출
+            if (typeof window.gtag === 'function' && window.gtag.toString().includes('google')) {
+                window.gtag('event', 'user_retention', eventData);
                 console.log('✅ 사용자 유지율 이벤트 전송 성공 (Collector 페이지)');
             } else {
-                console.log('⏳ 사용자 유지율 이벤트 큐에 저장됨 (Collector 페이지)');
+                console.log('⏳ GA4 gtag 함수 대기 중, 이벤트 큐에 저장됨 (Collector 페이지)');
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push(['event', 'user_retention', eventData]);
             }
             
             localStorage.setItem('lastVisit', currentVisit.toString());
@@ -1156,36 +1173,26 @@
                 'referrer_domain': referrer ? new URL(referrer).hostname : 'direct'
             };
             
-            // 안전한 gtag 호출
-            if (safeGtag('event', 'traffic_source_analysis', eventData)) {
+            // GA4 gtag 직접 호출
+            if (typeof window.gtag === 'function' && window.gtag.toString().includes('google')) {
+                window.gtag('event', 'traffic_source_analysis', eventData);
                 console.log('✅ 트래픽 소스 추적 완료 (Collector 페이지)');
             } else {
-                console.log('⏳ 트래픽 소스 이벤트 큐에 저장됨 (Collector 페이지)');
+                console.log('⏳ GA4 gtag 함수 대기 중, 이벤트 큐에 저장됨 (Collector 페이지)');
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push(['event', 'traffic_source_analysis', eventData]);
             }
         }
         
         // GA4 로딩 완료 후 활성 사용자 추적 함수들 호출
         function initGA4Tracking() {
-            // gtag 함수가 로드되었는지 확인
-            if (typeof gtag === 'function') {
+            // GA4 gtag 함수가 로드되었는지 확인
+            if (typeof window.gtag === 'function' && window.gtag.toString().includes('google')) {
                 trackUserRetention();
                 trackTrafficSource();
                 console.log('✅ GA4 추적 함수들 실행 완료 (Collector 페이지)');
-                
-                // 디버그 모드 활성화
-                safeGtag('config', 'G-DE2ZNKWV2W', {
-                    'debug_mode': true
-                });
-                
-                // 강제 페이지뷰 전송
-                safeGtag('event', 'page_view', {
-                    'page_title': document.title,
-                    'page_location': window.location.href,
-                    'page_type': 'collector'
-                });
-                
             } else {
-                console.log('⏳ gtag 로딩 대기 중... (Collector 페이지)');
+                console.log('⏳ GA4 gtag 로딩 대기 중... (Collector 페이지)');
                 setTimeout(initGA4Tracking, 500);
             }
         }
