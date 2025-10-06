@@ -9,7 +9,7 @@
     // 전역 설정
     const GA_CONFIG = {
         measurementId: window.__GA_MEASUREMENT_ID__ || 'G-DE2ZNKWV2W',
-        debug: false // 배포 시 false로 설정
+        debug: true // 실시간 디버깅을 위해 활성화
     };
 
     /**
@@ -19,20 +19,46 @@
      * @param {object} parameters - 파라미터 객체
      */
     function safeGtag(command, action, parameters) {
+        // GA4 로딩 상태 확인
         if (typeof window.gtag !== 'function') {
-            if (GA_CONFIG.debug) {
-                console.warn('[GA4] gtag function not available');
-            }
-            return;
+            console.warn('[GA4] gtag function not available - GA4 not loaded yet');
+            // GA4가 로드될 때까지 이벤트를 큐에 저장
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push(arguments);
+            return false;
+        }
+
+        // dataLayer 확인
+        if (!window.dataLayer) {
+            console.error('[GA4] dataLayer not available');
+            return false;
         }
 
         try {
+            // 실시간 이벤트 전송
             window.gtag(command, action, parameters);
-            if (GA_CONFIG.debug) {
-                console.log('[GA4] Event sent:', { command, action, parameters });
+            
+            // 강제 전송 보장
+            if (command === 'event') {
+                window.gtag('config', GA_CONFIG.measurementId, {
+                    'transport_type': 'beacon',
+                    'send_page_view': false
+                });
             }
+            
+            if (GA_CONFIG.debug) {
+                console.log('[GA4] ✅ Event sent successfully:', { 
+                    command, 
+                    action, 
+                    parameters,
+                    timestamp: new Date().toISOString(),
+                    measurementId: GA_CONFIG.measurementId
+                });
+            }
+            return true;
         } catch (error) {
-            console.error('[GA4] Error sending event:', error);
+            console.error('[GA4] ❌ Error sending event:', error);
+            return false;
         }
     }
 
@@ -61,12 +87,16 @@
      * @param {HTMLElement} element - 클릭된 요소
      */
     function sendCtaClick(ctaText, ctaLocation, element) {
+        const timestamp = Date.now();
         const eventData = {
             event_category: 'engagement',
             event_label: 'cta_click',
-            cta_text: ctaText,
-            cta_location: ctaLocation,
-            value: 1
+            cta_text: ctaText || 'Unknown CTA',
+            cta_location: ctaLocation || 'unknown_location',
+            value: 1,
+            timestamp: timestamp,
+            page_url: window.location.href,
+            page_title: document.title
         };
 
         // 데이터 속성에서 추가 정보 수집
@@ -86,9 +116,30 @@
             if (element.href) {
                 eventData.link_url = element.href;
             }
+            
+            // 요소 클래스 정보
+            if (element.className) {
+                eventData.element_classes = element.className;
+            }
         }
 
-        safeGtag('event', 'cta_click', eventData);
+        // 실시간 이벤트 전송
+        const success = safeGtag('event', 'cta_click', eventData);
+        
+        if (GA_CONFIG.debug) {
+            console.log('[GA4] 🎯 CTA Click Event:', {
+                success,
+                eventData,
+                element: element?.outerHTML?.substring(0, 100) + '...'
+            });
+        }
+        
+        // 추가적인 실시간 추적 이벤트
+        safeGtag('event', 'user_engagement', {
+            engagement_time_msec: 100
+        });
+        
+        return success;
     }
 
     /**
@@ -110,21 +161,44 @@
                         return;
                     }
 
+                    // 클릭 이벤트 리스너 추가
                     element.addEventListener('click', function(event) {
                         const ctaText = element.textContent.trim() || 
                                        element.getAttribute('aria-label') || 
                                        element.getAttribute('title') || 
+                                       element.getAttribute('data-cta-name') ||
                                        'Unknown CTA';
                         
-                        const ctaLocation = element.closest('[data-section]')?.getAttribute('data-section') || 
+                        const ctaLocation = element.getAttribute('data-cta-location') ||
+                                           element.closest('[data-section]')?.getAttribute('data-section') || 
                                            element.closest('section')?.className || 
+                                           element.closest('.hero-content, .choice-section, .gallery-section')?.className?.split(' ')[0] ||
                                            'unknown_section';
 
-                        sendCtaClick(ctaText, ctaLocation, element);
-                    });
+                        // 즉시 이벤트 전송
+                        const success = sendCtaClick(ctaText, ctaLocation, element);
+                        
+                        if (GA_CONFIG.debug) {
+                            console.log('[GA4] 🔥 Immediate CTA Event Fired:', {
+                                selector,
+                                ctaText,
+                                ctaLocation,
+                                success,
+                                element: element.tagName + (element.className ? '.' + element.className.split(' ')[0] : '')
+                            });
+                        }
+                    }, { capture: true }); // capture 모드로 더 빠른 캐치
 
                     // 바인딩 완료 표시
                     element.setAttribute('data-ga-bound', 'true');
+                    
+                    if (GA_CONFIG.debug) {
+                        console.log(`[GA4] ✅ Bound element:`, {
+                            selector,
+                            element: element.tagName + (element.className ? '.' + element.className.split(' ')[0] : ''),
+                            text: element.textContent.trim().substring(0, 50)
+                        });
+                    }
                 });
 
                 if (GA_CONFIG.debug && elements.length > 0) {

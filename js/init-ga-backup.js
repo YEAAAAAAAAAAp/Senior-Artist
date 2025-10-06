@@ -78,6 +78,11 @@
             console.log(`[GA4] ✅ Bound elements: ${boundElements}/${totalElements}`);
         }, 1000);
     }
+    }
+
+        // 디버그 모드 (개발 중에만 활성화)
+        // window.GA4Utils.setDebugMode(true);
+    }
 
     /**
      * DOM 준비 상태 확인 및 초기화 실행
@@ -98,7 +103,7 @@
         } else {
             // GA4Utils가 아직 로드되지 않은 경우 잠시 대기
             let attempts = 0;
-            const maxAttempts = 20; // 증가된 재시도 횟수
+            const maxAttempts = 10;
             
             const waitForGA4Utils = function() {
                 attempts++;

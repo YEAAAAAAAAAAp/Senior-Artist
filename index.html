@@ -1788,6 +1788,50 @@
     <!-- GA4 Tracking Scripts -->
     <script src="js/ga-lite.js"></script>
     <script src="js/init-ga.js"></script>
+    
+    <!-- 실시간 GA4 테스트 스크립트 -->
+    <script>
+        // 페이지 로드 후 GA4 상태 확인
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                console.log('🔍 GA4 Status Check:');
+                console.log('- gtag available:', typeof window.gtag === 'function');
+                console.log('- dataLayer available:', typeof window.dataLayer !== 'undefined');
+                console.log('- GA4Utils available:', typeof window.GA4Utils !== 'undefined');
+                console.log('- Measurement ID:', window.__GA_MEASUREMENT_ID__);
+                
+                // CTA 요소 확인
+                const ctaElements = document.querySelectorAll('.cta-button, .choice-btn, .btn-primary, .feature-btn, .submit-btn, .modal-btn, .nav-link, .back-btn');
+                console.log(`🎯 Found ${ctaElements.length} potential CTA elements`);
+                
+                // 바인딩된 요소 확인
+                const boundElements = document.querySelectorAll('[data-ga-bound]');
+                console.log(`✅ Bound ${boundElements.length} elements to GA4 tracking`);
+                
+                // 테스트 이벤트 전송
+                if (window.GA4Utils && window.GA4Utils.safeGtag) {
+                    window.GA4Utils.safeGtag('event', 'manual_test', {
+                        event_category: 'test',
+                        event_label: 'console_test',
+                        test_timestamp: Date.now()
+                    });
+                    console.log('🧪 Test event sent');
+                }
+            }, 2000);
+        });
+        
+        // 수동 CTA 테스트 함수
+        window.testCTA = function() {
+            if (window.GA4Utils && window.GA4Utils.sendCtaClick) {
+                window.GA4Utils.sendCtaClick('Manual Test CTA', 'console_test', null);
+                console.log('🧪 Manual CTA test event sent');
+            } else {
+                console.error('❌ GA4Utils not available for manual test');
+            }
+        };
+        
+        console.log('💡 Run testCTA() in console to manually test CTA tracking');
+    </script>
 </body>
 </html>
 
