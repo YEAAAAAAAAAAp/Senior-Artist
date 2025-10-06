@@ -234,19 +234,20 @@
         }
         
         .price-preview {
-            background: linear-gradient(135deg, #8b7f73, #ac9e8f);
-            color: white;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            color: #1a1a1a;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
+            border: 1px solid #cbd5e1;
         }
         
         .cta-button {
-            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
-            color: #ffffff;
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            color: #1a1a1a;
             padding: 18px 36px;
-            border: none;
+            border: 2px solid #cbd5e1;
             border-radius: 50px;
             font-size: 16px;
             font-weight: 600;
@@ -351,19 +352,19 @@
         }
         
         .benefit-tag {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
-            color: white;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
+            color: #1a1a1a;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 500;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(0, 0, 0, 0.2);
         }
         
         .feature-btn {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%);
+            color: #1a1a1a;
+            border: 1px solid rgba(0, 0, 0, 0.2);
             padding: 12px 24px;
             border-radius: 8px;
             font-weight: 600;
@@ -373,10 +374,10 @@
         }
         
         .feature-btn:hover {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.15) 100%);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border-color: rgba(0, 0, 0, 0.3);
         }
         
         .artwork-card {
@@ -410,8 +411,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
-            color: white;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
+            color: #1a1a1a;
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -431,7 +432,7 @@
             font-size: 18px;
             font-weight: 700;
             margin-bottom: 12px;
-            color: #ffffff;
+            color: #1a1a1a;
         }
         
         .story-overlay p {
@@ -559,10 +560,10 @@
         
         .submit-btn {
             width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #1a1a1a;
             padding: 14px;
-            border: none;
+            border: 2px solid #cbd5e1;
             border-radius: 6px;
             font-size: 1rem;
             font-weight: 600;
@@ -724,8 +725,8 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(45deg, rgba(139, 92, 246, 0.95), rgba(6, 182, 212, 0.95));
-            color: white;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
+            color: #1a1a1a;
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -733,6 +734,7 @@
             opacity: 0;
             transition: opacity 0.3s ease;
             border-radius: 12px;
+            border: 2px solid #e2e8f0;
         }
         
         .artwork-sample:hover .artwork-hover-overlay {
@@ -999,14 +1001,19 @@
                 return;
             }
             
-            // GA4 이벤트 추적 - 표준화된 trackCTA 함수 사용
-            gtag('event', 'collector_interest_submitted', {'page': 'collector', 'interests': interests.join(', ')});
+            // GA4 전환 이벤트 추적 - 콜렉터 관심 등록 완료
+            gtag('event', 'collector_interest_completed', {
+                'page': 'collector', 
+                'interests': interests.join(', '),
+                'event_category': 'conversion',
+                'conversion_type': 'collector_registration'
+            });
             
             // 추가 상세 이벤트
             gtag('event', 'collector_conversion', {
                 'event_category': 'conversion',
                 'event_label': interests.join(','),
-                'interests': interests,
+                'interests_count': interests.length,
                 'budget_range': data.budget || 'not_specified',
                 'user_type': 'collector'
             });
