@@ -26,22 +26,35 @@
             'allow_google_signals': true
         });
         
-        // GA4 로딩 상태 디버깅
+        // GA4 로딩 상태 디버깅 및 안전한 초기화
         console.log('🔍 GA4 초기화 시작 (Collector 페이지)');
         console.log('gtag 함수:', typeof gtag);
         console.log('dataLayer:', window.dataLayer);
         
-        // 즉시 테스트 이벤트 전송
-        setTimeout(function() {
+        // 안전한 gtag 함수 래퍼
+        function safeGtag() {
             if (typeof gtag === 'function') {
-                gtag('event', 'page_load_test', {
-                    'event_category': 'debug',
-                    'page_title': document.title,
-                    'page_type': 'collector'
-                });
+                gtag.apply(this, arguments);
+                return true;
+            } else {
+                console.warn('gtag 함수가 아직 로드되지 않음, 이벤트를 큐에 저장');
+                // dataLayer에 직접 추가하여 나중에 처리
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push(arguments);
+                return false;
+            }
+        }
+        
+        // 즉시 테스트 이벤트 전송 (안전한 방식)
+        setTimeout(function() {
+            if (safeGtag('event', 'page_load_test', {
+                'event_category': 'debug',
+                'page_title': document.title,
+                'page_type': 'collector'
+            })) {
                 console.log('✅ Collector 페이지 테스트 이벤트 전송 완료');
             } else {
-                console.error('❌ gtag 함수 로드 실패 (Collector 페이지)');
+                console.log('⏳ gtag 로딩 대기 중, 이벤트 큐에 저장됨');
             }
         }, 2000);
     </script>
@@ -831,7 +844,7 @@
                     <li>안전한 거래 보장</li>
                 </ul>
                 
-                <button class="cta-button" onclick="gtag('event', 'collector_interest_click', {'page': 'collector', 'location': 'hero'}); openInterestForm()">관심 등록하기</button>
+                <button class="cta-button" onclick="safeGtag('event', 'collector_interest_click', {'page': 'collector', 'location': 'hero'}); openInterestForm()">관심 등록하기</button>
             </div>
         </div>
         
@@ -894,7 +907,7 @@
     <!-- Interest Form Overlay -->
     <div class="interest-overlay" id="interestOverlay">
         <div class="interest-form">
-            <button class="close-btn" onclick="gtag('event', 'collector_form_close', {'page': 'collector'}); closeInterestForm()">&times;</button>
+            <button class="close-btn" onclick="safeGtag('event', 'collector_form_close', {'page': 'collector'}); closeInterestForm()">&times;</button>
             <div class="form-header">
                 <h3>콜렉터 관심 등록</h3>
                 <p>맞춤 작품을 추천받으세요</p>
@@ -959,14 +972,12 @@
         function openInterestForm() {
             document.getElementById('interestOverlay').style.display = 'flex';
             
-            // GA4 이벤트 추적
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'interest_form_opened', {
-                    'event_category': 'engagement',
-                    'event_label': 'collector_interest',
-                    'value': 1
-                });
-            }
+            // GA4 이벤트 추적 (안전한 방식)
+            safeGtag('event', 'interest_form_opened', {
+                'event_category': 'engagement',
+                'event_label': 'collector_interest',
+                'value': 1
+            });
         }
         
         function closeInterestForm() {
@@ -1024,8 +1035,8 @@
                 return;
             }
             
-            // GA4 전환 이벤트 추적 - 콜렉터 관심 등록 완료
-            gtag('event', 'collector_interest_completed', {
+            // GA4 전환 이벤트 추적 - 콜렉터 관심 등록 완료 (안전한 방식)
+            safeGtag('event', 'collector_interest_completed', {
                 'page': 'collector', 
                 'interests': interests.join(', '),
                 'event_category': 'conversion',
@@ -1033,7 +1044,7 @@
             });
             
             // 추가 상세 이벤트
-            gtag('event', 'collector_conversion', {
+            safeGtag('event', 'collector_conversion', {
                 'event_category': 'conversion',
                 'event_label': interests.join(','),
                 'interests_count': interests.length,
@@ -1084,8 +1095,8 @@
             
             if (scrollPercent > maxScrollDepth) {
                 maxScrollDepth = scrollPercent;
-                if (typeof gtag !== 'undefined' && (maxScrollDepth === 25 || maxScrollDepth === 50 || maxScrollDepth === 75 || maxScrollDepth === 100)) {
-                    gtag('event', 'scroll_depth', {
+                if (maxScrollDepth === 25 || maxScrollDepth === 50 || maxScrollDepth === 75 || maxScrollDepth === 100) {
+                    safeGtag('event', 'scroll_depth', {
                         'scroll_depth': maxScrollDepth + '%',
                         'page_title': document.title
                     });
@@ -1093,72 +1104,86 @@
             }
         });
 
-        // CTA 클릭 추적 함수
+        // CTA 클릭 추적 함수 (안전한 방식)
         function trackCTAClick(feature_name, user_type, category) {
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'cta_click', {
-                    'feature_name': feature_name,
-                    'user_type': user_type,
-                    'category': category,
-                    'page_title': document.title,
-                    'timestamp': new Date().toISOString()
-                });
-            }
+            safeGtag('event', 'cta_click', {
+                'feature_name': feature_name,
+                'user_type': user_type,
+                'category': category,
+                'page_title': document.title,
+                'timestamp': new Date().toISOString()
+            });
         }
         
-        // 활성 사용자 추적 함수들
+        // 활성 사용자 추적 함수들 (안전한 방식)
         function trackUserRetention() {
-            if (typeof gtag !== 'function') {
-                console.error('gtag 함수가 로드되지 않았습니다. (Collector 페이지)');
-                return;
-            }
-            
             const currentVisit = Date.now();
             const lastVisit = localStorage.getItem('lastVisit');
             
+            let eventData = {
+                'event_category': 'retention'
+            };
+            
             if (lastVisit) {
                 const daysSinceLastVisit = Math.floor((currentVisit - parseInt(lastVisit)) / (1000 * 60 * 60 * 24));
-                gtag('event', 'user_retention', {
-                    'event_category': 'retention',
-                    'days_since_last_visit': daysSinceLastVisit,
-                    'visitor_type': 'returning'
-                });
-                console.log('✅ 재방문 사용자 추적 완료 (Collector 페이지)');
+                eventData.days_since_last_visit = daysSinceLastVisit;
+                eventData.visitor_type = 'returning';
+                console.log('✅ 재방문 사용자 추적 준비 완료 (Collector 페이지)');
             } else {
-                gtag('event', 'user_retention', {
-                    'event_category': 'retention',
-                    'visitor_type': 'new'
-                });
-                console.log('✅ 신규 사용자 추적 완료 (Collector 페이지)');
+                eventData.visitor_type = 'new';
+                console.log('✅ 신규 사용자 추적 준비 완료 (Collector 페이지)');
             }
+            
+            // 안전한 gtag 호출
+            if (safeGtag('event', 'user_retention', eventData)) {
+                console.log('✅ 사용자 유지율 이벤트 전송 성공 (Collector 페이지)');
+            } else {
+                console.log('⏳ 사용자 유지율 이벤트 큐에 저장됨 (Collector 페이지)');
+            }
+            
             localStorage.setItem('lastVisit', currentVisit.toString());
         }
         
         function trackTrafficSource() {
-            if (typeof gtag !== 'function') {
-                console.error('gtag 함수가 로드되지 않았습니다. (Collector 페이지)');
-                return;
-            }
-            
             const urlParams = new URLSearchParams(window.location.search);
             const referrer = document.referrer;
             
-            gtag('event', 'traffic_source_analysis', {
+            const eventData = {
                 'event_category': 'acquisition',
                 'utm_source': urlParams.get('utm_source') || 'none',
                 'utm_medium': urlParams.get('utm_medium') || 'none',
                 'utm_campaign': urlParams.get('utm_campaign') || 'none',
                 'referrer_domain': referrer ? new URL(referrer).hostname : 'direct'
-            });
-            console.log('✅ 트래픽 소스 추적 완료 (Collector 페이지)');
+            };
+            
+            // 안전한 gtag 호출
+            if (safeGtag('event', 'traffic_source_analysis', eventData)) {
+                console.log('✅ 트래픽 소스 추적 완료 (Collector 페이지)');
+            } else {
+                console.log('⏳ 트래픽 소스 이벤트 큐에 저장됨 (Collector 페이지)');
+            }
         }
         
         // GA4 로딩 완료 후 활성 사용자 추적 함수들 호출
         function initGA4Tracking() {
+            // gtag 함수가 로드되었는지 확인
             if (typeof gtag === 'function') {
                 trackUserRetention();
                 trackTrafficSource();
                 console.log('✅ GA4 추적 함수들 실행 완료 (Collector 페이지)');
+                
+                // 디버그 모드 활성화
+                safeGtag('config', 'G-DE2ZNKWV2W', {
+                    'debug_mode': true
+                });
+                
+                // 강제 페이지뷰 전송
+                safeGtag('event', 'page_view', {
+                    'page_title': document.title,
+                    'page_location': window.location.href,
+                    'page_type': 'collector'
+                });
+                
             } else {
                 console.log('⏳ gtag 로딩 대기 중... (Collector 페이지)');
                 setTimeout(initGA4Tracking, 500);
@@ -1167,7 +1192,13 @@
         
         // 페이지 로드 완료 후 GA4 추적 시작
         window.addEventListener('load', function() {
-            setTimeout(initGA4Tracking, 1000);
+            // 즉시 실행 (지연 없이)
+            initGA4Tracking();
+        });
+        
+        // DOMContentLoaded 이벤트에서도 실행 (더 빠른 실행)
+        document.addEventListener('DOMContentLoaded', function() {
+            initGA4Tracking();
         });
 
     </script>

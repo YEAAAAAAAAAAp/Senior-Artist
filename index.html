@@ -22,21 +22,34 @@
             'allow_google_signals': true
         });
         
-        // GA4 로딩 상태 디버깅
+        // GA4 로딩 상태 디버깅 및 안전한 초기화
         console.log('🔍 GA4 초기화 시작');
         console.log('gtag 함수:', typeof gtag);
         console.log('dataLayer:', window.dataLayer);
         
-        // 즉시 테스트 이벤트 전송
-        setTimeout(function() {
+        // 안전한 gtag 함수 래퍼
+        function safeGtag() {
             if (typeof gtag === 'function') {
-                gtag('event', 'page_load_test', {
-                    'event_category': 'debug',
-                    'page_title': document.title
-                });
+                gtag.apply(this, arguments);
+                return true;
+            } else {
+                console.warn('gtag 함수가 아직 로드되지 않음, 이벤트를 큐에 저장');
+                // dataLayer에 직접 추가하여 나중에 처리
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push(arguments);
+                return false;
+            }
+        }
+        
+        // 즉시 테스트 이벤트 전송 (안전한 방식)
+        setTimeout(function() {
+            if (safeGtag('event', 'page_load_test', {
+                'event_category': 'debug',
+                'page_title': document.title
+            })) {
                 console.log('✅ 테스트 이벤트 전송 완료');
             } else {
-                console.error('❌ gtag 함수 로드 실패');
+                console.log('⏳ gtag 로딩 대기 중, 이벤트 큐에 저장됨');
             }
         }, 2000);
     </script>
@@ -1108,52 +1121,54 @@
             maxScrollDepth: 0
         };
         
-        // 사용자 유지율 측정
+        // 사용자 유지율 측정 (안전한 방식)
         function trackUserRetention() {
-            if (typeof gtag !== 'function') {
-                console.error('gtag 함수가 로드되지 않았습니다.');
-                return;
-            }
-            
             const currentVisit = Date.now();
             const lastVisit = localStorage.getItem('lastVisit');
             
+            let eventData = {
+                'event_category': 'retention'
+            };
+            
             if (lastVisit) {
                 const daysSinceLastVisit = Math.floor((currentVisit - parseInt(lastVisit)) / (1000 * 60 * 60 * 24));
-                gtag('event', 'user_retention', {
-                    'event_category': 'retention',
-                    'days_since_last_visit': daysSinceLastVisit,
-                    'visitor_type': 'returning'
-                });
-                console.log('✅ 재방문 사용자 추적 완료');
+                eventData.days_since_last_visit = daysSinceLastVisit;
+                eventData.visitor_type = 'returning';
+                console.log('✅ 재방문 사용자 추적 준비 완료');
             } else {
-                gtag('event', 'user_retention', {
-                    'event_category': 'retention',
-                    'visitor_type': 'new'
-                });
-                console.log('✅ 신규 사용자 추적 완료');
+                eventData.visitor_type = 'new';
+                console.log('✅ 신규 사용자 추적 준비 완료');
             }
+            
+            // 안전한 gtag 호출
+            if (safeGtag('event', 'user_retention', eventData)) {
+                console.log('✅ 사용자 유지율 이벤트 전송 성공');
+            } else {
+                console.log('⏳ 사용자 유지율 이벤트 큐에 저장됨');
+            }
+            
             localStorage.setItem('lastVisit', currentVisit.toString());
         }
         
-        // 트래픽 소스 분석
+        // 트래픽 소스 분석 (안전한 방식)
         function trackTrafficSource() {
-            if (typeof gtag !== 'function') {
-                console.error('gtag 함수가 로드되지 않았습니다.');
-                return;
-            }
-            
             const urlParams = new URLSearchParams(window.location.search);
             const referrer = document.referrer;
             
-            gtag('event', 'traffic_source_analysis', {
+            const eventData = {
                 'event_category': 'acquisition',
                 'utm_source': urlParams.get('utm_source') || 'none',
                 'utm_medium': urlParams.get('utm_medium') || 'none',
                 'utm_campaign': urlParams.get('utm_campaign') || 'none',
                 'referrer_domain': referrer ? new URL(referrer).hostname : 'direct'
-            });
-            console.log('✅ 트래픽 소스 추적 완료');
+            };
+            
+            // 안전한 gtag 호출
+            if (safeGtag('event', 'traffic_source_analysis', eventData)) {
+                console.log('✅ 트래픽 소스 추적 완료');
+            } else {
+                console.log('⏳ 트래픽 소스 이벤트 큐에 저장됨');
+            }
         }
         
         // About Modal Functions
@@ -1205,11 +1220,11 @@
         <nav class="nav">
             <div class="logo">Artisty</div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="artist.html" class="nav-link" onclick="gtag('event', 'nav_artist_click', {'page': 'main'});">예술가용</a></li>
-                <li><a href="collector.html" class="nav-link" onclick="gtag('event', 'nav_collector_click', {'page': 'main'});">콜렉터용</a></li>
-                <li><a href="#" class="nav-link" onclick="gtag('event', 'nav_about_click', {'page': 'main'}); openAboutModal(); return false;">소개</a></li>
+                <li><a href="artist.html" class="nav-link" onclick="safeGtag('event', 'nav_artist_click', {'page': 'main'});">예술가용</a></li>
+                <li><a href="collector.html" class="nav-link" onclick="safeGtag('event', 'nav_collector_click', {'page': 'main'});">콜렉터용</a></li>
+                <li><a href="#" class="nav-link" onclick="safeGtag('event', 'nav_about_click', {'page': 'main'}); openAboutModal(); return false;">소개</a></li>
             </ul>
-            <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기" onclick="gtag('event', 'mobile_menu_toggle', {'page': 'main'});">☰</button>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기" onclick="safeGtag('event', 'mobile_menu_toggle', {'page': 'main'});">☰</button>
         </nav>
     </header>
 
@@ -1230,14 +1245,14 @@
                     <div class="choice-icon">🎨</div>
                     <h3>예술가</h3>
                     <p>3가지 핵심 기능으로 작품 활동을<br>체계적으로 관리하고 성장시키세요</p>
-                    <a href="artist.html" class="choice-btn" onclick="gtag('event', 'artist_start_click', {'page': 'main', 'location': 'hero'});">예술가로 시작하기</a>
+                    <a href="artist.html" class="choice-btn" onclick="safeGtag('event', 'artist_start_click', {'page': 'main', 'location': 'hero'});">예술가로 시작하기</a>
                 </div>
                 
                 <div class="choice-card">
                     <div class="choice-icon">👁️</div>
                     <h3>콜렉터</h3>
                     <p>스토리텔링 기반으로 작품을 탐색하고<br>안전하게 소장할 수 있어요</p>
-                    <a href="collector.html" class="choice-btn" onclick="gtag('event', 'collector_start_click', {'page': 'main', 'location': 'hero'});">콜렉터로 시작하기</a>
+                    <a href="collector.html" class="choice-btn" onclick="safeGtag('event', 'collector_start_click', {'page': 'main', 'location': 'hero'});">콜렉터로 시작하기</a>
                 </div>
             </div>
         </div>
@@ -1302,7 +1317,7 @@
             </div>
             
             <div class="gallery-cta">
-                <a href="collector.html" class="btn btn-primary" onclick="gtag('event', 'gallery_view_more_click', {'page': 'main', 'location': 'gallery'});">
+                <a href="collector.html" class="btn btn-primary" onclick="safeGtag('event', 'gallery_view_more_click', {'page': 'main', 'location': 'gallery'});">
                     더 많은 작품 보기 →
                 </a>
             </div>
@@ -1312,7 +1327,7 @@
     <!-- CTA Form Overlay -->
     <div class="cta-overlay" id="ctaOverlay">
         <div class="cta-form">
-            <button class="close-btn" onclick="gtag('event', 'contact_form_close', {'page': 'main'}); closeForm();">&times;</button>
+            <button class="close-btn" onclick="safeGtag('event', 'contact_form_close', {'page': 'main'}); closeForm();">&times;</button>
             <div class="form-header">
                 <h2>관심 등록하기</h2>
                 <p>맞춤 정보를 받아보세요</p>
@@ -1343,7 +1358,7 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="submit-btn" onclick="gtag('event', 'contact_submit', {'page': 'main'});">등록하기</button>
+                <button type="submit" class="submit-btn">등록하기</button>
             </form>
         </div>
     </div>
@@ -1410,11 +1425,12 @@
                 return;
             }
             
-            // Track form submission
-            gtag('event', 'form_submit', {
+            // Track form submission (안전한 방식)
+            safeGtag('event', 'form_submit', {
                 'event_category': 'engagement',
                 'event_label': 'contact_form',
-                'user_type': data.userType
+                'user_type': data.userType,
+                'page': 'main'
             });
             
             // Success message and close form
@@ -1444,7 +1460,7 @@
             formFields.forEach(field => {
                 // 필드 포커스 추적
                 field.addEventListener('focus', function() {
-                    gtag('event', 'form_field_focus', {
+                    safeGtag('event', 'form_field_focus', {
                         'event_category': 'form_interaction',
                         'event_label': this.name || this.id,
                         'field_type': this.type
@@ -1454,7 +1470,7 @@
                 // 필드 완료 추적
                 field.addEventListener('blur', function() {
                     if (this.value.trim()) {
-                        gtag('event', 'form_field_complete', {
+                        safeGtag('event', 'form_field_complete', {
                             'event_category': 'form_interaction',
                             'event_label': this.name || this.id,
                             'field_type': this.type
@@ -1466,7 +1482,7 @@
             // 라디오 버튼 선택 추적
             document.querySelectorAll('input[name="userType"]').forEach(radio => {
                 radio.addEventListener('change', function() {
-                    gtag('event', 'user_type_selection', {
+                    safeGtag('event', 'user_type_selection', {
                         'event_category': 'form_interaction',
                         'event_label': this.value,
                         'selection_type': 'user_preference'
@@ -1481,10 +1497,24 @@
         
         // GA4 로딩 완료 후 활성 사용자 추적 함수들 호출
         function initGA4Tracking() {
+            // gtag 함수가 로드되었는지 확인
             if (typeof gtag === 'function') {
                 trackUserRetention();
                 trackTrafficSource();
                 console.log('✅ GA4 추적 함수들 실행 완료');
+                
+                // 디버그 모드 활성화
+                safeGtag('config', 'G-DE2ZNKWV2W', {
+                    'debug_mode': true
+                });
+                
+                // 강제 페이지뷰 전송
+                safeGtag('event', 'page_view', {
+                    'page_title': document.title,
+                    'page_location': window.location.href,
+                    'page_type': 'main'
+                });
+                
             } else {
                 console.log('⏳ gtag 로딩 대기 중...');
                 setTimeout(initGA4Tracking, 500);
@@ -1493,7 +1523,13 @@
         
         // 페이지 로드 완료 후 GA4 추적 시작
         window.addEventListener('load', function() {
-            setTimeout(initGA4Tracking, 1000);
+            // 즉시 실행 (지연 없이)
+            initGA4Tracking();
+        });
+        
+        // DOMContentLoaded 이벤트에서도 실행 (더 빠른 실행)
+        document.addEventListener('DOMContentLoaded', function() {
+            initGA4Tracking();
         });
         
         // 모바일 메뉴 토글
@@ -1523,7 +1559,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>🎨 Artisty 플랫폼 소개</h2>
-                <span class="close" onclick="gtag('event', 'about_modal_close', {'page': 'main'}); closeAboutModal();">&times;</span>
+                <span class="close" onclick="safeGtag('event', 'about_modal_close', {'page': 'main'}); closeAboutModal();">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="service-intro">
@@ -1565,8 +1601,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn primary" onclick="gtag('event', 'modal_artist_start', {'page': 'main', 'location': 'about_modal'}); window.location.href='artist.html';">예술가로 시작하기</button>
-                <button class="modal-btn secondary" onclick="gtag('event', 'modal_collector_start', {'page': 'main', 'location': 'about_modal'}); window.location.href='collector.html';">콜렉터로 시작하기</button>
+                <button class="modal-btn primary" onclick="safeGtag('event', 'modal_artist_start', {'page': 'main', 'location': 'about_modal'}); window.location.href='artist.html';">예술가로 시작하기</button>
+                <button class="modal-btn secondary" onclick="safeGtag('event', 'modal_collector_start', {'page': 'main', 'location': 'about_modal'}); window.location.href='collector.html';">콜렉터로 시작하기</button>
             </div>
         </div>
     </div>
