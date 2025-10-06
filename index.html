@@ -16,7 +16,11 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'G-DE2ZNKWV2W');
+        gtag('config', 'G-DE2ZNKWV2W', {
+            'send_page_view': true,
+            'allow_enhanced_conversions': true,
+            'allow_google_signals': true
+        });
     </script>
     
     <style>
@@ -1443,6 +1447,10 @@
         
         // 폼 추적 초기화
         initFormTracking();
+        
+        // 활성 사용자 추적 함수들 호출
+        trackUserRetention();
+        trackTrafficSource();
         
         // 모바일 메뉴 토글
         const mobileToggle = document.getElementById('mobileToggle');

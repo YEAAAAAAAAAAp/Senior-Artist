@@ -20,7 +20,11 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'G-DE2ZNKWV2W');
+        gtag('config', 'G-DE2ZNKWV2W', {
+            'send_page_view': true,
+            'allow_enhanced_conversions': true,
+            'allow_google_signals': true
+        });
     </script>
     
 
@@ -1082,6 +1086,44 @@
                 });
             }
         }
+        
+        // 활성 사용자 추적 함수들
+        function trackUserRetention() {
+            const currentVisit = Date.now();
+            const lastVisit = localStorage.getItem('lastVisit');
+            
+            if (lastVisit) {
+                const daysSinceLastVisit = Math.floor((currentVisit - parseInt(lastVisit)) / (1000 * 60 * 60 * 24));
+                gtag('event', 'user_retention', {
+                    'event_category': 'retention',
+                    'days_since_last_visit': daysSinceLastVisit,
+                    'visitor_type': 'returning'
+                });
+            } else {
+                gtag('event', 'user_retention', {
+                    'event_category': 'retention',
+                    'visitor_type': 'new'
+                });
+            }
+            localStorage.setItem('lastVisit', currentVisit.toString());
+        }
+        
+        function trackTrafficSource() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const referrer = document.referrer;
+            
+            gtag('event', 'traffic_source_analysis', {
+                'event_category': 'acquisition',
+                'utm_source': urlParams.get('utm_source') || 'none',
+                'utm_medium': urlParams.get('utm_medium') || 'none',
+                'utm_campaign': urlParams.get('utm_campaign') || 'none',
+                'referrer_domain': referrer ? new URL(referrer).hostname : 'direct'
+            });
+        }
+        
+        // 페이지 로드 시 활성 사용자 추적 함수들 호출
+        trackUserRetention();
+        trackTrafficSource();
 
     </script>
 </body>
