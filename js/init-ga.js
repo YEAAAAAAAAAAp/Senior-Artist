@@ -48,6 +48,13 @@
             return;
         }
 
+        // 기본적인 DOM 요소 확인
+        if (!document.body) {
+            console.warn('[GA4] DOM not ready, retrying...');
+            setTimeout(initializeGA4, 100);
+            return;
+        }
+
         // GA4Utils가 로드되었는지 확인
         if (typeof window.GA4Utils === 'undefined') {
             console.warn(`[GA4] GA4Utils not loaded yet (attempt ${initRetryCount}), retrying...`);
