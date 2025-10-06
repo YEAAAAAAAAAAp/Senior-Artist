@@ -19,15 +19,9 @@
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
-        window.gtag = gtag; // 명시적으로 전역으로 설정
         gtag('js', new Date());
         gtag('config', 'G-DE2ZNKWV2W');
-        
-        // GA4 측정 ID 전역 변수로 설정
-        window.__GA_MEASUREMENT_ID__ = 'G-DE2ZNKWV2W';
-        
-        console.log('[GA4] ✅ GA4 initialized with direct implementation');
-        console.log('[GA4] 📊 Page view sent for:', window.location.href);
+    </script>
     </script>
     
     <style>
@@ -700,12 +694,12 @@
         <nav class="nav">
             <div class="logo">Artisty</div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="artist.html" class="nav-link" data-cta-type="navigation" data-cta-name="nav_artist">예술가용</a></li>
-                <li><a href="collector.html" class="nav-link" data-cta-type="navigation" data-cta-name="nav_collector">콜렉터용</a></li>
-                <li><a href="index.html#about" class="nav-link" data-cta-type="navigation" data-cta-name="nav_about">소개</a></li>
+                <li><a href="artist.html" class="nav-link" onclick="gtag('event', 'cta_click', {'cta_name': 'nav_artist', 'cta_type': 'navigation', 'cta_location': 'header'});">예술가용</a></li>
+                <li><a href="collector.html" class="nav-link" onclick="gtag('event', 'cta_click', {'cta_name': 'nav_collector', 'cta_type': 'navigation', 'cta_location': 'header'});">콜렉터용</a></li>
+                <li><a href="index.html#about" class="nav-link" onclick="gtag('event', 'cta_click', {'cta_name': 'nav_about', 'cta_type': 'navigation', 'cta_location': 'header'});">소개</a></li>
             </ul>
-            <a href="index.html" class="back-btn" data-cta-type="navigation" data-cta-name="back_to_main">← 메인으로</a>
-            <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기" data-cta-type="navigation" data-cta-name="mobile_menu_toggle" data-cta-location="header">☰</button>
+            <a href="index.html" class="back-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'back_to_main', 'cta_type': 'navigation', 'cta_location': 'header'});">← 메인으로</a>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기" onclick="gtag('event', 'cta_click', {'cta_name': 'mobile_menu_toggle', 'cta_type': 'navigation', 'cta_location': 'header'});">☰</button>
         </nav>
     </header>
 
@@ -755,7 +749,7 @@
                     <li>콜렉터와 직접 소통</li>
                 </ul>
                 
-                <button class="cta-button" data-cta-type="primary" data-cta-name="portfolio_create" data-action="openRegistration">포트폴리오 만들기</button>
+                <button class="cta-button" onclick="gtag('event', 'cta_click', {'cta_name': 'portfolio_create', 'cta_type': 'primary', 'cta_location': 'main_section'}); openPreOrderModal();">포트폴리오 만들기</button>
             </div>
         </div>
         
@@ -778,7 +772,7 @@
                             <span class="benefit-tag">스토리텔링</span>
                             <span class="benefit-tag">SEO 최적화</span>
                         </div>
-                        <button class="feature-btn" data-cta-type="secondary" data-cta-name="portfolio_feature_btn">포트폴리오 만들기</button>
+                        <button class="feature-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'portfolio_feature_btn', 'cta_type': 'secondary', 'cta_location': 'feature_section'}); openComingSoonModal('포트폴리오 최적화');">포트폴리오 만들기</button>
                     </div>
                 </div>
 
@@ -793,7 +787,7 @@
                             <span class="benefit-tag">견적 시스템</span>
                             <span class="benefit-tag">결제·배송 자동화</span>
                         </div>
-                        <button class="feature-btn" data-cta-type="secondary" data-cta-name="transaction_feature_btn">거래 관리 설정</button>
+                        <button class="feature-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'transaction_feature_btn', 'cta_type': 'secondary', 'cta_location': 'feature_section'}); openComingSoonModal('거래 관리');">거래 관리 설정</button>
                     </div>
                 </div>
 
@@ -808,162 +802,175 @@
                             <span class="benefit-tag">취향 분석</span>
                             <span class="benefit-tag">맞춤 추천·소통</span>
                         </div>
-                        <button class="feature-btn" data-cta-type="secondary" data-cta-name="customer_feature_btn">고객 관리 시작</button>
+                        <button class="feature-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'customer_feature_btn', 'cta_type': 'secondary', 'cta_location': 'feature_section'}); openComingSoonModal('고객 관계 관리');">고객 관리 시작</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Registration Form Overlay -->
-    <div class="registration-overlay" id="registrationOverlay">
-        <div class="registration-form">
-            <button class="close-btn" data-cta-type="action" data-cta-name="registration_close" data-cta-location="registration_modal" data-action="closeRegistration">&times;</button>
-            <div class="form-header">
-                <h3>작가 등록하기</h3>
-                <p>예술가님 환영합니다</p>
+    <!-- Pre-Order Modal -->
+    <div id="preOrderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>사전예약하기</h2>
+                <span class="close" onclick="gtag('event', 'cta_click', {'cta_name': 'preorder_modal_close', 'cta_type': 'action', 'cta_location': 'preorder_modal'}); closePreOrderModal();">&times;</span>
             </div>
-            
-            <form id="artistForm">
-                <div class="form-group">
-                    <label for="artistName">이름 *</label>
-                    <input type="text" id="artistName" name="artistName" class="form-control" required>
+            <div class="modal-body">
+                <p>Artisty 플랫폼이 곧 오픈됩니다! 사전예약을 통해 런칭 소식을 가장 먼저 받아보세요.</p>
+                <form id="preOrderForm">
+                    <div class="form-group">
+                        <label for="preOrderName">이름</label>
+                        <input type="text" id="preOrderName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="preOrderEmail">이메일</label>
+                        <input type="email" id="preOrderEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userType">관심 분야</label>
+                        <select id="userType" name="userType" required>
+                            <option value="">선택해주세요</option>
+                            <option value="artist" selected>예술가</option>
+                            <option value="collector">콜렉터</option>
+                            <option value="both">둘 다</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'preorder_submit', 'cta_type': 'primary', 'cta_location': 'preorder_modal'});">사전예약하기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coming Soon Modal -->
+    <div id="comingSoonModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><span id="comingSoonFeature">기능</span> 준비 중</h2>
+                <span class="close" onclick="gtag('event', 'cta_click', {'cta_name': 'coming_soon_modal_close', 'cta_type': 'action', 'cta_location': 'coming_soon_modal'}); closeComingSoonModal();">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; padding: 20px 0;">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">🚀</div>
+                    <p style="font-size: 18px; margin-bottom: 16px; font-weight: 600; color: #2c3e50;">
+                        <span id="comingSoonFeature">이 기능</span>은 현재 개발 중입니다.
+                    </p>
+                    <p style="font-size: 16px; color: #64748b; line-height: 1.6; margin-bottom: 24px;">
+                        더 나은 서비스를 제공하기 위해 열심히 준비하고 있습니다.<br>
+                        곧 만나볼 수 있도록 최선을 다하겠습니다!
+                    </p>
+                    <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                        <p style="font-size: 14px; color: #475569; margin: 0;">
+                            💡 <strong>Tip:</strong> 사전예약을 통해 새로운 기능 업데이트 소식을 가장 먼저 받아보세요!
+                        </p>
+                    </div>
+                    <button class="submit-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'coming_soon_preorder', 'cta_type': 'primary', 'cta_location': 'coming_soon_modal'}); closeComingSoonModal(); openPreOrderModal();" style="margin-top: 10px;">
+                        사전예약하기
+                    </button>
                 </div>
-                
-                <div class="form-group">
-                    <label for="artistEmail">이메일 *</label>
-                    <input type="email" id="artistEmail" name="artistEmail" class="form-control" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="artistAge">나이 *</label>
-                    <input type="number" id="artistAge" name="artistAge" class="form-control" min="50" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="artStyle">주요 예술 분야 *</label>
-                    <select id="artStyle" name="artStyle" class="form-control" required>
-                        <option value="">선택해주세요</option>
-                        <option value="painting">회화</option>
-                        <option value="sculpture">조각</option>
-                        <option value="photography">사진</option>
-                        <option value="ceramics">도예</option>
-                        <option value="calligraphy">서예</option>
-                        <option value="other">기타</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="experience">예술 경력 (년) *</label>
-                    <input type="number" id="experience" name="experience" class="form-control" min="1" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="artistMessage">자기소개 및 작품 설명</label>
-                    <textarea id="artistMessage" name="artistMessage" class="form-control" rows="4" placeholder="당신의 예술 여정과 작품에 대해 간단히 소개해주세요"></textarea>
-                </div>
-                
-                <button type="submit" class="submit-btn" data-cta-type="primary" data-cta-name="artist_registration_submit">등록하기</button>
-            </form>
+            </div>
         </div>
     </div>
 
     <script>
-        function openRegistration() {
-            document.getElementById('registrationOverlay').style.display = 'flex';
+        // Pre-Order Modal Functions
+        function openPreOrderModal() {
+            const modal = document.getElementById('preOrderModal');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
             
-            // GTM 이벤트 추적
-            if (window.dataLayer) {
-                window.dataLayer.push({
-                    event: 'registration_modal_opened',
-                    timestamp: Date.now(),
-                    event_category: 'engagement',
-                    event_label: 'artist_registration',
-                    value: 1
-                });
+            document.addEventListener('keydown', handlePreOrderEscKey);
+            modal.addEventListener('click', handlePreOrderOutsideClick);
+        }
+
+        function closePreOrderModal() {
+            const modal = document.getElementById('preOrderModal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+            
+            document.removeEventListener('keydown', handlePreOrderEscKey);
+            modal.removeEventListener('click', handlePreOrderOutsideClick);
+        }
+
+        function handlePreOrderEscKey(event) {
+            if (event.key === 'Escape') {
+                closePreOrderModal();
             }
         }
-        
-        function closeRegistration() {
-            document.getElementById('registrationOverlay').style.display = 'none';
-        }
-        
-        // Close form when clicking outside
-        document.getElementById('registrationOverlay').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeRegistration();
+
+        function handlePreOrderOutsideClick(event) {
+            const modalContent = document.querySelector('#preOrderModal .modal-content');
+            if (event.target === event.currentTarget && !modalContent.contains(event.target)) {
+                closePreOrderModal();
             }
-        });
-        
-        // Form submission
-        document.getElementById('artistForm').addEventListener('submit', function(e) {
+        }
+
+        // Pre-Order Form submission
+        document.getElementById('preOrderForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // Get form data
             const formData = new FormData(this);
             const data = {
-                artistName: formData.get('artistName'),
-                artistEmail: formData.get('artistEmail'),
-                artistAge: formData.get('artistAge'),
-                artStyle: formData.get('artStyle'),
-                experience: formData.get('experience'),
-                artistMessage: formData.get('artistMessage') || ''
+                name: formData.get('name'),
+                email: formData.get('email'),
+                userType: formData.get('userType')
             };
             
-            // Validation
-            if (!data.artistName || !data.artistEmail || !data.artistAge || !data.artStyle || !data.experience) {
-                alert('모든 필수 항목을 입력해주세요.');
+            if (!data.name || !data.email || !data.userType) {
+                alert('모든 필드를 입력해주세요.');
                 return;
             }
             
-            if (data.artistAge < 50) {
-                alert('아티스트 플랫폼은 만 50세 이상만 등록 가능합니다.');
-                return;
-            }
+            alert('사전예약이 완료되었습니다! 런칭 소식을 가장 먼저 알려드리겠습니다.');
             
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(data.artistEmail)) {
-                alert('올바른 이메일 형식을 입력해주세요.');
-                return;
-            }
-            
-            // GTM dataLayer ?�벤???�송
-            if (window.dataLayer) {
-                window.dataLayer.push({
-                    event: 'form_submit',
-                    timestamp: Date.now(),
-                    event_category: 'conversion',
-                    event_label: 'artist_registration',
-                    art_style: data.artStyle
-                });
-
-                window.dataLayer.push({
-                    event: 'artist_conversion',
-                    timestamp: Date.now(),
-                    event_category: 'conversion',
-                    event_label: data.artStyle,
-                    art_style: data.artStyle,
-                    experience_years: data.experience,
-                    age_group: data.artistAge >= 65 ? '65+' : '50-64',
-                    user_type: 'artist'
-                });
-            }
-            
-            // Success message and close form
-            alert('작가 등록이 완료되었습니다! 검토 후 연락드리겠습니다.');
             this.reset();
-            closeRegistration();
+            closePreOrderModal();
             
-            // Artist registration data processed
+            console.log('Pre-order data:', data);
         });
-        
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeRegistration();
+
+        // Coming Soon Modal Functions
+        function openComingSoonModal(featureName) {
+            const modal = document.getElementById('comingSoonModal');
+            const featureTitle = document.getElementById('comingSoonFeature');
+            featureTitle.textContent = featureName;
+            
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+            
+            document.addEventListener('keydown', handleComingSoonEscKey);
+            modal.addEventListener('click', handleComingSoonOutsideClick);
+        }
+
+        function closeComingSoonModal() {
+            const modal = document.getElementById('comingSoonModal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+            
+            document.removeEventListener('keydown', handleComingSoonEscKey);
+            modal.removeEventListener('click', handleComingSoonOutsideClick);
+        }
+
+        function handleComingSoonEscKey(event) {
+            if (event.key === 'Escape') {
+                closeComingSoonModal();
             }
-        });
+        }
+
+        function handleComingSoonOutsideClick(event) {
+            const modalContent = document.querySelector('#comingSoonModal .modal-content');
+            if (event.target === event.currentTarget && !modalContent.contains(event.target)) {
+                closeComingSoonModal();
+            }
+        }
         
         // Enhanced form interactions
         document.querySelectorAll('.form-control').forEach(input => {
@@ -1093,6 +1100,5 @@
         }
     </script>
     <!-- GA4 Tracking Scripts -->
-    <script src="js/ga4-tracking.js?v=202510070100"></script>
 </body>
 </html>

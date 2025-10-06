@@ -15,15 +15,8 @@
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
-        window.gtag = gtag; // 명시적으로 전역으로 설정
         gtag('js', new Date());
         gtag('config', 'G-DE2ZNKWV2W');
-        
-        // GA4 측정 ID 전역 변수로 설정
-        window.__GA_MEASUREMENT_ID__ = 'G-DE2ZNKWV2W';
-        
-        console.log('[GA4] ✅ GA4 initialized with direct implementation');
-        console.log('[GA4] 📊 Page view sent for:', window.location.href);
     </script>
     
     <style>
@@ -420,6 +413,29 @@
         }
         
         .choice-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .hero-cta-btn {
+            background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 8px;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+        }
+
+        .hero-cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+        }
+
+        .hero-cta-btn:active {
             transform: translateY(-1px);
         }
         
@@ -1140,6 +1156,66 @@
             }
         }
         
+        // Pre-Order Modal Functions
+        function openPreOrderModal() {
+            const modal = document.getElementById('preOrderModal');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+            
+            document.addEventListener('keydown', handlePreOrderEscKey);
+            modal.addEventListener('click', handlePreOrderOutsideClick);
+        }
+
+        function closePreOrderModal() {
+            const modal = document.getElementById('preOrderModal');
+            modal.classList.remove('show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+            
+            document.removeEventListener('keydown', handlePreOrderEscKey);
+            modal.removeEventListener('click', handlePreOrderOutsideClick);
+        }
+
+        function handlePreOrderEscKey(event) {
+            if (event.key === 'Escape') {
+                closePreOrderModal();
+            }
+        }
+
+        function handlePreOrderOutsideClick(event) {
+            const modalContent = document.querySelector('#preOrderModal .modal-content');
+            if (event.target === event.currentTarget && !modalContent.contains(event.target)) {
+                closePreOrderModal();
+            }
+        }
+
+        // Pre-Order Form submission
+        document.getElementById('preOrderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                userType: formData.get('userType')
+            };
+            
+            if (!data.name || !data.email || !data.userType) {
+                alert('모든 필드를 입력해주세요.');
+                return;
+            }
+            
+            alert('사전예약이 완료되었습니다! 런칭 소식을 가장 먼저 알려드리겠습니다.');
+            
+            this.reset();
+            closePreOrderModal();
+            
+            console.log('Pre-order data:', data);
+        });
+
         // About Modal Functions
         function openAboutModal() {
             const modal = document.getElementById('aboutModal');
@@ -1147,16 +1223,6 @@
             setTimeout(() => {
                 modal.classList.add('show');
             }, 10);
-            
-            // 모달 열기 이벤트 추적 (GTM)
-            if (window.dataLayer) {
-                window.dataLayer.push({
-                    event: 'modal_open',
-                    timestamp: Date.now(),
-                    event_category: 'navigation',
-                    event_label: 'about_modal'
-                });
-            }
             
             // ESC 키로 모달 닫기
             document.addEventListener('keydown', handleEscKey);
@@ -1175,16 +1241,6 @@
             // 이벤트 리스너 제거
             document.removeEventListener('keydown', handleEscKey);
             modal.removeEventListener('click', handleOutsideClick);
-            
-            // 모달 닫기 이벤트 추적 (GTM)
-            if (window.dataLayer) {
-                window.dataLayer.push({
-                    event: 'modal_close',
-                    timestamp: Date.now(),
-                    event_category: 'navigation',
-                    event_label: 'about_modal'
-                });
-            }
         }
 
         function handleEscKey(event) {
@@ -1431,11 +1487,11 @@
         <nav class="nav">
             <div class="logo">Artisty</div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="artist.html" class="nav-link" data-cta-type="navigation" data-cta-name="nav_artist">예술가용</a></li>
-                <li><a href="collector.html" class="nav-link" data-cta-type="navigation" data-cta-name="nav_collector">콜렉터용</a></li>
-                <li><a href="#" class="nav-link" data-cta-type="navigation" data-cta-name="nav_about" data-action="openAboutModal">소개</a></li>
+                <li><a href="artist.html" class="nav-link" onclick="gtag('event', 'cta_click', {'cta_name': 'nav_artist', 'cta_type': 'navigation', 'cta_location': 'header'});">예술가용</a></li>
+                <li><a href="collector.html" class="nav-link" onclick="gtag('event', 'cta_click', {'cta_name': 'nav_collector', 'cta_type': 'navigation', 'cta_location': 'header'});">콜렉터용</a></li>
+                <li><a href="#" class="nav-link" onclick="gtag('event', 'cta_click', {'cta_name': 'nav_about', 'cta_type': 'navigation', 'cta_location': 'header'}); openAboutModal(); return false;">소개</a></li>
             </ul>
-            <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기" data-cta-type="navigation" data-cta-name="mobile_menu_toggle" data-cta-location="header">☰</button>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기" onclick="gtag('event', 'cta_click', {'cta_name': 'mobile_menu_toggle', 'cta_type': 'navigation', 'cta_location': 'header'});">☰</button>
         </nav>
     </header>
 
@@ -1446,6 +1502,7 @@
             <div class="hero-text">
                 <h1>Artisty — 예술가의 손끝에서,<br>당신의 공간으로</h1>
                 <p>예술가와 컬렉터를 연결하는 온라인 마켓플레이스에서<br>특별한 예술 경험을 시작하세요</p>
+                <button class="hero-cta-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'hero_preorder', 'cta_type': 'primary', 'cta_location': 'hero_section'}); openPreOrderModal();">사전예약하기</button>
             </div>
         </div>
         
@@ -1456,14 +1513,14 @@
                     <div class="choice-icon">🎨</div>
                     <h3>예술가</h3>
                     <p>3가지 핵심 기능으로 작품 활동을<br>체계적으로 관리하고 성장시키세요</p>
-                    <a href="artist.html" class="choice-btn" data-cta-type="primary" data-cta-name="artist_start" data-cta-location="hero_section">예술가로 시작하기</a>
+                    <a href="artist.html" class="choice-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'artist_start', 'cta_type': 'primary', 'cta_location': 'hero_section'});">예술가로 시작하기</a>
                 </div>
                 
                 <div class="choice-card">
                     <div class="choice-icon">👁️</div>
                     <h3>콜렉터</h3>
                     <p>스토리텔링 기반으로 작품을 탐색하고<br>안전하게 소장할 수 있어요</p>
-                    <a href="collector.html" class="choice-btn" data-cta-type="primary" data-cta-name="collector_start" data-cta-location="hero_section">콜렉터로 시작하기</a>
+                    <a href="collector.html" class="choice-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'collector_start', 'cta_type': 'primary', 'cta_location': 'hero_section'});">콜렉터로 시작하기</a>
                 </div>
             </div>
         </div>
@@ -1528,68 +1585,17 @@
             </div>
             
             <div class="gallery-cta">
-                <a href="collector.html" class="btn btn-primary" data-cta-type="secondary" data-cta-name="gallery_view_more">
+                <a href="collector.html" class="btn btn-primary" onclick="gtag('event', 'cta_click', {'cta_name': 'gallery_view_more', 'cta_type': 'secondary', 'cta_location': 'gallery_section'});">
                     더 많은 작품 보기 →
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- CTA Form Overlay -->
-    <div class="cta-overlay" id="ctaOverlay">
-        <div class="cta-form">
-            <button class="close-btn" data-cta-type="action" data-cta-name="contact_form_close" data-cta-location="contact_modal" data-action="closeForm">&times;</button>
-            <div class="form-header">
-                <h2>관심 등록하기</h2>
-                <p>맞춤 정보를 받아보세요</p>
-            </div>
-            
-            <form id="leadForm">
-                <div class="form-group">
-                    <label for="name">이름 *</label>
-                    <input type="text" id="name" name="name" class="form-control" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="email">이메일 *</label>
-                    <input type="email" id="email" name="email" class="form-control" required>
-                </div>
-                
-                <div class="form-group">
-                    <label>관심 분야 *</label>
-                    <div class="radio-group">
-                        <div class="radio-item" data-radio-value="artist" data-action="selectRadio">
-                            <input type="radio" id="artist" name="userType" value="artist" required>
-                            <label for="artist">예술가</label>
-                        </div>
-                        <div class="radio-item" data-radio-value="collector" data-action="selectRadio">
-                            <input type="radio" id="collector" name="userType" value="collector" required>
-                            <label for="collector">콜렉터</label>
-                        </div>
-                    </div>
-                </div>
-                
-                <button type="submit" class="submit-btn" data-cta-type="primary" data-cta-name="contact_form_submit">등록하기</button>
-            </form>
-        </div>
-    </div>
-        </div>
-    </div>
+
 
     <script>
-        function openForm() {
-            const overlay = document.getElementById('ctaOverlay');
-            if (overlay) {
-                overlay.style.display = 'flex';
-            }
-        }
-        
-        function closeForm() {
-            const overlay = document.getElementById('ctaOverlay');
-            if (overlay) {
-                overlay.style.display = 'none';
-            }
-        }
+
         
         function selectRadio(type) {
             document.querySelectorAll('.radio-item').forEach(item => {
@@ -1739,16 +1745,47 @@
                 }
             });
         });
-
-        // 기본 CTA 클릭 추적은 이제 ga-lite.js와 init-ga.js에서 처리됩니다.
     </script>
+
+    <!-- Pre-Order Modal -->
+    <div id="preOrderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>사전예약하기</h2>
+                <span class="close" onclick="gtag('event', 'cta_click', {'cta_name': 'preorder_modal_close', 'cta_type': 'action', 'cta_location': 'preorder_modal'}); closePreOrderModal();">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Artisty 플랫폼이 곧 오픈됩니다! 사전예약을 통해 런칭 소식을 가장 먼저 받아보세요.</p>
+                <form id="preOrderForm">
+                    <div class="form-group">
+                        <label for="preOrderName">이름</label>
+                        <input type="text" id="preOrderName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="preOrderEmail">이메일</label>
+                        <input type="email" id="preOrderEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userType">관심 분야</label>
+                        <select id="userType" name="userType" required>
+                            <option value="">선택해주세요</option>
+                            <option value="artist">예술가</option>
+                            <option value="collector">콜렉터</option>
+                            <option value="both">둘 다</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'preorder_submit', 'cta_type': 'primary', 'cta_location': 'preorder_modal'});">사전예약하기</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- About Modal -->
     <div id="aboutModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>🎨 Artisty 플랫폼 소개</h2>
-                <span class="close" data-action="closeAboutModal">&times;</span>
+                <span class="close" onclick="gtag('event', 'cta_click', {'cta_name': 'about_modal_close', 'cta_type': 'action', 'cta_location': 'about_modal'}); closeAboutModal();">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="service-intro">
@@ -1790,106 +1827,12 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn primary" data-cta-type="primary" data-cta-name="modal_artist_start" data-href="artist.html">예술가로 시작하기</button>
-                <button class="modal-btn secondary" data-cta-type="secondary" data-cta-name="modal_collector_start" data-href="collector.html">콜렉터로 시작하기</button>
+                <button class="modal-btn primary" onclick="gtag('event', 'cta_click', {'cta_name': 'modal_artist_start', 'cta_type': 'primary', 'cta_location': 'about_modal'}); window.location.href='artist.html';">예술가로 시작하기</button>
+                <button class="modal-btn secondary" onclick="gtag('event', 'cta_click', {'cta_name': 'modal_collector_start', 'cta_type': 'secondary', 'cta_location': 'about_modal'}); window.location.href='collector.html';">콜렉터로 시작하기</button>
             </div>
         </div>
     </div>
     
-    <script>
-        // 전역 에러 추적 시스템
-        window.addEventListener('error', function(e) {
-            if (window.dataLayer) {
-                window.dataLayer.push({
-                    event: 'javascript_error',
-                    timestamp: Date.now(),
-                    event_category: 'error',
-                    event_label: e.message,
-                    error_filename: e.filename,
-                    error_lineno: e.lineno,
-                    error_colno: e.colno
-                });
-            }
-        });
-        
-        // Promise rejection 에러 추적
-        window.addEventListener('unhandledrejection', function(e) {
-            if (window.dataLayer) {
-                window.dataLayer.push({
-                    event: 'promise_rejection',
-                    timestamp: Date.now(),
-                    event_category: 'error',
-                    event_label: e.reason.toString(),
-                    error_type: 'unhandled_promise'
-                });
-            }
-        });
-        
-        // 이미지 로딩 에러 추적
-        document.addEventListener('error', function(e) {
-            if (e.target.tagName === 'IMG') {
-                if (window.dataLayer) {
-                    window.dataLayer.push({
-                        event: 'image_load_error',
-                        timestamp: Date.now(),
-                        event_category: 'error',
-                        event_label: e.target.src,
-                        error_type: 'image_load_failed'
-                    });
-                }
-            }
-        }, true);
-        
-        // 최종 GA4 상태 확인
-        setTimeout(function() {
-            if (window.dataLayer) {
-                window.dataLayer.push({
-                    event: 'ga4_fully_loaded',
-                    timestamp: Date.now(),
-                    event_category: 'system',
-                    event_label: 'tracking_ready',
-                    load_time: Date.now()
-                });
-            }
-        }, 2000);
-    </script>
-    
-    <!-- GA4 Tracking Scripts -->
-    <script src="js/ga4-tracking.js?v=202510070100"></script>
-    
-    <!-- 실시간 GA4 테스트 스크립트 -->
-    <script>
-        // 페이지 로드 후 GA4 상태 확인
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                console.log('🔍 GA4 Status Check:');
-                console.log('- gtag available:', typeof window.gtag === 'function');
-                console.log('- dataLayer available:', typeof window.dataLayer !== 'undefined');
-                console.log('- Measurement ID:', window.__GA_MEASUREMENT_ID__);
-                
-                // CTA 요소 확인
-                const ctaElements = document.querySelectorAll('.cta-button, .choice-btn, .btn-primary, .feature-btn, .submit-btn, .modal-btn, .nav-link, .back-btn');
-                console.log(`🎯 Found ${ctaElements.length} potential CTA elements`);
-                
-                // 바인딩된 요소 확인
-                const boundElements = document.querySelectorAll('[data-ga-bound]');
-                console.log(`✅ Bound ${boundElements.length} elements to GA4 tracking`);
-                
-                // 테스트 이벤트 전송
-                if (typeof window.gtag === 'function') {
-                    window.gtag('event', 'manual_test', {
-                        'timestamp': Date.now(),
-                        'event_category': 'test',
-                        'event_label': 'console_test',
-                        'test_timestamp': Date.now()
-                    });
-                    console.log('🧪 Test event sent (GA4)');
-                }
-            }, 2000);
-        });
-        
-    console.log('💡 Run window.checkGA4() in console to check GA4 status');
-    </script>
 </body>
 </html>
 

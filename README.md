@@ -7,7 +7,7 @@
 - **Live URL**: `https://yeaaaaaaaaaap.github.io/Senior-Artist/`
 - **배포 방식**: GitHub Pages (Deploy from branch)
 - **브랜치**: main
-- **Analytics**: Google Analytics 4 (G-DE2ZNKWV2W) 직접 구현
+- **Analytics**: Google Analytics 4 (G-DE2ZNKWV2W) 직접 구현 (각 CTA별 개별 onclick 이벤트)
 
 ## 📂 파일 구조
 
@@ -17,47 +17,59 @@ Senior-Artist/
 ├── artist.html         # 예술가 전용 페이지
 ├── collector.html      # 콜렉터 전용 페이지
 ├── README.md           # 프로젝트 문서
-├── .gitignore          # Git 무시 파일
-└── js/
-    └── ga4-tracking.js # GA4 이벤트 추적 스크립트
+└── .gitignore          # Git 무시 파일
 ```
 
 ## 🌟 주요 기능
 
 ### 📊 Google Analytics 4 직접 구현
 - **페이지 추적**: 모든 페이지 조회 자동 측정
-- **이벤트 추적**: 모든 CTA 클릭 이벤트 자동 수집
+- **이벤트 추적**: 각 CTA에 개별 onclick 이벤트로 직접 gtag 호출
 - **사용자 여정**: 사용자 경로 및 전환 추적
 - **실시간 분석**: 실시간 사용자 행동 모니터링
 
 ## 📊 GA4 CTA 트래킹 시스템
 
-GA4 직접 구현 방식으로 모든 사용자 상호작용을 추적합니다. 코드는 Google Tag Manager에 의존하지 않고 순수 JavaScript로 구현되었습니다.
+각 CTA 요소에 직접 `onclick` 이벤트로 `gtag('event', 'cta_click', {...})` 호출을 구현했습니다. 
+이 방식은 외부 스크립트 파일 없이 각 CTA의 클릭을 개별적으로 측정할 수 있습니다.
 
-### 이벤트 추적 방식
-모든 CTA 요소에는 다음 데이터 속성이 부여되어 있습니다:
-- `data-cta-name`: CTA 식별자 (예: nav_artist, portfolio_create)
-- `data-cta-type`: CTA 유형 (primary, secondary, navigation, action)
-- `data-cta-location`: CTA 위치 (hero_section, feature_section 등)
-- `data-action`: 특정 액션 실행을 위한 식별자
+### 구현 특징
+- **직접 구현**: 각 CTA 요소에 onclick 이벤트로 gtag 직접 호출
+- **단순성**: 복잡한 이벤트 바인딩 로직 없이 HTML에서 직접 정의
+- **신뢰성**: 외부 스크립트 의존성 없이 GA4와 직접 통신
+- **디버깅 용이**: 브라우저 개발자 도구에서 각 CTA 클릭 즉시 확인 가능
+
+### 이벤트 구조
+모든 CTA 클릭은 다음과 같은 구조로 GA4에 전송됩니다:
+
+```javascript
+gtag('event', 'cta_click', {
+    'cta_name': 'CTA_식별자',
+    'cta_type': 'primary|secondary|navigation|action',
+    'cta_location': '위치_정보'
+});
+```
 
 ### 주요 CTA 요소
 
 #### index.html (메인 페이지)
-- **예술가/콜렉터 시작 버튼**: 메인 페이지 주요 전환 지점
-- **네비게이션 메뉴**: 페이지 이동 및 모달 열기
-- **갤러리 섹션 버튼**: 컨텐츠 더 보기
-- **소개 모달 컨트롤**: 모달 열기/닫기 액션
+- **네비게이션**: nav_artist, nav_collector, nav_about, mobile_menu_toggle
+- **메인 액션**: artist_start, collector_start
+- **갤러리**: gallery_view_more
+- **모달**: about_modal_close, modal_artist_start, modal_collector_start
+- **문의**: contact_form_close, contact_form_submit
 
 #### artist.html (예술가 페이지)
-- **포트폴리오 생성 버튼**: 주요 전환 지점
-- **기능 섹션 버튼**: 포트폴리오, 거래, 고객 관리
-- **등록 모달 컨트롤**: 양식 제출 및 모달 닫기
+- **네비게이션**: nav_artist, nav_collector, nav_about, back_to_main, mobile_menu_toggle
+- **메인 액션**: portfolio_create
+- **기능**: portfolio_feature_btn, transaction_feature_btn, customer_feature_btn
+- **등록**: registration_close, artist_registration_submit
 
 #### collector.html (콜렉터 페이지)
-- **관심 등록 버튼**: 주요 전환 지점
-- **기능 섹션 버튼**: 취향 분석, 거래 보장, 작가 대화
-- **관심 등록 모달 컨트롤**: 양식 제출 및 모달 닫기
+- **네비게이션**: nav_artist, nav_collector, nav_about, back_to_main, mobile_menu_toggle
+- **메인 액션**: interest_register
+- **기능**: taste_analysis_btn, transaction_guarantee_btn, artist_communication_btn
+- **관심 등록**: interest_form_close, collector_interest_submit
 
 ## 🎨 UI/UX 특징
 
@@ -98,54 +110,37 @@ GA4 직접 구현 방식으로 모든 사용자 상호작용을 추적합니다.
 <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    window.gtag = gtag; // 명시적으로 전역으로 설정
     gtag('js', new Date());
     gtag('config', 'G-DE2ZNKWV2W');
-    
-    // GA4 측정 ID 전역 변수로 설정
-    window.__GA_MEASUREMENT_ID__ = 'G-DE2ZNKWV2W';
-    
-    console.log('[GA4] ✅ GA4 initialized with direct implementation');
 </script>
 ```
 
 ### 이벤트 트래킹
-`ga4-tracking.js` 파일에서 모든 CTA 클릭 이벤트를 처리하고 GA4로 전송합니다:
+각 CTA 요소에 직접 onclick 이벤트로 gtag 호출을 구현했습니다:
 
-```javascript
-// GA4 이벤트 전송 예시
-window.gtag('event', 'cta_click', {
-    'cta_name': ctaName,
-    'cta_type': ctaType,
-    'cta_location': ctaLocation,
-    'cta_text': ctaText,
-    'element_type': element.tagName.toLowerCase(),
-    'measurement_id': window.__GA_MEASUREMENT_ID__ || 'G-DE2ZNKWV2W'
-});
-```
+```html
+<!-- 예시: 네비게이션 링크 -->
+<a href="artist.html" onclick="gtag('event', 'cta_click', {'cta_name': 'nav_artist', 'cta_type': 'navigation', 'cta_location': 'header'});">예술가용</a>
 
-### 디버깅 및 테스트 방법
-
-브라우저 콘솔에서 다음 함수들을 사용하여 GA4 트래킹을 디버깅하고 테스트할 수 있습니다:
-
-1. **GA4 상태 확인**:
-```javascript
-window.checkGA4()
-```
-
-2. **특정 CTA 테스트**:
-```javascript
-window.testCTA('.cta-button')  // 선택자로 CTA 요소 지정
-window.testCTA('#submitButton') // ID로 CTA 요소 지정
-window.testCTA()               // 기본 CTA 요소 테스트
+<!-- 예시: 메인 CTA 버튼 -->
+<button onclick="gtag('event', 'cta_click', {'cta_name': 'portfolio_create', 'cta_type': 'primary', 'cta_location': 'main_section'}); openRegistration();">포트폴리오 만들기</button>
 ```
 
 ### 구현 특징
 
-1. **GTM 없는 직접 구현**: Google Tag Manager에 의존하지 않고 직접 GA4 구현
-2. **자동 이벤트 바인딩**: 모든 CTA 요소에 자동으로 이벤트 리스너 추가
-3. **실패 복구 메커니즘**: gtag 함수 로드 확인 및 재시도 로직
-4. **디버깅 도구 내장**: 콘솔 테스트 도구 제공
+1. **직접 구현**: 각 CTA에 onclick 이벤트로 gtag 직접 호출
+2. **단순성**: 복잡한 외부 스크립트 없이 HTML에서 직접 정의
+3. **신뢰성**: 외부 의존성 최소화로 안정적인 추적
+4. **디버깅 용이**: 브라우저 개발자 도구에서 즉시 확인 가능
+
+### 테스트 방법
+
+브라우저 개발자 도구의 네트워크 탭에서 CTA 클릭 시 GA4로 전송되는 이벤트를 확인할 수 있습니다:
+
+1. 개발자 도구 열기 (F12)
+2. 네트워크 탭 선택
+3. CTA 버튼 클릭
+4. `collect?` 요청 확인하여 이벤트 전송 여부 검증
 
 ## 📱 반응형 지원
 
@@ -166,108 +161,41 @@ window.testCTA()               // 기본 CTA 요소 테스트
 }
 ```
 
+## � 측정되는 모든 CTA 목록
+
+모든 CTA 클릭은 `cta_click` 이벤트로 GA4에 전송되며, 다음 매개변수로 구분됩니다:
+
+- **cta_name**: CTA 고유 식별자
+- **cta_type**: primary(주요), secondary(보조), navigation(네비게이션), action(액션)  
+- **cta_location**: header, main_section, feature_section, modal 등
+
+### 주요 CTA 이벤트
+
+**네비게이션 (모든 페이지 공통)**
+- nav_artist, nav_collector, nav_about, mobile_menu_toggle, back_to_main
+
+**메인 액션**
+- artist_start, collector_start (index.html)
+- portfolio_create (artist.html)  
+- interest_register (collector.html)
+
+**기능 버튼**
+- gallery_view_more (index.html)
+- portfolio_feature_btn, transaction_feature_btn, customer_feature_btn (artist.html)
+- taste_analysis_btn, transaction_guarantee_btn, artist_communication_btn (collector.html)
+
+**모달 및 폼**
+- about_modal_close, modal_artist_start, modal_collector_start (index.html)
+- registration_close, artist_registration_submit (artist.html)
+- interest_form_close, collector_interest_submit (collector.html)
+- contact_form_close, contact_form_submit (index.html)
+
 ## 📈 GA4 보고서 확인 방법
 
-1. Google Analytics 계정에 로그인합니다.
-2. 속성 G-DE2ZNKWV2W를 선택합니다.
-3. 실시간 보고서에서 현재 발생하는 이벤트를 확인합니다.
-4. 이벤트 보고서에서 cta_click 이벤트를 확인하여 상세 데이터를 분석합니다.
-5. 탐색 메뉴에서 사용자 지정 보고서를 만들어 필요한 분석을 수행합니다.
-
-## 📊 전체 CTA 측정 목록
-
-아래는 GA4에서 개별적으로 측정 가능한 모든 CTA 요소의 상세 목록입니다. 각 요소는 `data-cta-name` 속성으로 고유하게 식별됩니다.
-
-### 1. index.html (메인 페이지)
-
-#### 네비게이션 영역
-| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 | 
-|----------|------|------|------|------------|
-| `nav_artist` | navigation | header | 예술가 페이지 링크 | cta_click |
-| `nav_collector` | navigation | header | 콜렉터 페이지 링크 | cta_click |
-| `nav_about` | navigation | header | 소개 모달 열기 | cta_click |
-| `mobile_menu_toggle` | navigation | header | 모바일 메뉴 토글 | cta_click |
-
-#### 히어로 섹션
-| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
-|----------|------|------|------|------------|
-| `artist_start` | primary | hero_section | 예술가 페이지로 이동 | cta_click |
-| `collector_start` | primary | hero_section | 콜렉터 페이지로 이동 | cta_click |
-| `gallery_view_more` | secondary | gallery_section | 갤러리 더 보기 | cta_click |
-
-#### 문의 모달
-| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
-|----------|------|------|------|------------|
-| `contact_form_close` | action | contact_modal | 문의 양식 닫기 | cta_click |
-| `contact_form_submit` | primary | contact_modal | 문의 양식 제출 | cta_click |
-
-#### 소개 모달
-| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
-|----------|------|------|------|------------|
-| `modal_artist_start` | primary | about_modal | 모달에서 예술가 페이지로 이동 | cta_click |
-| `modal_collector_start` | secondary | about_modal | 모달에서 콜렉터 페이지로 이동 | cta_click |
-
-### 2. artist.html (예술가 페이지)
-
-#### 네비게이션 영역
-| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
-|----------|------|------|------|------------|
-| `nav_artist` | navigation | header | 예술가 페이지 링크 | cta_click |
-| `nav_collector` | navigation | header | 콜렉터 페이지 링크 | cta_click |
-| `nav_about` | navigation | header | 소개 페이지 링크 | cta_click |
-| `back_to_main` | navigation | header | 메인 페이지로 돌아가기 | cta_click |
-| `mobile_menu_toggle` | navigation | header | 모바일 메뉴 토글 | cta_click |
-
-#### 메인 영역
-| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
-|----------|------|------|------|------------|
-| `portfolio_create` | primary | main_section | 등록 모달 열기 | cta_click |
-| `portfolio_feature_btn` | secondary | feature_section | 포트폴리오 기능 | cta_click |
-| `transaction_feature_btn` | secondary | feature_section | 거래 관리 기능 | cta_click |
-| `customer_feature_btn` | secondary | feature_section | 고객 관리 기능 | cta_click |
-
-#### 등록 모달
-| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
-|----------|------|------|------|------------|
-| `registration_close` | action | registration_modal | 등록 모달 닫기 | cta_click |
-| `artist_registration_submit` | primary | registration_modal | 예술가 등록 제출 | cta_click |
-
-### 3. collector.html (콜렉터 페이지)
-
-#### 네비게이션 영역
-| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
-|----------|------|------|------|------------|
-| `nav_artist` | navigation | header | 예술가 페이지 링크 | cta_click |
-| `nav_collector` | navigation | header | 콜렉터 페이지 링크 | cta_click |
-| `nav_about` | navigation | header | 소개 페이지 링크 | cta_click |
-| `back_to_main` | navigation | header | 메인 페이지로 돌아가기 | cta_click |
-| `mobile_menu_toggle` | navigation | header | 모바일 메뉴 토글 | cta_click |
-
-#### 메인 영역
-| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
-|----------|------|------|------|------------|
-| `interest_register` | primary | main_section | 관심 등록 모달 열기 | cta_click |
-| `taste_analysis_btn` | secondary | feature_section | 취향 분석 기능 | cta_click |
-| `transaction_guarantee_btn` | secondary | feature_section | 거래 보장 기능 | cta_click |
-| `artist_communication_btn` | secondary | feature_section | 작가 대화 기능 | cta_click |
-
-#### 관심 등록 모달
-| CTA 이름 | 타입 | 위치 | 설명 | 측정 이벤트 |
-|----------|------|------|------|------------|
-| `interest_form_close` | action | interest_modal | 관심 등록 모달 닫기 | cta_click |
-| `collector_interest_submit` | primary | interest_modal | 콜렉터 관심 등록 제출 | cta_click |
-
-### GA4 이벤트 매개변수
-
-모든 CTA 클릭은 동일한 `cta_click` 이벤트로 전송되지만, 다음 매개변수를 통해 구분됩니다:
-
-| 매개변수 | 설명 | 예시 |
-|---------|------|------|
-| `cta_name` | 위 표에 나열된 CTA 이름 | nav_artist, portfolio_create |
-| `cta_type` | CTA 유형 | primary, secondary, navigation, action |
-| `cta_location` | CTA가 위치한 영역 | header, hero_section, feature_section |
-| `cta_text` | 버튼 또는 링크 텍스트 | 예술가로 시작하기 |
-| `element_type` | HTML 요소 타입 | button, a |
+1. **Google Analytics** → 속성 **G-DE2ZNKWV2W** 선택
+2. **실시간** → 현재 발생하는 이벤트 확인
+3. **이벤트** → **cta_click** 이벤트 상세 분석
+4. **탐색** → 사용자 지정 보고서로 CTA별 성과 분석
 
 ---
 
