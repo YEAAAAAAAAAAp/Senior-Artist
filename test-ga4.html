@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GA4 테스트 페이지</title>
+    
+    <!-- 통합 추적 초기화 (dataLayer 충돌 방지) -->
+    <script>
+        // dataLayer 먼저 초기화
+        window.dataLayer = window.dataLayer || [];
+        
+        // 설정 변수 미리 정의
+        window.__GA_MEASUREMENT_ID__ = 'G-DE2ZNKWV2W';
+        window.__GTM_ID__ = 'GTM-594SVWKB';
+        
+        console.log('[TRACKING] 🚀 Initializing unified tracking system');
+    </script>
+    
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-594SVWKB');</script>
+    <!-- End Google Tag Manager -->
+    
+    <!-- Google Analytics 4 - GTM과 안전하게 병행 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
+    <script>
+        // dataLayer가 이미 존재하므로 재초기화하지 않음
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-DE2ZNKWV2W', { 
+            send_page_view: true,  // 테스트를 위해 페이지뷰 활성화
+            transport_type: 'beacon',
+            allow_enhanced_conversions: true
+        });
+        
+        console.log('[GA4] ✅ GA4 initialized with GTM integration');
+    </script>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .test-button {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            display: block;
+            width: 300px;
+        }
+        
+        .test-button:hover {
+            background: #3367d6;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #f0f0f0;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        #console-output {
+            background: #000;
+            color: #00ff00;
+            padding: 15px;
+            font-family: monospace;
+            height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-594SVWKB"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <h1>🧪 GA4 추적 테스트 페이지</h1>
+    
+    <div class="status" id="status">
+        <strong>상태:</strong> 초기화 중...
+    </div>
+    
+    <h2>테스트 버튼들</h2>
+    
+    <button class="test-button" id="test-btn-1" data-cta-type="primary" data-cta-name="test_button_1">
+        테스트 버튼 1 - 기본 CTA
+    </button>
+    
+    <button class="test-button" id="test-btn-2" data-cta-type="secondary" data-cta-name="test_button_2">
+        테스트 버튼 2 - 보조 CTA  
+    </button>
+    
+    <button class="test-button" id="manual-test" onclick="sendManualEvent()">
+        수동 이벤트 전송 테스트
+    </button>
+    
+    <button class="test-button" id="check-status" onclick="checkStatus()">
+        GA4/GTM 상태 확인
+    </button>
+    
+    <h2>실시간 콘솔 출력</h2>
+    <div id="console-output"></div>
+    
+    <h2>사용 방법</h2>
+    <ol>
+        <li>이 페이지를 열고 콘솔을 확인하세요 (F12)</li>
+        <li>위의 테스트 버튼들을 클릭하세요</li>
+        <li>GA4 실시간 개요에서 이벤트를 확인하세요</li>
+        <li>콘솔 출력에서 이벤트 전송 상태를 확인하세요</li>
+    </ol>
+    
+    <script src="js/ga-lite.js?v=202510062354"></script>
+    <script src="js/init-ga.js?v=202510062354"></script>
+    
+    <script>
+        // 콘솔 출력을 페이지에 표시
+        const consoleOutput = document.getElementById('console-output');
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addToOutput(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const line = `[${timestamp}] ${message}\n`;
+            consoleOutput.textContent += line;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToOutput(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToOutput('ERROR: ' + args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToOutput('WARN: ' + args.join(' '), 'warn');
+        };
+        
+        // 수동 이벤트 전송 함수
+        function sendManualEvent() {
+            console.log('[TEST] 수동 이벤트 전송 시작');
+            
+            // GA4 직접 전송
+            if (typeof gtag === 'function') {
+                gtag('event', 'manual_test_event', {
+                    event_category: 'test',
+                    event_label: 'manual_trigger',
+                    value: 1,
+                    transport_type: 'beacon'
+                });
+                console.log('[TEST] ✅ GA4 수동 이벤트 전송됨');
+            } else {
+                console.error('[TEST] ❌ gtag 함수를 찾을 수 없음');
+            }
+            
+            // dataLayer 직접 푸시
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'manual_test_event',
+                test_category: 'manual',
+                test_action: 'button_click',
+                timestamp: Date.now()
+            });
+            console.log('[TEST] ✅ dataLayer 수동 푸시 완료');
+        }
+        
+        // 상태 확인 함수
+        function checkStatus() {
+            console.log('[STATUS] === GA4/GTM 상태 확인 ===');
+            console.log('[STATUS] gtag function:', typeof gtag);
+            console.log('[STATUS] dataLayer:', Array.isArray(window.dataLayer));
+            console.log('[STATUS] dataLayer length:', window.dataLayer?.length || 0);
+            console.log('[STATUS] GA4Utils:', typeof window.GA4Utils);
+            console.log('[STATUS] Measurement ID:', window.__GA_MEASUREMENT_ID__);
+            console.log('[STATUS] GTM ID:', window.__GTM_ID__);
+            
+            // 바인딩된 요소 수 확인
+            const boundElements = document.querySelectorAll('[data-ga-bound]').length;
+            console.log('[STATUS] Bound elements:', boundElements);
+            
+            // 상태 업데이트
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `
+                <strong>상태:</strong> 
+                GA4: ${typeof gtag === 'function' ? '✅' : '❌'} | 
+                GTM: ${Array.isArray(window.dataLayer) ? '✅' : '❌'} | 
+                GA4Utils: ${typeof window.GA4Utils !== 'undefined' ? '✅' : '❌'} |
+                바인딩된 요소: ${boundElements}개
+            `;
+            statusDiv.className = 'status ' + (typeof gtag === 'function' && Array.isArray(window.dataLayer) ? 'success' : 'error');
+        }
+        
+        // 페이지 로드 후 초기 상태 확인
+        setTimeout(() => {
+            checkStatus();
+        }, 2000);
+        
+        // 주기적 상태 확인 (10초마다)
+        setInterval(checkStatus, 10000);
+    </script>
+</body>
+</html>

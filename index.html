@@ -10,6 +10,18 @@
     <meta property="og:type" content="website">
     <title>Artisty - 당신의 예술 여정을 시작하세요</title>
     
+    <!-- 통합 추적 초기화 (dataLayer 충돌 방지) -->
+    <script>
+        // dataLayer 먼저 초기화
+        window.dataLayer = window.dataLayer || [];
+        
+        // 설정 변수 미리 정의
+        window.__GA_MEASUREMENT_ID__ = 'G-DE2ZNKWV2W';
+        window.__GTM_ID__ = 'GTM-594SVWKB';
+        
+        console.log('[TRACKING] 🚀 Initializing unified tracking system');
+    </script>
+    
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -18,15 +30,19 @@
     })(window,document,'script','dataLayer','GTM-594SVWKB');</script>
     <!-- End Google Tag Manager -->
     
-    <!-- Google Analytics 4 - 표준화된 설정 (GTM과 병행) -->
+    <!-- Google Analytics 4 - GTM과 안전하게 병행 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
+        // dataLayer가 이미 존재하므로 재초기화하지 않음
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'G-DE2ZNKWV2W', { send_page_view: true });
-        window.__GA_MEASUREMENT_ID__ = 'G-DE2ZNKWV2W';
-        window.__GTM_ID__ = 'GTM-594SVWKB';
+        gtag('config', 'G-DE2ZNKWV2W', { 
+            send_page_view: false,  // GTM에서 관리하도록 변경
+            transport_type: 'beacon',
+            allow_enhanced_conversions: true
+        });
+        
+        console.log('[GA4] ✅ GA4 initialized with GTM integration');
     </script>
     
     <style>
@@ -1800,8 +1816,8 @@
     </script>
     
     <!-- GA4 Tracking Scripts -->
-    <script src="js/ga-lite.js"></script>
-    <script src="js/init-ga.js"></script>
+    <script src="js/ga-lite.js?v=202510062354"></script>
+    <script src="js/init-ga.js?v=202510062354"></script>
     
     <!-- 실시간 GA4 테스트 스크립트 -->
     <script>

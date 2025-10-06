@@ -260,8 +260,11 @@
                         return;
                     }
 
-                    // 클릭 이벤트 리스너 추가
-                    element.addEventListener('click', function(event) {
+                    // 강화된 클릭 이벤트 리스너 추가
+                    const clickHandler = function(event) {
+                        // 즉시 로그 출력
+                        console.log('[GA4] 🎯 CTA CLICKED!', element);
+                        
                         const ctaText = element.textContent.trim() || 
                                        element.getAttribute('aria-label') || 
                                        element.getAttribute('title') || 
@@ -274,19 +277,43 @@
                                            element.closest('.hero-content, .choice-section, .gallery-section')?.className?.split(' ')[0] ||
                                            'unknown_section';
 
+                        // 즉시 로그 출력
+                        console.log('[GA4] 🎯 CTA CLICKED!', element);
+                        
+                        // 강제 dataLayer 푸시 (백업)
+                        window.dataLayer = window.dataLayer || [];
+                        window.dataLayer.push({
+                            event: 'cta_click_immediate',
+                            cta_text: ctaText,
+                            cta_location: ctaLocation,
+                            timestamp: Date.now(),
+                            page_url: window.location.href
+                        });
+
                         // 즉시 이벤트 전송
                         const success = sendCtaClick(ctaText, ctaLocation, element);
                         
+                        console.log('[GA4] 🔥 CTA Event Fired:', {
+                            selector,
+                            ctaText,
+                            ctaLocation,
+                            success,
+                            element: element.tagName + (element.className ? '.' + element.className.split(' ')[0] : ''),
+                            timestamp: new Date().toISOString()
+                        });
+
+                        // 추가 확인을 위한 시각적 피드백 (디버그 모드)
                         if (GA_CONFIG.debug) {
-                            console.log('[GA4] 🔥 Immediate CTA Event Fired:', {
-                                selector,
-                                ctaText,
-                                ctaLocation,
-                                success,
-                                element: element.tagName + (element.className ? '.' + element.className.split(' ')[0] : '')
-                            });
+                            element.style.outline = '2px solid #00ff00';
+                            setTimeout(() => {
+                                element.style.outline = '';
+                            }, 1000);
                         }
-                    }, { capture: true }); // capture 모드로 더 빠른 캐치
+                    };
+
+                    // 여러 이벤트 타입에 바인딩 (안정성 확보)
+                    element.addEventListener('click', clickHandler, { capture: true });
+                    element.addEventListener('mousedown', clickHandler, { capture: true });
 
                     // 바인딩 완료 표시
                     element.setAttribute('data-ga-bound', 'true');
