@@ -14,272 +14,13 @@
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&h=800&fit=crop&crop=entropy&auto=format&q=80">
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80">
     
-    <!-- Google Analytics 4 - 기본 설정 (확실한 작동 보장) -->
+    <!-- Google Analytics 4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
-        // 기본 dataLayer 설정
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
-        
-        // 현재 시간으로 초기화
         gtag('js', new Date());
-        
-        // GA4 측정 ID 설정 - 향상된 설정 (Artist Page)
-        gtag('config', 'G-DE2ZNKWV2W', {
-            'page_title': 'Artist - Artist Portal',
-            'page_location': window.location.href,
-            'send_page_view': true,
-            'cookie_flags': 'SameSite=None;Secure',
-            'enhanced_measurements': {
-                'scrolls': true,
-                'outbound_clicks': true,
-                'site_search': false,
-                'video_engagement': false,
-                'file_downloads': true
-            },
-            'custom_parameters_allowed': true,
-            'allow_enhanced_conversions': true,
-            'user_properties': {
-                'page_type': 'artist',
-                'visit_timestamp': new Date().toISOString()
-            }
-        });
-
-        console.log('🚀 GA4 초기화 완료 - 측정 ID: G-DE2ZNKWV2W (Artist Page)');
-
-        // CTA 추적을 위한 표준화된 함수 - GA4 가이드라인 준수 (안전한 래퍼)
-        function trackCTA(actionName, ctaLocation, ctaText) {
-            // gtag 함수가 정의되었는지 확인
-            if (typeof gtag === 'undefined') {
-                console.warn('⚠️ gtag 함수가 아직 로드되지 않음 (Artist). 이벤트를 대기열에 추가:', actionName);
-                // gtag이 로드될 때까지 대기
-                setTimeout(function() {
-                    trackCTA(actionName, ctaLocation, ctaText);
-                }, 100);
-                return;
-            }
-
-            try {
-                // GA4 권장 cta_click 이벤트
-                gtag('event', 'cta_click', {
-                    'event_category': 'engagement',
-                    'event_label': actionName,
-                    'button_text': ctaText,
-                    'button_location': ctaLocation,
-                    'button_type': actionName.includes('primary') ? 'primary' : 'secondary',
-                    'page_path': window.location.pathname,
-                    'page_title': 'Artist - Artist Portal'
-                });
-                
-                // 개별 액션별 이벤트 (세부 분석용)
-                gtag('event', actionName, {
-                    'event_category': 'user_action',
-                    'location': ctaLocation,
-                    'button_text': ctaText,
-                    'timestamp': new Date().toISOString(),
-                    'user_type': 'artist'
-                });
-                
-                console.log('📈 GA4 CTA 추적 성공 (Artist):', {
-                    event: 'cta_click',
-                    action: actionName,
-                    location: ctaLocation,
-                    text: ctaText
-                });
-            } catch (error) {
-                console.error('❌ GA4 CTA 추적 오류 (Artist):', error, {
-                    action: actionName,
-                    location: ctaLocation,
-                    text: ctaText
-                });
-            }
-        }
-        
-        // 디버그 정보 출력
-        console.log('🎨 GA4 로딩 시작 - ID: G-DE2ZNKWV2W (Artist)');
-        console.log('🌍 현재 URL:', window.location.href);
-        console.log('🏷️ 페이지 제목:', 'Artist - Artist Portal');
-        
-        // GA4 연결 상태 모니터링 (Artist 페이지)
-        setTimeout(function() {
-            console.log('🔍 GA4 연결 상태 점검 시작 (Artist)...');
-            
-            // gtag 함수 로드 확인
-            if (typeof gtag === 'undefined') {
-                console.error('❌ GA4 gtag 함수가 로드되지 않음! (Artist)');
-                return;
-            }
-            
-            // dataLayer 상태 확인
-            if (!window.dataLayer || window.dataLayer.length === 0) {
-                console.error('❌ GA4 dataLayer가 비어있음! (Artist)');
-            } else {
-                console.log('✅ GA4 dataLayer 상태 (Artist):', window.dataLayer.length, '개 이벤트');
-            }
-            
-            // Artist 전용 헬스체크
-            try {
-                gtag('event', 'ga4_health_check_artist', {
-                    'page_type': 'artist',
-                    'timestamp': new Date().toISOString(),
-                    'browser': navigator.userAgent.substring(0, 50),
-                    'referrer': document.referrer || 'direct'
-                });
-                console.log('✅ GA4 Artist 헬스체크 이벤트 전송 완료');
-            } catch (error) {
-                console.error('❌ GA4 Artist 이벤트 전송 실패:', error);
-            }
-        }, 2000);
-        
-        // 즉시 확인 가능한 테스트 이벤트 전송
-        setTimeout(function() {
-            gtag('event', 'test_connection', {
-                'custom_parameter': 'artist_test_value',
-                'debug_timestamp': new Date().toISOString(),
-                'user_type': 'artist'
-            });
-            console.log('🧪 테스트 이벤트 전송 완료 (Artist)');
-            
-            // 페이지 진입 이벤트 (전환 퍼널 시작점)
-            gtag('event', 'page_view', {
-                'event_category': 'engagement',
-                'page_title': 'Artist - Artist Portal',
-                'page_location': window.location.href,
-                'user_engagement': 'artist_page_loaded',
-                'user_type': 'artist'
-            });
-            
-            console.log('📄 Artist 페이지 진입 이벤트 전송 완료');
-        }, 1000);
-        
-        // 페이지 로드 완료 시 추가 테스트
-        window.addEventListener('load', function() {
-            console.log('✅ Artist 페이지 로드 완료');
-            
-            // 로드 완료 이벤트
-            gtag('event', 'page_loaded', {
-                'event_category': 'page_timing',
-                'event_label': 'artist_load_complete',
-                'user_type': 'artist'
-            });
-            
-            // 3초 후 생존 확인 이벤트
-            setTimeout(function() {
-                gtag('event', 'user_alive', {
-                    'event_category': 'engagement',
-                    'event_label': '3_second_check_artist',
-                    'user_type': 'artist'
-                });
-                console.log('💓 3초 생존 확인 이벤트 전송 (Artist)');
-            }, 3000);
-        });
-        
-        console.log('🚀 GA4 스크립트 로딩 완료 (Artist)');
-    </script>
-    
-    <!-- GA4 디버깅 도구 -->
-    <script src="js/ga4-debug.js"></script>
-    
-    <!-- CTA 검증 시스템 -->
-    <script src="js/cta-validator.js"></script>
-    
-    <script>
-        // GA4 초기화 및 Artist 전용 추적
-        function initializeGA4Artist() {
-            console.log('🎨 Artist 페이지 GA4 초기화...');
-            
-            // Artist 페이지뷰 전송
-            gtag('event', 'page_view', {
-                page_title: 'Artist - Artist Portal',
-                page_location: window.location.href,
-                content_group1: 'artist_page',
-                user_category: 'artist_visitor'
-            });
-
-            // Artist 특화 참여도 추적
-            startArtistEngagementTracking();
-            
-            console.log('✅ Artist GA4 초기화 완료');
-        }
-
-        // Artist 특화 참여도 추적
-        let artworkViewTime = {};
-        
-        function startArtistEngagementTracking() {
-            // 아트워크 호버 추적
-            document.querySelectorAll('.artwork-image-container').forEach((artwork, index) => {
-                artwork.addEventListener('mouseenter', function() {
-                    artworkViewTime[index] = Date.now();
-                    gtag('event', 'artwork_hover_start', {
-                        event_category: 'artist_engagement',
-                        artwork_index: index,
-                        user_category: 'artist_visitor'
-                    });
-                });
-                
-                artwork.addEventListener('mouseleave', function() {
-                    if (artworkViewTime[index]) {
-                        const viewDuration = Date.now() - artworkViewTime[index];
-                        gtag('event', 'artwork_hover_end', {
-                            event_category: 'artist_engagement',
-                            artwork_index: index,
-                            view_duration_ms: viewDuration,
-                            user_category: 'artist_visitor'
-                        });
-                        delete artworkViewTime[index];
-                    }
-                });
-            });
-        }
-
-        // Artist CTA 추적 함수
-        function trackCTAClick(feature_name, user_type, category) {
-            gtag('event', 'cta_click', {
-                event_category: 'artist_cta',
-                feature_name: feature_name,
-                user_type: user_type,
-                cta_category: category,
-                page_section: 'artist_features'
-            });
-            
-            console.log('🎯 Artist CTA 추적:', {
-                feature: feature_name,
-                type: user_type,
-                category: category
-            });
-        }
-
-        // 페이지 로드 시 초기화
-        window.addEventListener('load', function() {
-            setTimeout(initializeGA4Artist, 500);
-            
-            // 작품 호버 이벤트 추적 초기화
-            initArtworkHoverTracking();
-        });
-        
-        // 작품 호버 이벤트 추적
-        function initArtworkHoverTracking() {
-            const artworkContainer = document.querySelector('.artwork-image-container');
-            if (artworkContainer) {
-                artworkContainer.addEventListener('mouseenter', function() {
-                    gtag('event', 'artwork_story_hover', {
-                        event_category: 'artist_engagement',
-                        artwork_name: '꿈을 키우는 손',
-                        artist_name: '박창석',
-                        user_category: 'artist_visitor'
-                    });
-                });
-                
-                artworkContainer.addEventListener('mouseleave', function() {
-                    gtag('event', 'artwork_story_hover_end', {
-                        event_category: 'artist_engagement',
-                        artwork_name: '꿈을 키우는 손',
-                        artist_name: '박창석',
-                        user_category: 'artist_visitor'
-                    });
-                });
-            }
-        }
+        gtag('config', 'G-DE2ZNKWV2W');
     </script>
     
     <style>
@@ -1005,7 +746,7 @@
                     <li>콜렉터와 직접 소통</li>
                 </ul>
                 
-                <button class="cta-button" onclick="trackCTA('artist_registration_signup', 'hero_section', '작가 등록하기'); openRegistration()">작가 등록하기</button>
+                <button class="cta-button" onclick="gtag('event', 'artist_registration_click', {'page': 'artist', 'location': 'hero'}); openRegistration()">작가 등록하기</button>
             </div>
         </div>
         
@@ -1018,7 +759,7 @@
             
             <div class="features-grid">
                 <!-- 포트폴리오 최적화 -->
-                <div class="feature-card" onclick="trackCTA('portfolio_optimization', 'artist_features', '포트폴리오 최적화')">
+                <div class="feature-card" onclick="gtag('event', 'portfolio_feature_click', {'page': 'artist', 'feature': 'portfolio'})">>
                     <div class="feature-icon">🎨</div>
                     <div class="feature-content">
                         <h3>포트폴리오 최적화</h3>
@@ -1033,7 +774,7 @@
                 </div>
 
                 <!-- 거래 관리 -->
-                <div class="feature-card" onclick="trackCTA('transaction_management', 'artist_features', '거래 관리')">
+                <div class="feature-card" onclick="gtag('event', 'transaction_feature_click', {'page': 'artist', 'feature': 'transaction'})">>
                     <div class="feature-icon">💳</div>
                     <div class="feature-content">
                         <h3>거래 관리</h3>
@@ -1048,7 +789,7 @@
                 </div>
 
                 <!-- 고객 관계 관리 -->
-                <div class="feature-card" onclick="trackCTA('customer_management', 'artist_features', '고객 관리')">
+                <div class="feature-card" onclick="gtag('event', 'customer_feature_click', {'page': 'artist', 'feature': 'customer'})">>
                     <div class="feature-icon">👥</div>
                     <div class="feature-content">
                         <h3>고객 관계 관리</h3>
@@ -1068,7 +809,7 @@
     <!-- Registration Form Overlay -->
     <div class="registration-overlay" id="registrationOverlay">
         <div class="registration-form">
-            <button class="close-btn" onclick="trackCTA('artist_form_close', 'registration_form', '폼 닫기'); closeRegistration()">&times;</button>
+            <button class="close-btn" onclick="gtag('event', 'artist_form_close', {'page': 'artist'}); closeRegistration()">&times;</button>
             <div class="form-header">
                 <h3>작가 등록하기</h3>
                 <p>예술가로 함께하세요</p>
@@ -1177,7 +918,7 @@
             }
             
             // GA4 이벤트 추적 - 표준화된 trackCTA 함수 사용
-            trackCTA('artist_registration_completed', 'registration_form', `작가 등록 완료 - ${data.artStyle}`);
+            gtag('event', 'artist_registration_completed', {'page': 'artist', 'art_style': data.artStyle});
             
             // 추가 상세 이벤트
             gtag('event', 'artist_conversion', {
@@ -1193,8 +934,6 @@
             alert('작가 등록이 완료되었습니다! 검토 후 연락드리겠습니다.');
             this.reset();
             closeRegistration();
-            
-            console.log('Artist registration:', data);
         });
         
         // Keyboard shortcuts
@@ -1250,89 +989,9 @@
                     'page_title': document.title,
                     'timestamp': new Date().toISOString()
                 });
-                
-                console.log('🎯 CTA Tracked:', {
-                    feature: feature_name,
-                    user: user_type,
-                    category: category
-                });
             }
         }
-
-        console.log('🎨 Artist page loaded successfully');
-        
-        // Artist 페이지 고급 분석 시스템
-        document.addEventListener('DOMContentLoaded', function() {
-            initArtistAdvancedAnalytics();
-        });
-        
-        function initArtistAdvancedAnalytics() {
-            // 트래픽 소스 추적
-            trackArtistTrafficSource();
-            
-            // 작가 특화 리텐션 분석
-            analyzeArtistRetention();
-            
-            // 작품 상호작용 추적
-            trackArtworkInteractions();
-        }
-        
-        function trackArtistTrafficSource() {
-            const urlParams = new URLSearchParams(window.location.search);
-            gtag('event', 'artist_traffic_analysis', {
-                event_category: 'artist_acquisition',
-                referrer_domain: document.referrer ? new URL(document.referrer).hostname : 'direct',
-                utm_source: urlParams.get('utm_source') || 'none',
-                utm_medium: urlParams.get('utm_medium') || 'none',
-                utm_campaign: urlParams.get('utm_campaign') || 'none',
-                page_type: 'artist_portal',
-                user_intent: 'artist_registration'
-            });
-        }
-        
-        function analyzeArtistRetention() {
-            const artistVisitHistory = JSON.parse(localStorage.getItem('artistVisitHistory') || '[]');
-            const currentVisit = {
-                timestamp: Date.now(),
-                page: 'artist_portal',
-                features_viewed: [],
-                registration_attempted: false
-            };
-            
-            artistVisitHistory.push(currentVisit);
-            localStorage.setItem('artistVisitHistory', JSON.stringify(artistVisitHistory));
-            
-            gtag('event', 'artist_retention_analysis', {
-                event_category: 'artist_retention',
-                visit_count: artistVisitHistory.length,
-                user_segment: artistVisitHistory.length === 1 ? 'new_artist' : 'returning_artist',
-                registration_journey_stage: artistVisitHistory.length <= 2 ? 'discovery' : 'consideration'
-            });
-        }
-        
-        function trackArtworkInteractions() {
-            // 작품 미리보기 상호작용 추적
-            const artworkContainer = document.querySelector('.artwork-image-container');
-            if (artworkContainer) {
-                let hoverStartTime;
-                
-                artworkContainer.addEventListener('mouseenter', function() {
-                    hoverStartTime = Date.now();
-                });
-                
-                artworkContainer.addEventListener('mouseleave', function() {
-                    if (hoverStartTime) {
-                        const hoverDuration = Date.now() - hoverStartTime;
-                        gtag('event', 'artist_artwork_interaction', {
-                            event_category: 'artist_engagement',
-                            interaction_type: 'artwork_hover',
-                            duration_ms: hoverDuration,
-                            engagement_depth: hoverDuration > 3000 ? 'deep' : hoverDuration > 1000 ? 'medium' : 'brief'
-                        });
-                    }
-                });
-            }
-        }
+    </script>
     </script>
 </body>
 </html>
