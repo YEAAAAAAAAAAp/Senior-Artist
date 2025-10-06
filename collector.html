@@ -954,12 +954,14 @@
         function openInterestForm() {
             document.getElementById('interestOverlay').style.display = 'flex';
             
-            // GA4 이벤트 추적
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'interest_form_opened', {
-                    'event_category': 'engagement',
-                    'event_label': 'collector_interest',
-                    'value': 1
+            // GTM 이벤트 추적
+            if (window.dataLayer) {
+                window.dataLayer.push({
+                    event: 'interest_form_opened',
+                    timestamp: Date.now(),
+                    event_category: 'engagement',
+                    event_label: 'collector_interest',
+                    value: 1
                 });
             }
         }
@@ -1019,23 +1021,26 @@
                 return;
             }
             
-            // GA4 이벤트 추적
-            if (window.safeGtag) {
-                safeGtag('event', 'form_submit', {
+            // GTM 이벤트 전송
+            if (window.dataLayer) {
+                window.dataLayer.push({
+                    event: 'form_submit',
+                    timestamp: Date.now(),
                     event_category: 'conversion',
                     event_label: 'collector_interest',
                     interests: interests.join(',')
                 });
+
+                window.dataLayer.push({
+                    event: 'collector_conversion',
+                    timestamp: Date.now(),
+                    event_category: 'conversion',
+                    event_label: interests.join(','),
+                    interests: interests,
+                    budget_range: data.budget || 'not_specified',
+                    user_type: 'collector'
+                });
             }
-            
-            // 추가 상세 이벤트
-            gtag('event', 'collector_conversion', {
-                'event_category': 'conversion',
-                'event_label': interests.join(','),
-                'interests': interests,
-                'budget_range': data.budget || 'not_specified',
-                'user_type': 'collector'
-            });
             
             // Success message and close form
             alert('관심 등록이 완료되었습니다! 맞춤 작품을 추천해드리겠습니다.');
@@ -1082,10 +1087,12 @@
             
             if (scrollPercent > maxScrollDepth) {
                 maxScrollDepth = scrollPercent;
-                if (typeof gtag !== 'undefined' && (maxScrollDepth === 25 || maxScrollDepth === 50 || maxScrollDepth === 75 || maxScrollDepth === 100)) {
-                    gtag('event', 'scroll_depth', {
-                        'scroll_depth': maxScrollDepth + '%',
-                        'page_title': document.title
+                if (window.dataLayer && (maxScrollDepth === 25 || maxScrollDepth === 50 || maxScrollDepth === 75 || maxScrollDepth === 100)) {
+                    window.dataLayer.push({
+                        event: 'scroll_depth',
+                        timestamp: Date.now(),
+                        scroll_depth: maxScrollDepth + '%',
+                        page_title: document.title
                     });
                 }
             }
@@ -1114,15 +1121,19 @@
         
         function trackCollectorTrafficSource() {
             const urlParams = new URLSearchParams(window.location.search);
-            gtag('event', 'collector_traffic_analysis', {
-                event_category: 'collector_acquisition',
-                referrer_domain: document.referrer ? new URL(document.referrer).hostname : 'direct',
-                utm_source: urlParams.get('utm_source') || 'none',
-                utm_medium: urlParams.get('utm_medium') || 'none',
-                utm_campaign: urlParams.get('utm_campaign') || 'none',
-                page_type: 'collector_portal',
-                user_intent: 'art_discovery'
-            });
+            if (window.dataLayer) {
+                window.dataLayer.push({
+                    event: 'collector_traffic_analysis',
+                    timestamp: Date.now(),
+                    event_category: 'collector_acquisition',
+                    referrer_domain: document.referrer ? new URL(document.referrer).hostname : 'direct',
+                    utm_source: urlParams.get('utm_source') || 'none',
+                    utm_medium: urlParams.get('utm_medium') || 'none',
+                    utm_campaign: urlParams.get('utm_campaign') || 'none',
+                    page_type: 'collector_portal',
+                    user_intent: 'art_discovery'
+                });
+            }
         }
         
         function analyzeCollectorRetention() {
@@ -1143,13 +1154,17 @@
                                    visitCount <= 3 ? 'browsing_collector' :
                                    visitCount <= 10 ? 'engaged_collector' : 'serious_collector';
             
-            gtag('event', 'collector_retention_analysis', {
-                event_category: 'collector_retention',
-                visit_count: visitCount,
-                collector_segment: collectorSegment,
-                buying_journey_stage: visitCount <= 2 ? 'awareness' : 
-                                    visitCount <= 5 ? 'consideration' : 'decision'
-            });
+            if (window.dataLayer) {
+                window.dataLayer.push({
+                    event: 'collector_retention_analysis',
+                    timestamp: Date.now(),
+                    event_category: 'collector_retention',
+                    visit_count: visitCount,
+                    collector_segment: collectorSegment,
+                    buying_journey_stage: visitCount <= 2 ? 'awareness' : 
+                                        visitCount <= 5 ? 'consideration' : 'decision'
+                });
+            }
         }
         
         function trackAIRecommendationInteractions() {
@@ -1157,13 +1172,17 @@
             const aiRecommendationCard = document.querySelector('[onclick*="ai_story_exploration"]');
             if (aiRecommendationCard) {
                 aiRecommendationCard.addEventListener('click', function() {
-                    gtag('event', 'ai_recommendation_engagement', {
-                        event_category: 'ai_features',
-                        feature_type: 'story_exploration',
-                        interaction_type: 'feature_click',
-                        user_segment: 'collector',
-                        ai_adoption_stage: 'initial_engagement'
-                    });
+                    if (window.dataLayer) {
+                        window.dataLayer.push({
+                            event: 'ai_recommendation_engagement',
+                            timestamp: Date.now(),
+                            event_category: 'ai_features',
+                            feature_type: 'story_exploration',
+                            interaction_type: 'feature_click',
+                            user_segment: 'collector',
+                            ai_adoption_stage: 'initial_engagement'
+                        });
+                    }
                 });
             }
         }
@@ -1183,19 +1202,23 @@
                         const viewDuration = Date.now() - artworkViewTime;
                         if (viewDuration > 2000) { // 2초 이상 관찰
                             featureInteractions++;
-                            gtag('event', 'purchase_intent_signal', {
-                                event_category: 'collector_behavior',
-                                signal_type: 'artwork_deep_view',
-                                view_duration_ms: viewDuration,
-                                intent_strength: viewDuration > 5000 ? 'high' : 'medium',
-                                cumulative_signals: featureInteractions
-                            });
+                            if (window.dataLayer) {
+                                window.dataLayer.push({
+                                    event: 'purchase_intent_signal',
+                                    timestamp: Date.now(),
+                                    event_category: 'collector_behavior',
+                                    signal_type: 'artwork_deep_view',
+                                    view_duration_ms: viewDuration,
+                                    intent_strength: viewDuration > 5000 ? 'high' : 'medium',
+                                    cumulative_signals: featureInteractions
+                                });
+                            }
                         }
                     }
                 });
             });
         }
     </script>
-    <script src="js/gtm-only.js?v=202510070050"></script>
+    <script src="js/gtm-only.js?v=202510070061"></script>
 </body>
 </html>

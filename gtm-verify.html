@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTM-GA4 CTA 추적 검증 도구</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .status { padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .warning { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .test-btn { background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin: 5px; cursor: pointer; }
+        .test-btn:hover { background: #218838; }
+        .log { background: #f8f9fa; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto; }
+        .metric { display: inline-block; margin: 10px; padding: 15px; background: #e9ecef; border-radius: 5px; min-width: 120px; text-align: center; }
+        .metric-value { font-size: 24px; font-weight: bold; color: #007bff; }
+        .checklist { list-style: none; padding: 0; }
+        .checklist li { padding: 8px; margin: 5px 0; border-left: 4px solid #007bff; background: #f8f9fa; }
+        .checklist .done { border-left-color: #28a745; background: #d4edda; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 GTM-GA4 CTA 추적 최종 검증</h1>
+        
+        <div id="gtm-status" class="status">
+            <strong>GTM 상태:</strong> 확인 중...
+        </div>
+        
+        <div id="dataLayer-status" class="status">
+            <strong>DataLayer 상태:</strong> 확인 중...
+        </div>
+
+        <h2>📊 실시간 메트릭</h2>
+        <div>
+            <div class="metric">
+                <div class="metric-value" id="bound-count">0</div>
+                <div>바인딩된 CTA</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="event-count">0</div>
+                <div>전송된 이벤트</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" id="error-count">0</div>
+                <div>오류 개수</div>
+            </div>
+        </div>
+
+        <h2>🧪 테스트 도구</h2>
+        <button class="test-btn" onclick="testDataLayerAccess()">DataLayer 접근 테스트</button>
+        <button class="test-btn" onclick="testCTABinding()">CTA 바인딩 검증</button>
+        <button class="test-btn" onclick="simulateClicks()">클릭 시뮬레이션</button>
+        <button class="test-btn" onclick="clearLogs()">로그 지우기</button>
+
+        <h2>📋 GA4 연결 체크리스트</h2>
+        <ul class="checklist" id="checklist">
+            <li>GTM 컨테이너 로드 확인</li>
+            <li>DataLayer 초기화 확인</li>
+            <li>CTA 요소 바인딩 확인</li>
+            <li>이벤트 전송 테스트</li>
+            <li>GA4 데이터 수신 확인</li>
+        </ul>
+
+        <h2>📝 실시간 로그</h2>
+        <div id="log" class="log"></div>
+
+        <h2>🎯 GA4 확인 방법</h2>
+        <div class="status">
+            <strong>GA4에서 데이터 확인하는 방법:</strong><br>
+            1. GA4 속성 (G-DE2ZNKWV2W) 접속<br>
+            2. 보고서 > 실시간 > 개요 메뉴로 이동<br>
+            3. 이벤트 섹션에서 "cta_click" 이벤트 확인<br>
+            4. 이벤트를 클릭하여 세부 파라미터 확인<br>
+            5. cta_name, cta_type, cta_location 등 맞춤 측정기준 데이터 검증
+        </div>
+    </div>
+
+    <script>
+        let eventCount = 0;
+        let errorCount = 0;
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#dc3545' : type === 'success' ? '#28a745' : '#6c757d';
+            logDiv.innerHTML += `<div style="color: ${color}">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function updateMetric(id, value) {
+            document.getElementById(id).textContent = value;
+        }
+
+        function updateChecklist(index, done = true) {
+            const items = document.querySelectorAll('.checklist li');
+            if (items[index]) {
+                if (done) items[index].classList.add('done');
+                else items[index].classList.remove('done');
+            }
+        }
+
+        function testDataLayerAccess() {
+            log('DataLayer 접근 테스트 시작...');
+            
+            if (typeof window.dataLayer !== 'undefined') {
+                log('✅ DataLayer 발견됨', 'success');
+                log(`DataLayer 길이: ${window.dataLayer.length}`, 'info');
+                
+                // 테스트 이벤트 전송
+                window.dataLayer.push({
+                    event: 'test_event',
+                    test_parameter: 'verification_tool',
+                    timestamp: Date.now()
+                });
+                
+                log('✅ 테스트 이벤트 전송 완료', 'success');
+                updateChecklist(1, true);
+            } else {
+                log('❌ DataLayer를 찾을 수 없습니다', 'error');
+                errorCount++;
+                updateMetric('error-count', errorCount);
+            }
+        }
+
+        function testCTABinding() {
+            log('CTA 바인딩 검증 시작...');
+            
+            const ctaElements = document.querySelectorAll('[data-cta-name], .cta-button, .choice-btn, .submit-btn');
+            const boundElements = document.querySelectorAll('[data-gtm-bound]');
+            
+            log(`발견된 CTA 요소: ${ctaElements.length}개`);
+            log(`바인딩된 요소: ${boundElements.length}개`);
+            
+            updateMetric('bound-count', boundElements.length);
+            
+            if (boundElements.length > 0) {
+                log('✅ CTA 바인딩 확인됨', 'success');
+                updateChecklist(2, true);
+            } else {
+                log('⚠️ 바인딩된 요소가 없습니다', 'warning');
+            }
+        }
+
+        function simulateClicks() {
+            log('클릭 시뮬레이션 시작...');
+            
+            const testEvent = {
+                event: 'cta_click',
+                event_category: 'engagement',
+                event_label: 'test_cta',
+                cta_name: 'verification_test',
+                cta_type: 'test',
+                cta_location: 'verification_tool',
+                cta_text: 'Test CTA Click',
+                element_type: 'button',
+                element_class: 'test-btn',
+                timestamp: Date.now()
+            };
+
+            if (window.dataLayer) {
+                window.dataLayer.push(testEvent);
+                eventCount++;
+                updateMetric('event-count', eventCount);
+                log('✅ 시뮬레이션 이벤트 전송 완료', 'success');
+                updateChecklist(3, true);
+            } else {
+                log('❌ DataLayer 접근 실패', 'error');
+                errorCount++;
+                updateMetric('error-count', errorCount);
+            }
+        }
+
+        function clearLogs() {
+            document.getElementById('log').innerHTML = '';
+            log('로그가 지워졌습니다.');
+        }
+
+        function checkGTMStatus() {
+            if (window.google_tag_manager) {
+                document.getElementById('gtm-status').className = 'status success';
+                document.getElementById('gtm-status').innerHTML = '<strong>GTM 상태:</strong> ✅ 정상 로드됨';
+                updateChecklist(0, true);
+            } else {
+                document.getElementById('gtm-status').className = 'status error';
+                document.getElementById('gtm-status').innerHTML = '<strong>GTM 상태:</strong> ❌ 로드되지 않음';
+            }
+
+            if (window.dataLayer) {
+                document.getElementById('dataLayer-status').className = 'status success';
+                document.getElementById('dataLayer-status').innerHTML = '<strong>DataLayer 상태:</strong> ✅ 초기화됨';
+                updateChecklist(1, true);
+            } else {
+                document.getElementById('dataLayer-status').className = 'status error';
+                document.getElementById('dataLayer-status').innerHTML = '<strong>DataLayer 상태:</strong> ❌ 초기화되지 않음';
+            }
+        }
+
+        // 페이지 로드 후 상태 확인
+        setTimeout(checkGTMStatus, 2000);
+        
+        // 초기 로그
+        log('GTM-GA4 CTA 추적 검증 도구 시작됨');
+        log('모든 테스트를 순서대로 실행해보세요.');
+    </script>
+</body>
+</html>

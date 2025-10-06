@@ -1,6 +1,6 @@
 /**
- * GTM 전용 CTA 추적 시스템 (최종 최적화)
- * 중복 제거를 위해 CTA 추적 기능만 포함
+ * GTM 전용 CTA 추적 시스템
+ * GA4 직접 호출 없이 GTM dataLayer만 사용
  */
 
 (function() {
@@ -10,10 +10,11 @@
     const GTM_CONFIG = {
         gtmId: window.__GTM_ID__ || 'GTM-594SVWKB',
         debug: true,
-        maxRetries: 3
+        maxRetries: 3,
+        retryInterval: 1000
     };
 
-    // CTA 셀렉터 정의 (핵심만)
+    // CTA 셀렉터 정의 (단순화)
     const CTA_SELECTORS = [
         '[data-cta-name]',
         '[data-cta-type]',
@@ -28,18 +29,21 @@
         '.close-btn'
     ];
 
-    let eventCount = 0;
+    let initRetryCount = 0;
+    const MAX_INIT_RETRIES = 5;
 
     /**
      * GTM dataLayer 이벤트 전송 (단일 함수)
      */
     function sendGTMEvent(eventName, eventData) {
         try {
+            // dataLayer 확인
             if (!window.dataLayer) {
-                console.warn('[GTM] dataLayer not found');
-                return false;
+                console.warn('[GTM] dataLayer not found, initializing...');
+                window.dataLayer = [];
             }
 
+            // 이벤트 데이터 구성
             const gtmEventData = {
                 event: eventName,
                 timestamp: Date.now(),
@@ -49,11 +53,11 @@
                 ...eventData
             };
 
+            // GTM으로 이벤트 전송
             window.dataLayer.push(gtmEventData);
-            eventCount++;
 
             if (GTM_CONFIG.debug) {
-                console.log(`[GTM] 📤 Event #${eventCount} sent:`, eventName, eventData);
+                console.log('[GTM] 📤 Event sent:', gtmEventData);
             }
 
             return true;
@@ -64,24 +68,16 @@
     }
 
     /**
-     * CTA 클릭 이벤트 처리 (완전 중복 방지)
+     * CTA 클릭 이벤트 처리 (단순화)
      */
     function handleCtaClick(element, event) {
-        // 강력한 중복 방지
-        if (element.hasAttribute('data-processing') || element.hasAttribute('data-clicked')) {
-            console.log('[GTM] ⚠️ Duplicate click prevented');
-            return false;
+        // 중복 클릭 방지
+        if (element.hasAttribute('data-processing')) {
+            return;
         }
 
-        // 처리 중 표시
         element.setAttribute('data-processing', 'true');
-        element.setAttribute('data-clicked', 'true');
-        
-        // 플래그 제거 (1초 후)
-        setTimeout(() => {
-            element.removeAttribute('data-processing');
-            setTimeout(() => element.removeAttribute('data-clicked'), 2000);
-        }, 1000);
+        setTimeout(() => element.removeAttribute('data-processing'), 1000);
 
         // GA4 표준 CTA 정보 추출
         const ctaData = {
@@ -90,15 +86,16 @@
             event_label: element.getAttribute('data-cta-name') || 'unknown',
             value: 1,
             
-            // GA4 맞춤 측정기준
+            // GA4 맞춤 측정기준 (Custom Dimensions)
             cta_name: element.getAttribute('data-cta-name') || 'unknown',
             cta_type: element.getAttribute('data-cta-type') || 'unknown', 
-            cta_location: element.getAttribute('data-cta-location') || getElementLocation(element),
+            cta_location: element.getAttribute('data-cta-location') || 'unknown',
             cta_text: (element.textContent || '').trim().substring(0, 100),
             
-            // 추가 컨텍스트
+            // 추가 컨텍스트 정보
             element_type: element.tagName.toLowerCase(),
-            element_class: element.className || 'no-class'
+            element_class: element.className || 'no-class',
+            page_section: element.closest('section')?.className || 'unknown'
         };
 
         // 링크 정보 (있는 경우)
@@ -110,10 +107,10 @@
         const success = sendGTMEvent('cta_click', ctaData);
 
         // 디버그 피드백
-        if (GTM_CONFIG.debug && success) {
+        if (GTM_CONFIG.debug) {
             console.log('[GTM] 🎯 CTA CLICKED:', ctaData);
             
-            // 시각적 피드백 (1초간)
+            // 시각적 피드백
             element.style.outline = '2px solid #00ff00';
             setTimeout(() => element.style.outline = '', 1000);
         }
@@ -122,61 +119,39 @@
     }
 
     /**
-     * 요소 위치 추정
-     */
-    function getElementLocation(element) {
-        const section = element.closest('section');
-        if (section) {
-            return section.className.split(' ')[0] || 'unknown_section';
-        }
-        
-        const containers = ['.hero-content', '.choice-section', '.gallery-section', '.contact-section'];
-        for (let container of containers) {
-            if (element.closest(container)) {
-                return container.substring(1);
-            }
-        }
-        
-        return 'unknown_location';
-    }
-
-    /**
-     * CTA 요소 바인딩 (완전 중복 방지)
+     * CTA 요소 바인딩 (단순화)
      */
     function bindCtaElements() {
         let boundCount = 0;
-        const processedElements = new Set();
+        const allElements = new Set();
 
         CTA_SELECTORS.forEach(selector => {
             try {
                 const elements = document.querySelectorAll(selector + ':not([data-gtm-bound])');
                 
                 elements.forEach(element => {
-                    // Set을 이용한 중복 방지
-                    if (processedElements.has(element)) {
+                    // 중복 바인딩 방지
+                    if (allElements.has(element)) {
                         return;
                     }
-                    processedElements.add(element);
+
+                    allElements.add(element);
 
                     // 단일 클릭 이벤트만 바인딩
                     element.addEventListener('click', function(event) {
                         handleCtaClick(element, event);
-                    }, { 
-                        once: false, 
-                        passive: true,
-                        capture: false
-                    });
+                    }, { once: false, passive: true });
 
                     // 바인딩 표시
                     element.setAttribute('data-gtm-bound', 'true');
                     boundCount++;
 
                     if (GTM_CONFIG.debug) {
-                        console.log(`[GTM] ✅ Bound: ${selector}`, element);
+                        console.log('[GTM] ✅ Bound:', selector, element);
                     }
                 });
             } catch (error) {
-                console.warn(`[GTM] Selector error: ${selector}`, error);
+                console.warn('[GTM] Selector error:', selector, error);
             }
         });
 
@@ -185,7 +160,7 @@
     }
 
     /**
-     * 페이지뷰 이벤트 전송 (한번만)
+     * 페이지뷰 이벤트 전송
      */
     function sendPageView() {
         sendGTMEvent('page_view', {
@@ -194,40 +169,53 @@
     }
 
     /**
-     * GTM 초기화 (간소화)
+     * GTM 초기화
      */
     function initGTM() {
-        console.log('[GTM] 🚀 Initializing GTM-only CTA tracking');
+        initRetryCount++;
+        
+        console.log(`[GTM] 🚀 Initializing attempt ${initRetryCount}/${MAX_INIT_RETRIES}`);
 
-        // dataLayer 확인
+        // GTM 로드 확인
         if (!window.dataLayer) {
-            console.warn('[GTM] ⚠️ Creating minimal dataLayer');
-            window.dataLayer = [];
+            if (initRetryCount < MAX_INIT_RETRIES) {
+                setTimeout(initGTM, GTM_CONFIG.retryInterval);
+                return;
+            } else {
+                console.warn('[GTM] ⚠️ GTM not loaded, creating minimal dataLayer');
+                window.dataLayer = [];
+            }
         }
 
-        // 페이지뷰 전송 (한번만)
+        // 페이지뷰 전송
         sendPageView();
 
         // CTA 바인딩
         const boundCount = bindCtaElements();
 
-        // 완료 로그
-        console.log(`[GTM] ✅ GTM CTA tracking ready - ${boundCount} elements bound`);
+        // 바인딩 재시도 (필요시)
+        if (boundCount < 5 && initRetryCount < MAX_INIT_RETRIES) {
+            setTimeout(() => {
+                const retryCount = bindCtaElements();
+                console.log(`[GTM] 🔄 Retry binding: ${retryCount} additional elements`);
+            }, 2000);
+        }
+
+        console.log('[GTM] ✅ GTM initialization complete');
     }
 
     // DOM 준비 후 초기화
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initGTM);
     } else {
-        setTimeout(initGTM, 100);
+        initGTM();
     }
 
     // 전역 노출 (디버깅용)
     window.GTMTracker = {
         sendEvent: sendGTMEvent,
         bindElements: bindCtaElements,
-        config: GTM_CONFIG,
-        eventCount: () => eventCount
+        config: GTM_CONFIG
     };
 
 })();

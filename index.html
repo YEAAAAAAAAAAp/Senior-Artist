@@ -1109,16 +1109,20 @@
             
             if (lastVisit) {
                 const daysSinceLastVisit = Math.floor((currentVisit - parseInt(lastVisit)) / (1000 * 60 * 60 * 24));
-                if (window.safeGtag) {
-                    safeGtag('event', 'user_retention', {
+                if (window.dataLayer) {
+                    window.dataLayer.push({
+                        event: 'user_retention',
+                        timestamp: Date.now(),
                         event_category: 'retention',
                         days_since_last_visit: daysSinceLastVisit,
                         visitor_type: 'returning'
                     });
                 }
             } else {
-                if (window.safeGtag) {
-                    safeGtag('event', 'user_retention', {
+                if (window.dataLayer) {
+                    window.dataLayer.push({
+                        event: 'user_retention',
+                        timestamp: Date.now(),
                         event_category: 'retention',
                         visitor_type: 'new'
                     });
@@ -1132,8 +1136,10 @@
             const urlParams = new URLSearchParams(window.location.search);
             const referrer = document.referrer;
             
-            if (window.safeGtag) {
-                safeGtag('event', 'traffic_source_analysis', {
+            if (window.dataLayer) {
+                window.dataLayer.push({
+                    event: 'traffic_source_analysis',
+                    timestamp: Date.now(),
                     event_category: 'acquisition',
                     utm_source: urlParams.get('utm_source') || 'none',
                     utm_medium: urlParams.get('utm_medium') || 'none',
@@ -1151,9 +1157,11 @@
                 modal.classList.add('show');
             }, 10);
             
-            // 모달 열기 이벤트 추적
-            if (window.safeGtag) {
-                safeGtag('event', 'modal_open', {
+            // 모달 열기 이벤트 추적 (GTM)
+            if (window.dataLayer) {
+                window.dataLayer.push({
+                    event: 'modal_open',
+                    timestamp: Date.now(),
                     event_category: 'navigation',
                     event_label: 'about_modal'
                 });
@@ -1177,9 +1185,11 @@
             document.removeEventListener('keydown', handleEscKey);
             modal.removeEventListener('click', handleOutsideClick);
             
-            // 모달 닫기 이벤트 추적
-            if (window.safeGtag) {
-                safeGtag('event', 'modal_close', {
+            // 모달 닫기 이벤트 추적 (GTM)
+            if (window.dataLayer) {
+                window.dataLayer.push({
+                    event: 'modal_close',
+                    timestamp: Date.now(),
                     event_category: 'navigation',
                     event_label: 'about_modal'
                 });
@@ -1240,12 +1250,14 @@
                     scrollMilestones.forEach(milestone => {
                         if (scrollPercent >= milestone && !trackedMilestones.includes(milestone)) {
                             trackedMilestones.push(milestone);
-                            if (window.safeGtag) {
-                                safeGtag('event', 'scroll_depth', {
-                                    'event_category': 'engagement',
-                                    'event_label': `${milestone}%`,
-                                    'scroll_depth': milestone,
-                                    'page_title': document.title
+                            if (window.dataLayer) {
+                                window.dataLayer.push({
+                                    event: 'scroll_depth',
+                                    timestamp: Date.now(),
+                                    event_category: 'engagement',
+                                    event_label: `${milestone}%`,
+                                    scroll_depth: milestone,
+                                    page_title: document.title
                                 });
                             }
                             // Scroll depth milestone reached
@@ -1262,12 +1274,14 @@
             // 페이지 이탈 추적
             window.addEventListener('beforeunload', function() {
                 const timeSpent = Math.round((Date.now() - startTime) / 1000);
-                if (window.safeGtag) {
-                    safeGtag('event', 'page_exit', {
-                        'event_category': 'engagement',
-                        'event_label': 'before_unload',
-                        'time_spent': timeSpent,
-                        'page_title': document.title
+                if (window.dataLayer) {
+                    window.dataLayer.push({
+                        event: 'page_exit',
+                        timestamp: Date.now(),
+                        event_category: 'engagement',
+                        event_label: 'before_unload',
+                        time_spent: timeSpent,
+                        page_title: document.title
                     });
                 }
             });
@@ -1275,17 +1289,21 @@
             // 페이지 숨김/표시 추적 (탭 전환 등)
             document.addEventListener('visibilitychange', function() {
                 if (document.visibilityState === 'hidden') {
-                    if (window.safeGtag) {
-                        safeGtag('event', 'page_hidden', {
-                            'event_category': 'engagement',
-                            'event_label': 'tab_hidden'
+                    if (window.dataLayer) {
+                        window.dataLayer.push({
+                            event: 'page_hidden',
+                            timestamp: Date.now(),
+                            event_category: 'engagement',
+                            event_label: 'tab_hidden'
                         });
                     }
                 } else if (document.visibilityState === 'visible') {
-                    if (window.safeGtag) {
-                        safeGtag('event', 'page_visible', {
-                            'event_category': 'engagement',
-                            'event_label': 'tab_visible'
+                    if (window.dataLayer) {
+                        window.dataLayer.push({
+                            event: 'page_visible',
+                            timestamp: Date.now(),
+                            event_category: 'engagement',
+                            event_label: 'tab_visible'
                         });
                     }
                 }
@@ -1294,15 +1312,19 @@
         
         // 페이지 성능 추적
         function trackPagePerformance() {
-            if ('performance' in window) {
+                if ('performance' in window) {
                 const perfData = performance.getEntriesByType('navigation')[0];
-                gtag('event', 'page_performance', {
-                    event_category: 'technical',
-                    load_time: Math.round(perfData.loadEventEnd - perfData.fetchStart),
-                    dom_content_loaded: Math.round(perfData.domContentLoadedEventEnd - perfData.fetchStart),
-                    first_paint: Math.round(performance.getEntriesByType('paint')[0]?.startTime || 0),
-                    page_type: 'main_landing'
-                });
+                if (window.dataLayer) {
+                    window.dataLayer.push({
+                        event: 'page_performance',
+                        timestamp: Date.now(),
+                        event_category: 'technical',
+                        load_time: Math.round(perfData.loadEventEnd - perfData.fetchStart),
+                        dom_content_loaded: Math.round(perfData.domContentLoadedEventEnd - perfData.fetchStart),
+                        first_paint: Math.round(performance.getEntriesByType('paint')[0]?.startTime || 0),
+                        page_type: 'main_landing'
+                    });
+                }
             }
         }
         
@@ -1324,16 +1346,20 @@
                 keystrokes++;
             });
             
-            // 30초마다 행동 패턴 전송
+                // 30초마다 행동 패턴 전송
             setInterval(function() {
                 if (mouseMovements > 0 || clicks > 0 || keystrokes > 0) {
-                    gtag('event', 'user_behavior_pattern', {
-                        event_category: 'engagement',
-                        mouse_movements: mouseMovements,
-                        clicks: clicks,
-                        keystrokes: keystrokes,
-                        activity_score: (mouseMovements * 0.1) + (clicks * 2) + (keystrokes * 1.5)
-                    });
+                    if (window.dataLayer) {
+                        window.dataLayer.push({
+                            event: 'user_behavior_pattern',
+                            timestamp: Date.now(),
+                            event_category: 'engagement',
+                            mouse_movements: mouseMovements,
+                            clicks: clicks,
+                            keystrokes: keystrokes,
+                            activity_score: (mouseMovements * 0.1) + (clicks * 2) + (keystrokes * 1.5)
+                        });
+                    }
                     
                     // 카운터 리셋
                     mouseMovements = 0;
@@ -1348,17 +1374,21 @@
             const startTime = Date.now();
             const urlParams = new URLSearchParams(window.location.search);
             
-            gtag('event', 'traffic_quality', {
-                event_category: 'acquisition',
-                referrer_domain: document.referrer ? new URL(document.referrer).hostname : 'direct',
-                utm_source: urlParams.get('utm_source') || 'none',
-                utm_medium: urlParams.get('utm_medium') || 'none',
-                utm_campaign: urlParams.get('utm_campaign') || 'none',
-                device_type: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
-                browser: navigator.userAgent.includes('Chrome') ? 'chrome' : 
-                        navigator.userAgent.includes('Firefox') ? 'firefox' : 
-                        navigator.userAgent.includes('Safari') ? 'safari' : 'other'
-            });
+            if (window.dataLayer) {
+                window.dataLayer.push({
+                    event: 'traffic_quality',
+                    timestamp: Date.now(),
+                    event_category: 'acquisition',
+                    referrer_domain: document.referrer ? new URL(document.referrer).hostname : 'direct',
+                    utm_source: urlParams.get('utm_source') || 'none',
+                    utm_medium: urlParams.get('utm_medium') || 'none',
+                    utm_campaign: urlParams.get('utm_campaign') || 'none',
+                    device_type: /Mobi|Android/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+                    browser: navigator.userAgent.includes('Chrome') ? 'chrome' : 
+                            navigator.userAgent.includes('Firefox') ? 'firefox' : 
+                            navigator.userAgent.includes('Safari') ? 'safari' : 'other'
+                });
+            }
         }
         
         // 리텐션 세그먼트 분석
@@ -1383,15 +1413,19 @@
             const daysSinceFirst = recentVisits.length > 1 ? 
                 Math.floor((Date.now() - recentVisits[0].timestamp) / (24 * 60 * 60 * 1000)) : 0;
             
-            gtag('event', 'retention_analysis', {
-                event_category: 'retention',
-                visit_count_30d: visitCount,
-                days_since_first_visit: daysSinceFirst,
-                user_segment: visitCount === 1 ? 'new' : 
-                           visitCount <= 3 ? 'casual' : 
-                           visitCount <= 10 ? 'regular' : 'power_user',
-                return_frequency: visitCount > 1 ? daysSinceFirst / visitCount : 0
-            });
+            if (window.dataLayer) {
+                window.dataLayer.push({
+                    event: 'retention_analysis',
+                    timestamp: Date.now(),
+                    event_category: 'retention',
+                    visit_count_30d: visitCount,
+                    days_since_first_visit: daysSinceFirst,
+                    user_segment: visitCount === 1 ? 'new' : 
+                               visitCount <= 3 ? 'casual' : 
+                               visitCount <= 10 ? 'regular' : 'power_user',
+                    return_frequency: visitCount > 1 ? daysSinceFirst / visitCount : 0
+                });
+            }
         }
         
         // 고급 분석 시스템 초기화 실행
@@ -1614,9 +1648,11 @@
                 return;
             }
             
-            // Track form submission
-            if (window.safeGtag) {
-                safeGtag('event', 'form_submit', {
+            // Track form submission (GTM)
+            if (window.dataLayer) {
+                window.dataLayer.push({
+                    event: 'form_submit',
+                    timestamp: Date.now(),
                     event_category: 'engagement',
                     event_label: 'contact_form',
                     user_type: data.userType
@@ -1650,21 +1686,29 @@
             formFields.forEach(field => {
                 // 필드 포커스 추적
                 field.addEventListener('focus', function() {
-                    gtag('event', 'form_field_focus', {
-                        'event_category': 'form_interaction',
-                        'event_label': this.name || this.id,
-                        'field_type': this.type
-                    });
+                    if (window.dataLayer) {
+                        window.dataLayer.push({
+                            event: 'form_field_focus',
+                            timestamp: Date.now(),
+                            event_category: 'form_interaction',
+                            event_label: this.name || this.id,
+                            field_type: this.type
+                        });
+                    }
                 });
                 
                 // 필드 완료 추적
                 field.addEventListener('blur', function() {
                     if (this.value.trim()) {
-                        gtag('event', 'form_field_complete', {
-                            'event_category': 'form_interaction',
-                            'event_label': this.name || this.id,
-                            'field_type': this.type
-                        });
+                        if (window.dataLayer) {
+                            window.dataLayer.push({
+                                event: 'form_field_complete',
+                                timestamp: Date.now(),
+                                event_category: 'form_interaction',
+                                event_label: this.name || this.id,
+                                field_type: this.type
+                            });
+                        }
                     }
                 });
             });
@@ -1672,11 +1716,15 @@
             // 라디오 버튼 선택 추적
             document.querySelectorAll('input[name="userType"]').forEach(radio => {
                 radio.addEventListener('change', function() {
-                    gtag('event', 'user_type_selection', {
-                        'event_category': 'form_interaction',
-                        'event_label': this.value,
-                        'selection_type': 'user_preference'
-                    });
+                    if (window.dataLayer) {
+                        window.dataLayer.push({
+                            event: 'user_type_selection',
+                            timestamp: Date.now(),
+                            event_category: 'form_interaction',
+                            event_label: this.value,
+                            selection_type: 'user_preference'
+                        });
+                    }
                     // User type selected
                 });
             });
@@ -1763,50 +1811,63 @@
     <script>
         // 전역 에러 추적 시스템
         window.addEventListener('error', function(e) {
-            gtag('event', 'javascript_error', {
-                'event_category': 'error',
-                'event_label': e.message,
-                'error_filename': e.filename,
-                'error_lineno': e.lineno,
-                'error_colno': e.colno
-            });
+            if (window.dataLayer) {
+                window.dataLayer.push({
+                    event: 'javascript_error',
+                    timestamp: Date.now(),
+                    event_category: 'error',
+                    event_label: e.message,
+                    error_filename: e.filename,
+                    error_lineno: e.lineno,
+                    error_colno: e.colno
+                });
+            }
         });
         
         // Promise rejection 에러 추적
         window.addEventListener('unhandledrejection', function(e) {
-            gtag('event', 'promise_rejection', {
-                'event_category': 'error',
-                'event_label': e.reason.toString(),
-                'error_type': 'unhandled_promise'
-            });
+            if (window.dataLayer) {
+                window.dataLayer.push({
+                    event: 'promise_rejection',
+                    timestamp: Date.now(),
+                    event_category: 'error',
+                    event_label: e.reason.toString(),
+                    error_type: 'unhandled_promise'
+                });
+            }
         });
         
         // 이미지 로딩 에러 추적
         document.addEventListener('error', function(e) {
             if (e.target.tagName === 'IMG') {
-                gtag('event', 'image_load_error', {
-                    'event_category': 'error',
-                    'event_label': e.target.src,
-                    'error_type': 'image_load_failed'
-                });
+                if (window.dataLayer) {
+                    window.dataLayer.push({
+                        event: 'image_load_error',
+                        timestamp: Date.now(),
+                        event_category: 'error',
+                        event_label: e.target.src,
+                        error_type: 'image_load_failed'
+                    });
+                }
             }
         }, true);
         
         // 최종 GA4 상태 확인
         setTimeout(function() {
-            if (typeof gtag === 'function') {
-                // GA4 fully loaded - all tracking systems active
-                gtag('event', 'ga4_fully_loaded', {
-                    'event_category': 'system',
-                    'event_label': 'tracking_ready',
-                    'load_time': Date.now()
+            if (window.dataLayer) {
+                window.dataLayer.push({
+                    event: 'ga4_fully_loaded',
+                    timestamp: Date.now(),
+                    event_category: 'system',
+                    event_label: 'tracking_ready',
+                    load_time: Date.now()
                 });
             }
         }, 2000);
     </script>
     
     <!-- GA4 Tracking Scripts -->
-    <script src="js/gtm-only.js?v=202510070050"></script>
+    <script src="js/gtm-only.js?v=202510070061"></script>
     
     <!-- 실시간 GA4 테스트 스크립트 -->
     <script>
@@ -1816,7 +1877,7 @@
                 console.log('🔍 GA4 Status Check:');
                 console.log('- gtag available:', typeof window.gtag === 'function');
                 console.log('- dataLayer available:', typeof window.dataLayer !== 'undefined');
-                console.log('- GA4Utils available:', typeof window.GA4Utils !== 'undefined');
+                console.log('- GTMTracker available:', typeof window.GTMTracker !== 'undefined');
                 console.log('- Measurement ID:', window.__GA_MEASUREMENT_ID__);
                 
                 // CTA 요소 확인
@@ -1828,28 +1889,37 @@
                 console.log(`✅ Bound ${boundElements.length} elements to GA4 tracking`);
                 
                 // 테스트 이벤트 전송
-                if (window.GA4Utils && window.GA4Utils.safeGtag) {
-                    window.GA4Utils.safeGtag('event', 'manual_test', {
+                if (window.dataLayer) {
+                    window.dataLayer.push({
+                        event: 'manual_test',
+                        timestamp: Date.now(),
                         event_category: 'test',
                         event_label: 'console_test',
                         test_timestamp: Date.now()
                     });
-                    console.log('🧪 Test event sent');
+                    console.log('🧪 Test event sent (GTM)');
                 }
             }, 2000);
         });
         
         // 수동 CTA 테스트 함수
         window.testCTA = function() {
-            if (window.GA4Utils && window.GA4Utils.sendCtaClick) {
-                window.GA4Utils.sendCtaClick('Manual Test CTA', 'console_test', null);
-                console.log('🧪 Manual CTA test event sent');
+            if (window.GTMTracker && window.GTMTracker.sendEvent) {
+                window.GTMTracker.sendEvent('cta_click', {
+                    event_category: 'test',
+                    event_label: 'console_test_manual_cta',
+                    cta_name: 'Manual Test CTA',
+                    cta_type: 'test',
+                    cta_location: 'console',
+                    cta_text: 'Manual Test CTA (Console)'
+                });
+                console.log('🧪 Manual CTA test event sent (GTM)');
             } else {
-                console.error('❌ GA4Utils not available for manual test');
+                console.error('❌ GTMTracker not available for manual test');
             }
         };
         
-        console.log('💡 Run testCTA() in console to manually test CTA tracking');
+    console.log('💡 Run testCTA() in console to manually test CTA tracking (GTM)');
     </script>
 </body>
 </html>
