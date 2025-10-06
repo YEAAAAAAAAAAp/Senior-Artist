@@ -98,8 +98,14 @@ GA4 직접 구현 방식으로 모든 사용자 상호작용을 추적합니다.
 <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag; // 명시적으로 전역으로 설정
     gtag('js', new Date());
     gtag('config', 'G-DE2ZNKWV2W');
+    
+    // GA4 측정 ID 전역 변수로 설정
+    window.__GA_MEASUREMENT_ID__ = 'G-DE2ZNKWV2W';
+    
+    console.log('[GA4] ✅ GA4 initialized with direct implementation');
 </script>
 ```
 
@@ -108,14 +114,38 @@ GA4 직접 구현 방식으로 모든 사용자 상호작용을 추적합니다.
 
 ```javascript
 // GA4 이벤트 전송 예시
-gtag('event', 'cta_click', {
+window.gtag('event', 'cta_click', {
     'cta_name': ctaName,
     'cta_type': ctaType,
     'cta_location': ctaLocation,
     'cta_text': ctaText,
-    'element_type': element.tagName.toLowerCase()
+    'element_type': element.tagName.toLowerCase(),
+    'measurement_id': window.__GA_MEASUREMENT_ID__ || 'G-DE2ZNKWV2W'
 });
 ```
+
+### 디버깅 및 테스트 방법
+
+브라우저 콘솔에서 다음 함수들을 사용하여 GA4 트래킹을 디버깅하고 테스트할 수 있습니다:
+
+1. **GA4 상태 확인**:
+```javascript
+window.checkGA4()
+```
+
+2. **특정 CTA 테스트**:
+```javascript
+window.testCTA('.cta-button')  // 선택자로 CTA 요소 지정
+window.testCTA('#submitButton') // ID로 CTA 요소 지정
+window.testCTA()               // 기본 CTA 요소 테스트
+```
+
+### 구현 특징
+
+1. **GTM 없는 직접 구현**: Google Tag Manager에 의존하지 않고 직접 GA4 구현
+2. **자동 이벤트 바인딩**: 모든 CTA 요소에 자동으로 이벤트 리스너 추가
+3. **실패 복구 메커니즘**: gtag 함수 로드 확인 및 재시도 로직
+4. **디버깅 도구 내장**: 콘솔 테스트 도구 제공
 
 ## 📱 반응형 지원
 

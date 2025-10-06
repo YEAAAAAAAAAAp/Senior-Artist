@@ -15,8 +15,12 @@
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag; // 명시적으로 전역으로 설정
         gtag('js', new Date());
         gtag('config', 'G-DE2ZNKWV2W');
+        
+        // GA4 측정 ID 전역 변수로 설정
+        window.__GA_MEASUREMENT_ID__ = 'G-DE2ZNKWV2W';
         
         console.log('[GA4] ✅ GA4 initialized with direct implementation');
         console.log('[GA4] 📊 Page view sent for:', window.location.href);
@@ -1861,7 +1865,6 @@
                 console.log('🔍 GA4 Status Check:');
                 console.log('- gtag available:', typeof window.gtag === 'function');
                 console.log('- dataLayer available:', typeof window.dataLayer !== 'undefined');
-                console.log('- GTMTracker available:', typeof window.GTMTracker !== 'undefined');
                 console.log('- Measurement ID:', window.__GA_MEASUREMENT_ID__);
                 
                 // CTA 요소 확인
@@ -1873,37 +1876,19 @@
                 console.log(`✅ Bound ${boundElements.length} elements to GA4 tracking`);
                 
                 // 테스트 이벤트 전송
-                if (window.dataLayer) {
-                    window.dataLayer.push({
-                        event: 'manual_test',
-                        timestamp: Date.now(),
-                        event_category: 'test',
-                        event_label: 'console_test',
-                        test_timestamp: Date.now()
+                if (typeof window.gtag === 'function') {
+                    window.gtag('event', 'manual_test', {
+                        'timestamp': Date.now(),
+                        'event_category': 'test',
+                        'event_label': 'console_test',
+                        'test_timestamp': Date.now()
                     });
-                    console.log('🧪 Test event sent (GTM)');
+                    console.log('🧪 Test event sent (GA4)');
                 }
             }, 2000);
         });
         
-        // 수동 CTA 테스트 함수
-        window.testCTA = function() {
-            if (window.GTMTracker && window.GTMTracker.sendEvent) {
-                window.GTMTracker.sendEvent('cta_click', {
-                    event_category: 'test',
-                    event_label: 'console_test_manual_cta',
-                    cta_name: 'Manual Test CTA',
-                    cta_type: 'test',
-                    cta_location: 'console',
-                    cta_text: 'Manual Test CTA (Console)'
-                });
-                console.log('🧪 Manual CTA test event sent (GTM)');
-            } else {
-                console.error('❌ GTMTracker not available for manual test');
-            }
-        };
-        
-    console.log('💡 Run testCTA() in console to manually test CTA tracking (GTM)');
+    console.log('💡 Run window.checkGA4() in console to check GA4 status');
     </script>
 </body>
 </html>

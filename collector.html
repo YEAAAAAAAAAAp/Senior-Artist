@@ -19,8 +19,12 @@
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
+        window.gtag = gtag; // 명시적으로 전역으로 설정
         gtag('js', new Date());
         gtag('config', 'G-DE2ZNKWV2W');
+        
+        // GA4 측정 ID 전역 변수로 설정
+        window.__GA_MEASUREMENT_ID__ = 'G-DE2ZNKWV2W';
         
         console.log('[GA4] ✅ GA4 initialized with direct implementation');
         console.log('[GA4] 📊 Page view sent for:', window.location.href);
