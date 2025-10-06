@@ -692,11 +692,11 @@
         <nav class="nav">
             <div class="logo">아티스트</div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="artist.html" class="nav-link">예술가용</a></li>
-                <li><a href="collector.html" class="nav-link">콜렉터용</a></li>
-                <li><a href="index.html#about" class="nav-link">소개</a></li>
+                <li><a href="artist.html" class="nav-link" data-cta-type="navigation" data-cta-name="nav_artist">예술가용</a></li>
+                <li><a href="collector.html" class="nav-link" data-cta-type="navigation" data-cta-name="nav_collector">콜렉터용</a></li>
+                <li><a href="index.html#about" class="nav-link" data-cta-type="navigation" data-cta-name="nav_about">소개</a></li>
             </ul>
-            <a href="index.html" class="back-btn">← 메인으로</a>
+            <a href="index.html" class="back-btn" data-cta-type="navigation" data-cta-name="back_to_main">← 메인으로</a>
             <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기">☰</button>
         </nav>
     </header>
@@ -770,7 +770,7 @@
                             <span class="benefit-tag">스토리텔링</span>
                             <span class="benefit-tag">SEO 최적화</span>
                         </div>
-                        <button class="feature-btn">포트폴리오 만들기</button>
+                        <button class="feature-btn" data-cta-type="secondary" data-cta-name="portfolio_feature_btn">포트폴리오 만들기</button>
                     </div>
                 </div>
 
@@ -785,7 +785,7 @@
                             <span class="benefit-tag">견적 시스템</span>
                             <span class="benefit-tag">결제·배송 자동화</span>
                         </div>
-                        <button class="feature-btn">거래 관리 설정</button>
+                        <button class="feature-btn" data-cta-type="secondary" data-cta-name="transaction_feature_btn">거래 관리 설정</button>
                     </div>
                 </div>
 
@@ -800,7 +800,7 @@
                             <span class="benefit-tag">취향 분析</span>
                             <span class="benefit-tag">맞춤 추천·소통</span>
                         </div>
-                        <button class="feature-btn">고객 관리 시작</button>
+                        <button class="feature-btn" data-cta-type="secondary" data-cta-name="customer_feature_btn">고객 관리 시작</button>
                     </div>
                 </div>
             </div>
@@ -855,7 +855,7 @@
                     <textarea id="artistMessage" name="artistMessage" class="form-control" rows="4" placeholder="당신의 예술 여정과 작품에 대해 간단히 소개해주세요"></textarea>
                 </div>
                 
-                <button type="submit" class="submit-btn">등록하기</button>
+                <button type="submit" class="submit-btn" data-cta-type="primary" data-cta-name="artist_registration_submit">등록하기</button>
             </form>
         </div>
     </div>

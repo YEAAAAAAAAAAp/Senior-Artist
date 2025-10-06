@@ -69,9 +69,23 @@
             value: 1
         };
 
-        // 링크 URL 추가 (있는 경우)
-        if (element && element.href) {
-            eventData.link_url = element.href;
+        // 데이터 속성에서 추가 정보 수집
+        if (element) {
+            const ctaType = element.getAttribute('data-cta-type');
+            const ctaName = element.getAttribute('data-cta-name');
+            
+            if (ctaType) {
+                eventData.cta_type = ctaType;
+            }
+            
+            if (ctaName) {
+                eventData.cta_name = ctaName;
+            }
+            
+            // 링크 URL 추가 (있는 경우)
+            if (element.href) {
+                eventData.link_url = element.href;
+            }
         }
 
         safeGtag('event', 'cta_click', eventData);

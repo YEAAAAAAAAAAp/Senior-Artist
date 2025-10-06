@@ -758,11 +758,11 @@
         <nav class="nav">
             <div class="logo">아티스트</div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="artist.html" class="nav-link">예술가용</a></li>
-                <li><a href="collector.html" class="nav-link">콜렉터용</a></li>
-                <li><a href="index.html#about" class="nav-link">소개</a></li>
+                <li><a href="artist.html" class="nav-link" data-cta-type="navigation" data-cta-name="nav_artist">예술가용</a></li>
+                <li><a href="collector.html" class="nav-link" data-cta-type="navigation" data-cta-name="nav_collector">콜렉터용</a></li>
+                <li><a href="index.html#about" class="nav-link" data-cta-type="navigation" data-cta-name="nav_about">소개</a></li>
             </ul>
-            <a href="index.html" class="back-btn">← 메인으로</a>
+            <a href="index.html" class="back-btn" data-cta-type="navigation" data-cta-name="back_to_main">← 메인으로</a>
             <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기">☰</button>
         </nav>
     </header>
@@ -829,7 +829,7 @@
                             <span class="benefit-tag">개인 취향 학습</span>
                             <span class="benefit-tag">스마트 추천</span>
                         </div>
-                        <button class="feature-btn">취향 분석 시작</button>
+                        <button class="feature-btn" data-cta-type="secondary" data-cta-name="taste_analysis_btn">취향 분석 시작</button>
                     </div>
                 </div>
 
@@ -844,7 +844,7 @@
                             <span class="benefit-tag">표준계약서</span>
                             <span class="benefit-tag">작가 검증·리뷰</span>
                         </div>
-                        <button class="feature-btn">거래 보장 알아보기</button>
+                        <button class="feature-btn" data-cta-type="secondary" data-cta-name="transaction_guarantee_btn">거래 보장 알아보기</button>
                     </div>
                 </div>
 
@@ -859,7 +859,7 @@
                             <span class="benefit-tag">맞춤 견적</span>
                             <span class="benefit-tag">즉시 예약</span>
                         </div>
-                        <button class="feature-btn">작가와 대화하기</button>
+                        <button class="feature-btn" data-cta-type="secondary" data-cta-name="artist_communication_btn">작가와 대화하기</button>
                     </div>
                 </div>
             </div>
@@ -925,7 +925,7 @@
                     <textarea id="interests" name="interests" class="form-control" rows="3" placeholder="어떤 스타일이나 주제의 작품에 관심이 있으신가요?"></textarea>
                 </div>
                 
-                <button type="submit" class="submit-btn">관심 등록하기</button>
+                <button type="submit" class="submit-btn" data-cta-type="primary" data-cta-name="collector_interest_submit">관심 등록하기</button>
             </form>
         </div>
     </div>

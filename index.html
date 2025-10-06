@@ -1353,9 +1353,9 @@
         <nav class="nav">
             <div class="logo">아티스트</div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="artist.html" class="nav-link">예술가용</a></li>
-                <li><a href="collector.html" class="nav-link">콜렉터용</a></li>
-                <li><a href="#" class="nav-link" onclick="openAboutModal()">소개</a></li>
+                <li><a href="artist.html" class="nav-link" data-cta-type="navigation" data-cta-name="nav_artist">예술가용</a></li>
+                <li><a href="collector.html" class="nav-link" data-cta-type="navigation" data-cta-name="nav_collector">콜렉터용</a></li>
+                <li><a href="#" class="nav-link" onclick="openAboutModal()" data-cta-type="navigation" data-cta-name="nav_about">소개</a></li>
             </ul>
             <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기">☰</button>
         </nav>
@@ -1450,7 +1450,7 @@
             </div>
             
             <div class="gallery-cta">
-                <a href="collector.html" class="btn btn-primary">
+                <a href="collector.html" class="btn btn-primary" data-cta-type="secondary" data-cta-name="gallery_view_more">
                     더 많은 작품 보기 →
                 </a>
             </div>
@@ -1491,7 +1491,7 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="submit-btn">등록하기</button>
+                <button type="submit" class="submit-btn" data-cta-type="primary" data-cta-name="contact_form_submit">등록하기</button>
             </form>
         </div>
     </div>
@@ -1698,8 +1698,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn primary" onclick="location.href='artist.html'">예술가로 시작하기</button>
-                <button class="modal-btn secondary" onclick="location.href='collector.html'">콜렉터로 시작하기</button>
+                <button class="modal-btn primary" onclick="location.href='artist.html'" data-cta-type="primary" data-cta-name="modal_artist_start">예술가로 시작하기</button>
+                <button class="modal-btn secondary" onclick="location.href='collector.html'" data-cta-type="secondary" data-cta-name="modal_collector_start">콜렉터로 시작하기</button>
             </div>
         </div>
     </div>

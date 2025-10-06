@@ -14,11 +14,16 @@
         '.feature-btn',
         '.submit-btn',
         '.modal-btn',
+        '.nav-link',
+        '.back-btn',
         'a[href*="artist.html"]',
         'a[href*="collector.html"]',
         'button[onclick*="trackCTA"]',
         'button[onclick*="openRegistration"]',
-        'button[onclick*="openInterestForm"]'
+        'button[onclick*="openInterestForm"]',
+        'button[onclick*="openAboutModal"]',
+        'button[data-cta-name]',
+        'a[data-cta-name]'
     ];
 
     // MPA 여부 (현재 프로젝트는 MPA)
