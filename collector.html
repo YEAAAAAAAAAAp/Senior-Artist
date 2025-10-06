@@ -14,49 +14,14 @@
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=1200&h=800&fit=crop&crop=entropy&auto=format&q=80">
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80">
     
-    <!-- Google Analytics 4 - 기본 설정 (확실한 작동 보장) -->
+    <!-- Google Analytics 4 - 표준화된 설정 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
-        // 기본 dataLayer 설정
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
-        
-        // 현재 시간으로 초기화
         gtag('js', new Date());
-        
-        // GA4 측정 ID 설정 - 간소화된 안정적 설정 (Collector Page)
-        gtag('config', 'G-DE2ZNKWV2W', {
-            'page_title': 'Artist - Collector Portal',
-            'send_page_view': true
-        });
-
-        console.log('🚀 GA4 초기화 완료 - 측정 ID: G-DE2ZNKWV2W (Collector Page)');
-
-        // CTA 추적을 위한 간소화된 함수 - 안정성 우선
-        function trackCTA(actionName, ctaLocation, ctaText) {
-            try {
-                // 기본 GA4 이벤트만 전송
-                gtag('event', 'click', {
-                    'event_category': 'engagement',
-                    'event_label': actionName,
-                    'value': 1
-                });
-                
-                console.log('📈 GA4 이벤트 추적:', actionName);
-            } catch (error) {
-                console.error('❌ GA4 추적 오류:', error);
-            }
-        }
-        
-        // 간단한 페이지 로드 확인
-        window.addEventListener('load', function() {
-            console.log('📄 Collector 페이지 로드 완료');
-            gtag('event', 'page_view', {
-                'page_title': 'Collector Portal'
-            });
-        });
-    </script>
-        
+        gtag('config', 'G-DE2ZNKWV2W', { send_page_view: true });
+        window.__GA_MEASUREMENT_ID__ = 'G-DE2ZNKWV2W';
     </script>
     
     <style>
@@ -841,7 +806,7 @@
                     <li>안전한 거래 보장</li>
                 </ul>
                 
-                <button class="cta-button" onclick="trackCTA('collector_interest_signup', 'hero_section', '관심 등록하기'); openInterestForm()">관심 등록하기</button>
+                <button class="cta-button" data-cta-type="primary" data-cta-name="interest_register" onclick="openInterestForm()">관심 등록하기</button>
             </div>
         </div>
         
@@ -854,7 +819,7 @@
             
             <div class="features-grid">
                 <!-- AI 기반 스토리 탐색 -->
-                <div class="feature-card" onclick="trackCTA('ai_story_exploration', 'collector_features', 'AI 스토리 탐색')">
+                <div class="feature-card">
                     <div class="feature-icon">🤖</div>
                     <div class="feature-content">
                         <h3>AI 기반 스토리 탐색</h3>
@@ -869,7 +834,7 @@
                 </div>
 
                 <!-- 안심 거래 -->
-                <div class="feature-card" onclick="trackCTA('secure_transaction', 'collector_features', '안전한 거래')">
+                <div class="feature-card">
                     <div class="feature-icon">🛡️</div>
                     <div class="feature-content">
                         <h3>안심 거래</h3>
@@ -884,7 +849,7 @@
                 </div>
 
                 <!-- 즉시 소통·견적 -->
-                <div class="feature-card" onclick="trackCTA('instant_communication', 'collector_features', '즉석 소통')">
+                <div class="feature-card">
                     <div class="feature-icon">💬</div>
                     <div class="feature-content">
                         <h3>즉시 소통·견적</h3>
@@ -904,7 +869,7 @@
     <!-- Interest Form Overlay -->
     <div class="interest-overlay" id="interestOverlay">
         <div class="interest-form">
-            <button class="close-btn" onclick="trackCTA('collector_form_close', 'interest_form', '폼 닫기'); closeInterestForm()">&times;</button>
+            <button class="close-btn" onclick="closeInterestForm()">&times;</button>
             <div class="form-header">
                 <h3>콜렉터 관심 등록</h3>
                 <p>맞춤 작품을 추천받으세요</p>
@@ -1034,8 +999,14 @@
                 return;
             }
             
-            // GA4 이벤트 추적 - 표준화된 trackCTA 함수 사용
-            trackCTA('collector_interest_submitted', 'interest_form', `관심 등록 완료 - ${interests.join(', ')}`);
+            // GA4 이벤트 추적
+            if (window.safeGtag) {
+                safeGtag('event', 'form_submit', {
+                    event_category: 'conversion',
+                    event_label: 'collector_interest',
+                    interests: interests.join(',')
+                });
+            }
             
             // 추가 상세 이벤트
             gtag('event', 'collector_conversion', {
@@ -1054,7 +1025,7 @@
             });
             closeInterestForm();
             
-            console.log('Collector interest:', data);
+            // Collector interest data processed
         });
         
         // Keyboard shortcuts
@@ -1100,26 +1071,7 @@
             }
         });
 
-        // CTA 클릭 추적 함수
-        function trackCTAClick(feature_name, user_type, category) {
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'cta_click', {
-                    'feature_name': feature_name,
-                    'user_type': user_type,
-                    'category': category,
-                    'page_title': document.title,
-                    'timestamp': new Date().toISOString()
-                });
-                
-                console.log('🎯 CTA Tracked:', {
-                    feature: feature_name,
-                    user: user_type,
-                    category: category
-                });
-            }
-        }
-
-        console.log('🎨 Collector page loaded successfully');
+        // Collector page loaded successfully
         
         // Collector 페이지 고급 분석 시스템
         document.addEventListener('DOMContentLoaded', function() {
@@ -1224,5 +1176,7 @@
             });
         }
     </script>
+    <script src="js/ga-lite.js"></script>
+    <script src="js/init-ga.js"></script>
 </body>
 </html>

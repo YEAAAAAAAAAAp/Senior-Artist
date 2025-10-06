@@ -10,47 +10,14 @@
     <meta property="og:type" content="website">
     <title>아티스트 - 당신의 예술 여정을 시작하세요</title>
     
-    <!-- Google Analytics 4 - 기본 설정 (확실한 작동 보장) -->
+    <!-- Google Analytics 4 - 표준화된 설정 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
-        // 기본 dataLayer 설정
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
-        
-        // 현재 시간으로 초기화
         gtag('js', new Date());
-        
-        // GA4 측정 ID 설정 - 간소화된 안정적 설정
-        gtag('config', 'G-DE2ZNKWV2W', {
-            'page_title': 'Artist - Main Portal',
-            'send_page_view': true
-        });
-
-        console.log('🚀 GA4 초기화 완료 - 측정 ID: G-DE2ZNKWV2W');
-
-        // CTA 추적을 위한 간소화된 함수 - 안정성 우선
-        function trackCTA(actionName, ctaLocation, ctaText) {
-            try {
-                // 기본 GA4 이벤트만 전송
-                gtag('event', 'click', {
-                    'event_category': 'engagement',
-                    'event_label': actionName,
-                    'value': 1
-                });
-                
-                console.log('📈 GA4 이벤트 추적:', actionName);
-            } catch (error) {
-                console.error('❌ GA4 추적 오류:', error);
-            }
-        }
-        
-        // 간단한 페이지 로드 확인
-        window.addEventListener('load', function() {
-            console.log('📄 Main 페이지 로드 완료');
-            gtag('event', 'page_view', {
-                'page_title': 'Main Portal'
-            });
-        });
+        gtag('config', 'G-DE2ZNKWV2W', { send_page_view: true });
+        window.__GA_MEASUREMENT_ID__ = 'G-DE2ZNKWV2W';
     </script>
     
     <style>
@@ -1091,16 +1058,20 @@
             
             if (lastVisit) {
                 const daysSinceLastVisit = Math.floor((currentVisit - parseInt(lastVisit)) / (1000 * 60 * 60 * 24));
-                gtag('event', 'user_retention', {
-                    event_category: 'retention',
-                    days_since_last_visit: daysSinceLastVisit,
-                    visitor_type: 'returning'
-                });
+                if (window.safeGtag) {
+                    safeGtag('event', 'user_retention', {
+                        event_category: 'retention',
+                        days_since_last_visit: daysSinceLastVisit,
+                        visitor_type: 'returning'
+                    });
+                }
             } else {
-                gtag('event', 'user_retention', {
-                    event_category: 'retention',
-                    visitor_type: 'new'
-                });
+                if (window.safeGtag) {
+                    safeGtag('event', 'user_retention', {
+                        event_category: 'retention',
+                        visitor_type: 'new'
+                    });
+                }
             }
             localStorage.setItem('lastVisit', currentVisit.toString());
         }
@@ -1110,13 +1081,15 @@
             const urlParams = new URLSearchParams(window.location.search);
             const referrer = document.referrer;
             
-            gtag('event', 'traffic_source_analysis', {
-                event_category: 'acquisition',
-                utm_source: urlParams.get('utm_source') || 'none',
-                utm_medium: urlParams.get('utm_medium') || 'none',
-                utm_campaign: urlParams.get('utm_campaign') || 'none',
-                referrer_domain: referrer ? new URL(referrer).hostname : 'direct'
-            });
+            if (window.safeGtag) {
+                safeGtag('event', 'traffic_source_analysis', {
+                    event_category: 'acquisition',
+                    utm_source: urlParams.get('utm_source') || 'none',
+                    utm_medium: urlParams.get('utm_medium') || 'none',
+                    utm_campaign: urlParams.get('utm_campaign') || 'none',
+                    referrer_domain: referrer ? new URL(referrer).hostname : 'direct'
+                });
+            }
         }
         
         // About Modal Functions
@@ -1128,7 +1101,12 @@
             }, 10);
             
             // 모달 열기 이벤트 추적
-            trackCTA('modal_open', 'about_modal', '서비스 소개 모달');
+            if (window.safeGtag) {
+                safeGtag('event', 'modal_open', {
+                    event_category: 'navigation',
+                    event_label: 'about_modal'
+                });
+            }
             
             // ESC 키로 모달 닫기
             document.addEventListener('keydown', handleEscKey);
@@ -1149,7 +1127,12 @@
             modal.removeEventListener('click', handleOutsideClick);
             
             // 모달 닫기 이벤트 추적
-            trackCTA('modal_close', 'about_modal', '서비스 소개 모달 닫기');
+            if (window.safeGtag) {
+                safeGtag('event', 'modal_close', {
+                    event_category: 'navigation',
+                    event_label: 'about_modal'
+                });
+            }
         }
 
         function handleEscKey(event) {
@@ -1212,7 +1195,7 @@
                                 'scroll_depth': milestone,
                                 'page_title': document.title
                             });
-                            console.log(`📜 스크롤 깊이 ${milestone}% 도달`);
+                            // Scroll depth milestone reached
                         }
                     });
                 }
@@ -1362,9 +1345,9 @@
         <nav class="nav">
             <div class="logo">아티스트</div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="artist.html" class="nav-link" onclick="trackCTA('nav_artist', 'navigation', '예술가용')">예술가용</a></li>
-                <li><a href="collector.html" class="nav-link" onclick="trackCTA('nav_collector', 'navigation', '콜렉터용')">콜렉터용</a></li>
-                <li><a href="#" class="nav-link" onclick="openAboutModal(); trackCTA('nav_about', 'navigation', '소개')">소개</a></li>
+                <li><a href="artist.html" class="nav-link">예술가용</a></li>
+                <li><a href="collector.html" class="nav-link">콜렉터용</a></li>
+                <li><a href="#" class="nav-link" onclick="openAboutModal()">소개</a></li>
             </ul>
             <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기">☰</button>
         </nav>
@@ -1387,14 +1370,14 @@
                     <div class="choice-icon">🎨</div>
                     <h3>예술가</h3>
                     <p>3가지 핵심 기능으로 작품 활동을<br>체계적으로 관리하고 성장시키세요</p>
-                    <a href="artist.html" class="choice-btn" onclick="trackCTA('artist_signup', 'hero_section', '예술가로 시작하기')">예술가로 시작하기</a>
+                    <a href="artist.html" class="choice-btn" data-cta-type="primary" data-cta-name="artist_start">예술가로 시작하기</a>
                 </div>
                 
                 <div class="choice-card">
                     <div class="choice-icon">👁️</div>
                     <h3>콜렉터</h3>
                     <p>스토리텔링 기반으로 작품을 탐색하고<br>안전하게 소장할 수 있어요</p>
-                    <a href="collector.html" class="choice-btn" onclick="trackCTA('collector_signup', 'hero_section', '콜렉터로 시작하기')">콜렉터로 시작하기</a>
+                    <a href="collector.html" class="choice-btn" data-cta-type="primary" data-cta-name="collector_start">콜렉터로 시작하기</a>
                 </div>
             </div>
         </div>
@@ -1409,7 +1392,7 @@
             </div>
             
             <div class="artwork-grid">
-                <div class="artwork-item" onclick="trackCTA('artwork_view_urban_solitude', 'gallery_section', '도시의 고독 작품 조회')">
+                <div class="artwork-item">
                     <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2dyYWQxKSIvPgo8ZGVmcz4KPGF1ZGF0aUdyYWRpZW50IGlkPSJncmFkMSI+CjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMyYTJhM2EiLz4KPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjNGM1MjZhIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPGVsbGlwc2UgY3g9IjEwMCIgY3k9IjEwMCIgcng9IjUwIiByeT0iNzAiIGZpbGw9IiNmZmI0NjYiIG9wYWNpdHk9IjAuNyIvPgo8cG9seWdvbiBwb2ludHM9IjI1MCA4MCAzMzAgMTUwIDIwMCAxODAiIGZpbGw9IiMzNGQ0YWEiIG9wYWNpdHk9IjAuNiIvPgo8Y2lyY2xlIGN4PSIzMDAiIGN5PSI2MCIgcj0iMzAiIGZpbGw9IiNmZDczOTciIG9wYWNpdHk9IjAuOCIvPgo8L3N2Zz4K" alt="Urban Solitude by 김현민" class="artwork-image" />
                     <div class="artwork-price">2,800,000원</div>
                     <div class="artwork-overlay">
@@ -1421,7 +1404,7 @@
                     </div>
                 </div>
                 
-                <div class="artwork-item" onclick="trackCTA('artwork_view_memories_garden', 'gallery_section', '추억의 정원 작품 조회')">
+                <div class="artwork-item">
                     <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2dyYWQyKSIvPgo8ZGVmcz4KPGF1ZGF0aUdyYWRpZW50IGlkPSJncmFkMiI+CjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM2ZWY0ODMiLz4KPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMTBlNzNjIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI0MCIgZmlsbD0iI2Y5NzMxNiIgb3BhY2l0eT0iMC43Ii8+CjxjaXJjbGUgY3g9IjMwMCIgY3k9IjIwMCIgcj0iNjAiIGZpbGw9IiNlYzQ4OTkiIG9wYWNpdHk9IjAuNiIvPgo8cGF0aCBkPSJNMjAwIDUwIEwyNTAgMTUwIEwxNTAgMTgwIFoiIGZpbGw9IiNmZWY5ZTciIG9wYWNpdHk9IjAuOCIvPgo8L3N2Zz4K" alt="Memories of Spring Garden by 박순자" class="artwork-image" />
                     <div class="artwork-price">1,950,000원</div>
                     <div class="artwork-overlay">
@@ -1433,7 +1416,7 @@
                     </div>
                 </div>
                 
-                <div class="artwork-item" onclick="trackCTA('artwork_view_time_flow', 'gallery_section', '시간의 흐름 작품 조회')">
+                <div class="artwork-item">
                     <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2dyYWQzKSIvPgo8ZGVmcz4KPGF1ZGF0aUdyYWRpZW50IGlkPSJncmFkMyI+CjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNmMTRkNWYiLz4KPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjZjkzOGFkIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPGVsbGlwc2UgY3g9IjIwMCIgY3k9IjE1MCIgcng9IjEyMCIgcnk9IjgwIiBmaWxsPSIjZGRkNmZlIiBvcGFjaXR5PSIwLjciLz4KPHJlY3QgeD0iMTAwIiB5PSI1MCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSI0MCIgZmlsbD0iI2Y5N2Y0ZiIgb3BhY2l0eT0iMC42Ii8+CjxjaXJjbGUgY3g9IjMwMCIgY3k9IjEwMCIgcj0iMzAiIGZpbGw9IiNmZWM5NGMiIG9wYWNpdHk9IjAuOCIvPgo8L3N2Zz4K" alt="Time Flow by 이정수" class="artwork-image" />
                     <div class="artwork-price">3,200,000원</div>
                     <div class="artwork-overlay">
@@ -1445,7 +1428,7 @@
                     </div>
                 </div>
                 
-                <div class="artwork-item" onclick="trackCTA('artwork_view_silent_dialogue', 'gallery_section', '무언의 대화 작품 조회')">
+                <div class="artwork-item">
                     <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDQwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2dyYWQ0KSIvPgo8ZGVmcz4KPGF1ZGF0aUdyYWRpZW50IGlkPSJncmFkNCI+CjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzNzQxNTEiLz4KPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMWYyOTM3Ii8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPGNpcmNsZSBjeD0iMTUwIiBjeT0iMTIwIiByPSI1MCIgZmlsbD0iI2ZkYjcxNCIgb3BhY2l0eT0iMC44Ii8+CjxjaXJjbGUgY3g9IjI3MCIgY3k9IjE4MCIgcj0iNDAiIGZpbGw9IiNmYjdmODUiIG9wYWNpdHk9IjAuNyIvPgo8cmVjdCB4PSIyMDAiIHk9IjcwIiB3aWR0aD0iODAiIGhlaWdodD0iNjAiIGZpbGw9IiM2YjczZmYiIG9wYWNpdHk9IjAuNiIvPgo8L3N2Zz4K" alt="Silent Dialogue by 최은영" class="artwork-image" />
                     <div class="artwork-price">1,750,000원</div>
                     <div class="artwork-overlay">
@@ -1459,7 +1442,7 @@
             </div>
             
             <div class="gallery-cta">
-                <a href="collector.html" class="btn btn-primary" onclick="trackCTA('gallery_view_all_artworks', 'gallery_section', '모든 작품 보기')">
+                <a href="collector.html" class="btn btn-primary">
                     더 많은 작품 보기 →
                 </a>
             </div>
@@ -1548,7 +1531,13 @@
             }
             
             // Track form submission
-            trackCTA('form_submit_lead', 'contact_form', `리드 폼 제출 - ${data.userType}`);
+            if (window.safeGtag) {
+                safeGtag('event', 'form_submit', {
+                    event_category: 'engagement',
+                    event_label: 'contact_form',
+                    user_type: data.userType
+                });
+            }
             
             // Success message and close form
             alert('등록이 완료되었습니다! 곧 연락드리겠습니다.');
@@ -1558,7 +1547,7 @@
             });
             closeForm();
             
-            console.log('Form submitted:', data);
+            // Form submitted successfully
         });
         
         // Keyboard shortcuts
@@ -1602,7 +1591,7 @@
                         'event_label': this.value,
                         'selection_type': 'user_preference'
                     });
-                    console.log(`👤 사용자 유형 선택: ${this.value}`);
+                    // User type selected
                 });
             });
         }
@@ -1624,14 +1613,7 @@
             });
         });
 
-        // 기본 CTA 클릭 추적 - 표준화된 이벤트명 사용
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('choice-btn') || 
-                e.target.classList.contains('cta-button') ||
-                e.target.classList.contains('nav-link')) {
-                trackCTA('general_click_interaction', 'page_element', e.target.textContent.trim());
-            }
-        });
+        // 기본 CTA 클릭 추적은 이제 ga-lite.js와 init-ga.js에서 처리됩니다.
     </script>
 
     <!-- About Modal -->
@@ -1681,8 +1663,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn primary" onclick="trackCTA('modal_artist_start', 'about_modal_footer', '예술가로 시작하기'); location.href='artist.html'">예술가로 시작하기</button>
-                <button class="modal-btn secondary" onclick="trackCTA('modal_collector_start', 'about_modal_footer', '콜렉터로 시작하기'); location.href='collector.html'">콜렉터로 시작하기</button>
+                <button class="modal-btn primary" onclick="location.href='artist.html'">예술가로 시작하기</button>
+                <button class="modal-btn secondary" onclick="location.href='collector.html'">콜렉터로 시작하기</button>
             </div>
         </div>
     </div>
@@ -1725,7 +1707,7 @@
         // 최종 GA4 상태 확인
         setTimeout(function() {
             if (typeof gtag === 'function') {
-                console.log('✅ GA4 완전 로딩 확인 - 모든 추적 시스템 활성화');
+                // GA4 fully loaded - all tracking systems active
                 gtag('event', 'ga4_fully_loaded', {
                     'event_category': 'system',
                     'event_label': 'tracking_ready',
@@ -1736,6 +1718,10 @@
             }
         }, 2000);
     </script>
+    
+    <!-- GA4 Tracking Scripts -->
+    <script src="js/ga-lite.js"></script>
+    <script src="js/init-ga.js"></script>
 </body>
 </html>
 
