@@ -10,14 +10,141 @@
     <meta property="og:type" content="website">
     <title>Artisty - 당신의 예술 여정을 시작하세요</title>
     
-    <!-- Google Analytics 4 (GA4) -->
+    <!-- Google Analytics 4 - 향상된 설정 (확실한 작동 보장) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
+        // 기본 dataLayer 설정
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
+        
+        // 현재 시간으로 초기화
         gtag('js', new Date());
-        gtag('config', 'G-DE2ZNKWV2W');
+        
+        // GA4 측정 ID 설정 - 향상된 설정 (Main Page)
+        gtag('config', 'G-DE2ZNKWV2W', {
+            'page_title': 'Artisty - Main Landing Page',
+            'page_location': window.location.href,
+            'send_page_view': true,
+            'cookie_flags': 'SameSite=None;Secure',
+            'enhanced_measurements': {
+                'scrolls': true,
+                'outbound_clicks': true,
+                'site_search': false,
+                'video_engagement': false,
+                'file_downloads': true
+            },
+            'custom_parameters_allowed': true,
+            'allow_enhanced_conversions': true,
+            'linker': {
+                'domains': [window.location.hostname]
+            },
+            'user_properties': {
+                'page_type': 'main',
+                'visit_timestamp': new Date().toISOString()
+            }
+        });
+
+        console.log('🚀 GA4 초기화 완료 - 측정 ID: G-DE2ZNKWV2W (Main Page)');
+
+        // CTA 추적을 위한 표준화된 함수 - GA4 가이드라인 준수 (안전한 래퍼)
+        function trackCTA(actionName, ctaLocation, ctaText) {
+            // gtag 함수가 정의되었는지 확인
+            if (typeof gtag === 'undefined') {
+                console.warn('⚠️ gtag 함수가 아직 로드되지 않음 (Main). 이벤트를 대기열에 추가:', actionName);
+                // gtag이 로드될 때까지 대기
+                setTimeout(function() {
+                    trackCTA(actionName, ctaLocation, ctaText);
+                }, 100);
+                return;
+            }
+
+            try {
+                // GA4 권장 cta_click 이벤트
+                gtag('event', 'cta_click', {
+                    'event_category': 'engagement',
+                    'event_label': actionName,
+                    'button_text': ctaText,
+                    'button_location': ctaLocation,
+                    'button_type': actionName.includes('primary') ? 'primary' : 'secondary',
+                    'page_path': window.location.pathname,
+                    'page_title': 'Artisty - Main Landing Page'
+                });
+                
+                // 개별 액션별 이벤트 (세부 분석용)
+                gtag('event', actionName, {
+                    'event_category': 'user_action',
+                    'location': ctaLocation,
+                    'button_text': ctaText,
+                    'timestamp': new Date().toISOString(),
+                    'user_type': 'main_visitor'
+                });
+                
+                console.log('📈 GA4 CTA 추적 성공 (Main):', {
+                    event: 'cta_click',
+                    action: actionName,
+                    location: ctaLocation,
+                    text: ctaText
+                });
+            } catch (error) {
+                console.error('❌ GA4 CTA 추적 오류 (Main):', error, {
+                    action: actionName,
+                    location: ctaLocation,
+                    text: ctaText
+                });
+            }
+        }
+
+        // 페이지 로드 이벤트 자동 추적
+        window.addEventListener('load', function() {
+            console.log('🏠 GA4 로딩 시작 - ID: G-DE2ZNKWV2W (Main)');
+            
+            // 연결 테스트 이벤트
+            setTimeout(function() {
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'test_connection', {
+                        'page_type': 'main',
+                        'timestamp': new Date().toISOString(),
+                        'user_agent': navigator.userAgent.substring(0, 100)
+                    });
+                    
+                    gtag('event', 'page_view', {
+                        'page_title': 'Artisty - Main Landing Page',
+                        'page_location': window.location.href,
+                        'page_referrer': document.referrer,
+                        'engagement_time_msec': 100
+                    });
+                    
+                    console.log('✅ GA4 페이지뷰 및 연결 테스트 완료 (Main)');
+                }
+            }, 1000);
+
+            // 페이지 로드 완료 이벤트
+            setTimeout(function() {
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', 'page_loaded', {
+                        'page_type': 'main',
+                        'load_time': Date.now(),
+                        'viewport_size': window.innerWidth + 'x' + window.innerHeight
+                    });
+                    
+                    // 사용자 활성 상태 추적 (30초 후)
+                    setTimeout(function() {
+                        gtag('event', 'user_alive', {
+                            'page_type': 'main',
+                            'time_on_page': 30,
+                            'scroll_depth': Math.round((window.pageYOffset / document.body.scrollHeight) * 100)
+                        });
+                    }, 30000);
+                }
+            }, 3000);
+        });
     </script>
+    
+    <!-- GA4 디버깅 도구 -->
+    <script src="js/ga4-debug.js"></script>
+    
+    <!-- CTA 검증 시스템 -->
+    <script src="js/cta-validator.js"></script>
     
     <style>
         /* CSS Reset */
@@ -413,29 +540,6 @@
         }
         
         .choice-btn:active {
-            transform: translateY(-1px);
-        }
-
-        .hero-cta-btn {
-            background: linear-gradient(135deg, #8b5cf6 0%, #06b6d4 100%);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-top: 8px;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-        }
-
-        .hero-cta-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
-        }
-
-        .hero-cta-btn:active {
             transform: translateY(-1px);
         }
         
@@ -1198,6 +1302,47 @@
         
         // 고급 분석 시스템 초기화
         function initAdvancedAnalytics() {
+            // GA4 연결 상태 모니터링 및 디버깅
+            setTimeout(function() {
+                console.log('🔍 GA4 연결 상태 점검 시작...');
+                
+                // gtag 함수 로드 확인
+                if (typeof gtag === 'undefined') {
+                    console.error('❌ GA4 gtag 함수가 로드되지 않음!');
+                    return;
+                }
+                
+                // dataLayer 상태 확인
+                if (!window.dataLayer || window.dataLayer.length === 0) {
+                    console.error('❌ GA4 dataLayer가 비어있음!');
+                } else {
+                    console.log('✅ GA4 dataLayer 상태:', window.dataLayer.length, '개 이벤트');
+                }
+                
+                // 테스트 이벤트 전송
+                try {
+                    gtag('event', 'ga4_health_check', {
+                        'page_type': 'main',
+                        'timestamp': new Date().toISOString(),
+                        'browser': navigator.userAgent.substring(0, 50),
+                        'screen_resolution': screen.width + 'x' + screen.height,
+                        'viewport': window.innerWidth + 'x' + window.innerHeight
+                    });
+                    console.log('✅ GA4 헬스체크 이벤트 전송 완료');
+                } catch (error) {
+                    console.error('❌ GA4 이벤트 전송 실패:', error);
+                }
+                
+                // Network 리소스 로딩 확인
+                const gtagScript = document.querySelector('script[src*="googletagmanager.com/gtag/js"]');
+                if (gtagScript) {
+                    console.log('✅ GA4 스크립트 태그 발견');
+                } else {
+                    console.error('❌ GA4 스크립트 태그 누락!');
+                }
+                
+            }, 3000);
+            
             // 1. 페이지 성능 추적
             window.addEventListener('load', function() {
                 setTimeout(trackPagePerformance, 1000);
@@ -1427,11 +1572,11 @@
         <nav class="nav">
             <div class="logo">Artisty</div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="artist.html" class="nav-link" onclick="gtag('event', 'cta_click', {'cta_name': 'nav_artist', 'cta_type': 'navigation', 'cta_location': 'header'});">예술가용</a></li>
-                <li><a href="collector.html" class="nav-link" onclick="gtag('event', 'cta_click', {'cta_name': 'nav_collector', 'cta_type': 'navigation', 'cta_location': 'header'});">콜렉터용</a></li>
-                <li><a href="#" class="nav-link" onclick="gtag('event', 'cta_click', {'cta_name': 'nav_about', 'cta_type': 'navigation', 'cta_location': 'header'}); openAboutModal(); return false;">소개</a></li>
+                <li><a href="artist.html" class="nav-link" onclick="trackCTA('nav_artist', 'header', '예술가용');">예술가용</a></li>
+                <li><a href="collector.html" class="nav-link" onclick="trackCTA('nav_collector', 'header', '콜렉터용');">콜렉터용</a></li>
+                <li><a href="#" class="nav-link" onclick="trackCTA('nav_about', 'header', '소개'); openAboutModal(); return false;">소개</a></li>
             </ul>
-            <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기" onclick="gtag('event', 'cta_click', {'cta_name': 'mobile_menu_toggle', 'cta_type': 'navigation', 'cta_location': 'header'});">☰</button>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기" onclick="trackCTA('mobile_menu_toggle', 'header', '모바일 메뉴');">☰</button>
         </nav>
     </header>
 
@@ -1442,7 +1587,6 @@
             <div class="hero-text">
                 <h1>Artisty — 예술가의 손끝에서,<br>당신의 공간으로</h1>
                 <p>예술가와 컬렉터를 연결하는 온라인 마켓플레이스에서<br>특별한 예술 경험을 시작하세요</p>
-                <button class="hero-cta-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'hero_preorder', 'cta_type': 'primary', 'cta_location': 'hero_section'}); openPreOrderModal();">사전예약하기</button>
             </div>
         </div>
         
@@ -1453,14 +1597,14 @@
                     <div class="choice-icon">🎨</div>
                     <h3>예술가</h3>
                     <p>3가지 핵심 기능으로 작품 활동을<br>체계적으로 관리하고 성장시키세요</p>
-                    <a href="artist.html" class="choice-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'artist_start', 'cta_type': 'primary', 'cta_location': 'hero_section'});">예술가로 시작하기</a>
+                    <a href="artist.html" class="choice-btn" onclick="trackCTA('artist_start_primary', 'hero_section', '예술가로 시작하기');">예술가로 시작하기</a>
                 </div>
                 
                 <div class="choice-card">
                     <div class="choice-icon">👁️</div>
                     <h3>콜렉터</h3>
                     <p>스토리텔링 기반으로 작품을 탐색하고<br>안전하게 소장할 수 있어요</p>
-                    <a href="collector.html" class="choice-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'collector_start', 'cta_type': 'primary', 'cta_location': 'hero_section'});">콜렉터로 시작하기</a>
+                    <a href="collector.html" class="choice-btn" onclick="trackCTA('collector_start_primary', 'hero_section', '콜렉터로 시작하기');">콜렉터로 시작하기</a>
                 </div>
             </div>
         </div>
@@ -1525,7 +1669,7 @@
             </div>
             
             <div class="gallery-cta">
-                <a href="collector.html" class="btn btn-primary" onclick="gtag('event', 'cta_click', {'cta_name': 'gallery_view_more', 'cta_type': 'secondary', 'cta_location': 'gallery_section'});">
+                <a href="collector.html" class="btn btn-primary" onclick="trackCTA('gallery_view_more', 'gallery_section', '더 많은 작품 보기');">
                     더 많은 작품 보기 →
                 </a>
             </div>
@@ -1535,7 +1679,7 @@
     <!-- CTA Form Overlay -->
     <div class="cta-overlay" id="ctaOverlay">
         <div class="cta-form">
-            <button class="close-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'contact_form_close', 'cta_type': 'action', 'cta_location': 'contact_modal'}); closeForm();">&times;</button>
+            <button class="close-btn" onclick="trackCTA('contact_form_close', 'contact_modal', '폼 닫기'); closeForm();">&times;</button>
             <div class="form-header">
                 <h2>관심 등록하기</h2>
                 <p>맞춤 정보를 받아보세요</p>
@@ -1566,7 +1710,7 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="submit-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'contact_form_submit', 'cta_type': 'primary', 'cta_location': 'contact_modal'});">등록하기</button>
+                <button type="submit" class="submit-btn" onclick="trackCTA('contact_form_submit_primary', 'contact_modal', '등록하기');">등록하기</button>
             </form>
         </div>
     </div>
@@ -1745,7 +1889,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>🎨 Artisty 플랫폼 소개</h2>
-                <span class="close" onclick="gtag('event', 'cta_click', {'cta_name': 'about_modal_close', 'cta_type': 'action', 'cta_location': 'about_modal'}); closeAboutModal();">&times;</span>
+                <span class="close" onclick="trackCTA('about_modal_close', 'about_modal', '모달 닫기'); closeAboutModal();">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="service-intro">
@@ -1787,8 +1931,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn primary" onclick="gtag('event', 'cta_click', {'cta_name': 'modal_artist_start', 'cta_type': 'primary', 'cta_location': 'about_modal'}); window.location.href='artist.html';">예술가로 시작하기</button>
-                <button class="modal-btn secondary" onclick="gtag('event', 'cta_click', {'cta_name': 'modal_collector_start', 'cta_type': 'secondary', 'cta_location': 'about_modal'}); window.location.href='collector.html';">콜렉터로 시작하기</button>
+                <button class="modal-btn primary" onclick="trackCTA('modal_artist_start_primary', 'about_modal', '예술가로 시작하기'); window.location.href='artist.html';">예술가로 시작하기</button>
+                <button class="modal-btn secondary" onclick="trackCTA('modal_collector_start', 'about_modal', '콜렉터로 시작하기'); window.location.href='collector.html';">콜렉터로 시작하기</button>
             </div>
         </div>
     </div>
