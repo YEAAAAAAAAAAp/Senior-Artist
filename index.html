@@ -1156,66 +1156,6 @@
             }
         }
         
-        // Pre-Order Modal Functions
-        function openPreOrderModal() {
-            const modal = document.getElementById('preOrderModal');
-            modal.style.display = 'flex';
-            setTimeout(() => {
-                modal.classList.add('show');
-            }, 10);
-            
-            document.addEventListener('keydown', handlePreOrderEscKey);
-            modal.addEventListener('click', handlePreOrderOutsideClick);
-        }
-
-        function closePreOrderModal() {
-            const modal = document.getElementById('preOrderModal');
-            modal.classList.remove('show');
-            setTimeout(() => {
-                modal.style.display = 'none';
-            }, 300);
-            
-            document.removeEventListener('keydown', handlePreOrderEscKey);
-            modal.removeEventListener('click', handlePreOrderOutsideClick);
-        }
-
-        function handlePreOrderEscKey(event) {
-            if (event.key === 'Escape') {
-                closePreOrderModal();
-            }
-        }
-
-        function handlePreOrderOutsideClick(event) {
-            const modalContent = document.querySelector('#preOrderModal .modal-content');
-            if (event.target === event.currentTarget && !modalContent.contains(event.target)) {
-                closePreOrderModal();
-            }
-        }
-
-        // Pre-Order Form submission
-        document.getElementById('preOrderForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const data = {
-                name: formData.get('name'),
-                email: formData.get('email'),
-                userType: formData.get('userType')
-            };
-            
-            if (!data.name || !data.email || !data.userType) {
-                alert('모든 필드를 입력해주세요.');
-                return;
-            }
-            
-            alert('사전예약이 완료되었습니다! 런칭 소식을 가장 먼저 알려드리겠습니다.');
-            
-            this.reset();
-            closePreOrderModal();
-            
-            console.log('Pre-order data:', data);
-        });
-
         // About Modal Functions
         function openAboutModal() {
             const modal = document.getElementById('aboutModal');
@@ -1592,10 +1532,61 @@
         </div>
     </section>
 
-
+    <!-- CTA Form Overlay -->
+    <div class="cta-overlay" id="ctaOverlay">
+        <div class="cta-form">
+            <button class="close-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'contact_form_close', 'cta_type': 'action', 'cta_location': 'contact_modal'}); closeForm();">&times;</button>
+            <div class="form-header">
+                <h2>관심 등록하기</h2>
+                <p>맞춤 정보를 받아보세요</p>
+            </div>
+            
+            <form id="leadForm">
+                <div class="form-group">
+                    <label for="name">이름 *</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">이메일 *</label>
+                    <input type="email" id="email" name="email" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>관심 분야 *</label>
+                    <div class="radio-group">
+                        <div class="radio-item" data-radio-value="artist" data-action="selectRadio">
+                            <input type="radio" id="artist" name="userType" value="artist" required>
+                            <label for="artist">예술가</label>
+                        </div>
+                        <div class="radio-item" data-radio-value="collector" data-action="selectRadio">
+                            <input type="radio" id="collector" name="userType" value="collector" required>
+                            <label for="collector">콜렉터</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'contact_form_submit', 'cta_type': 'primary', 'cta_location': 'contact_modal'});">등록하기</button>
+            </form>
+        </div>
+    </div>
+        </div>
+    </div>
 
     <script>
-
+        function openForm() {
+            const overlay = document.getElementById('ctaOverlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+            }
+        }
+        
+        function closeForm() {
+            const overlay = document.getElementById('ctaOverlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
+        }
         
         function selectRadio(type) {
             document.querySelectorAll('.radio-item').forEach(item => {
@@ -1745,40 +1736,9 @@
                 }
             });
         });
-    </script>
 
-    <!-- Pre-Order Modal -->
-    <div id="preOrderModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>사전예약하기</h2>
-                <span class="close" onclick="gtag('event', 'cta_click', {'cta_name': 'preorder_modal_close', 'cta_type': 'action', 'cta_location': 'preorder_modal'}); closePreOrderModal();">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p>Artisty 플랫폼이 곧 오픈됩니다! 사전예약을 통해 런칭 소식을 가장 먼저 받아보세요.</p>
-                <form id="preOrderForm">
-                    <div class="form-group">
-                        <label for="preOrderName">이름</label>
-                        <input type="text" id="preOrderName" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="preOrderEmail">이메일</label>
-                        <input type="email" id="preOrderEmail" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="userType">관심 분야</label>
-                        <select id="userType" name="userType" required>
-                            <option value="">선택해주세요</option>
-                            <option value="artist">예술가</option>
-                            <option value="collector">콜렉터</option>
-                            <option value="both">둘 다</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="submit-btn" onclick="gtag('event', 'cta_click', {'cta_name': 'preorder_submit', 'cta_type': 'primary', 'cta_location': 'preorder_modal'});">사전예약하기</button>
-                </form>
-            </div>
-        </div>
-    </div>
+        // 기본 CTA 클릭 추적은 이제 ga-lite.js와 init-ga.js에서 처리됩니다.
+    </script>
 
     <!-- About Modal -->
     <div id="aboutModal" class="modal">
