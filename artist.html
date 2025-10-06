@@ -14,12 +14,12 @@
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&h=800&fit=crop&crop=entropy&auto=format&q=80">
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop&crop=entropy&auto=format&q=80">
     
-    <!-- ?�합 추적 초기??(dataLayer 충돌 방�?) -->
+    <!-- 통합 추적 초기화(dataLayer 충돌 방지) -->
     <script>
-        // dataLayer 먼�? 초기??
+        // dataLayer 먼저 초기화
         window.dataLayer = window.dataLayer || [];
         
-        // GTM ?�용 ?�정
+        // GTM 전용 설정
         window.__GTM_ID__ = 'GTM-594SVWKB';
         
         console.log('[TRACKING] 🚀 Initializing unified tracking system');
@@ -34,7 +34,7 @@
     <!-- End Google Tag Manager -->
     
     <!-- GTM 전용 설정 - GA4는 GTM을 통해서만 관리 -->
-        
+    <script>
         console.log('[GA4] ✅ GA4 initialized with enhanced tracking');
         console.log('[GA4] 📊 Page view sent for:', window.location.href);
     </script>
@@ -884,7 +884,7 @@
         function openRegistration() {
             document.getElementById('registrationOverlay').style.display = 'flex';
             
-            // GTM ?�벤??추적
+            // GTM 이벤트 추적
             if (window.dataLayer) {
                 window.dataLayer.push({
                     event: 'registration_modal_opened',
