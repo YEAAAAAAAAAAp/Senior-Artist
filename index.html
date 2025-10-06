@@ -20,120 +20,37 @@
         // 현재 시간으로 초기화
         gtag('js', new Date());
         
-        // GA4 측정 ID 설정 - 향상된 설정
+        // GA4 측정 ID 설정 - 간소화된 안정적 설정
         gtag('config', 'G-DE2ZNKWV2W', {
-            'page_title': document.title,
-            'page_location': window.location.href,
-            'send_page_view': true,
-            'enhanced_measurements': {
-                'scrolls': true,
-                'outbound_clicks': true,
-                'site_search': false,
-                'video_engagement': false,
-                'file_downloads': true
-            },
-            'custom_parameters_allowed': true,
-            'allow_enhanced_conversions': true
+            'page_title': 'Artist - Main Portal',
+            'send_page_view': true
         });
 
         console.log('🚀 GA4 초기화 완료 - 측정 ID: G-DE2ZNKWV2W');
 
-        // CTA 추적을 위한 표준화된 함수 - GA4 가이드라인 준수 (안전한 래퍼)
+        // CTA 추적을 위한 간소화된 함수 - 안정성 우선
         function trackCTA(actionName, ctaLocation, ctaText) {
-            // gtag 함수가 정의되었는지 확인
-            if (typeof gtag === 'undefined') {
-                console.warn('⚠️ gtag 함수가 아직 로드되지 않음. 이벤트를 대기열에 추가:', actionName);
-                // gtag이 로드될 때까지 대기
-                setTimeout(function() {
-                    trackCTA(actionName, ctaLocation, ctaText);
-                }, 100);
-                return;
-            }
-
             try {
-                // GA4 권장 cta_click 이벤트
-                gtag('event', 'cta_click', {
+                // 기본 GA4 이벤트만 전송
+                gtag('event', 'click', {
                     'event_category': 'engagement',
                     'event_label': actionName,
-                    'button_text': ctaText,
-                    'button_location': ctaLocation,
-                    'button_type': actionName.includes('primary') ? 'primary' : 'secondary',
-                    'page_path': window.location.pathname,
-                    'page_title': document.title
+                    'value': 1
                 });
                 
-                // 개별 액션별 이벤트 (세부 분석용)
-                gtag('event', actionName, {
-                    'event_category': 'user_action',
-                    'location': ctaLocation,
-                    'button_text': ctaText,
-                    'timestamp': new Date().toISOString()
-                });
-                
-                console.log('📈 GA4 CTA 추적 성공:', {
-                    event: 'cta_click',
-                    action: actionName,
-                    location: ctaLocation,
-                    text: ctaText
-                });
+                console.log('📈 GA4 이벤트 추적:', actionName);
             } catch (error) {
-                console.error('❌ GA4 CTA 추적 오류:', error, {
-                    action: actionName,
-                    location: ctaLocation,
-                    text: ctaText
-                });
+                console.error('❌ GA4 추적 오류:', error);
             }
         }
         
-        // 디버그 정보 출력
-        console.log('� GA4 로딩 시작 - ID: G-DE2ZNKWV2W');
-        console.log('🌍 현재 URL:', window.location.href);
-        console.log('🏷️ 페이지 제목:', document.title);
-        
-        // 즉시 확인 가능한 테스트 이벤트 전송
-        setTimeout(function() {
-            gtag('event', 'test_connection', {
-                'custom_parameter': 'test_value',
-                'debug_timestamp': new Date().toISOString()
-            });
-            console.log('🧪 테스트 이벤트 전송 완료');
-            
-            // 페이지 진입 이벤트 (전환 퍼널 시작점)
-            gtag('event', 'page_view', {
-                'event_category': 'engagement',
-                'page_title': document.title,
-                'page_location': window.location.href,
-                'user_engagement': 'page_loaded'
-            });
-            
-            console.log('📄 페이지 진입 이벤트 전송 완료');
-        }, 1000);
-        
-        // 페이지 로드 완료 시 추가 테스트
+        // 간단한 페이지 로드 확인
         window.addEventListener('load', function() {
-            console.log('✅ 페이지 로드 완료');
-            
-            // 로드 완료 이벤트
-            gtag('event', 'page_loaded', {
-                'event_category': 'page_timing',
-                'event_label': 'load_complete'
+            console.log('📄 Main 페이지 로드 완료');
+            gtag('event', 'page_view', {
+                'page_title': 'Main Portal'
             });
-            
-            // 3초 후 생존 확인 이벤트
-            setTimeout(function() {
-                gtag('event', 'user_alive', {
-                    'event_category': 'engagement',
-                    'event_label': '3_second_check'
-                });
-                console.log('💓 3초 생존 확인 이벤트 전송');
-            }, 3000);
         });
-        
-        console.log('🚀 GA4 스크립트 로딩 완료');
-    </script>
-            
-        console.log('� GA4 스크립트 로딩 완료');
-    </script>
     </script>
     
     <style>

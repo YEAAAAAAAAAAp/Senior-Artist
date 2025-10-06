@@ -24,205 +24,39 @@
         // 현재 시간으로 초기화
         gtag('js', new Date());
         
-        // GA4 측정 ID 설정 - 향상된 설정 (Collector Page)
+        // GA4 측정 ID 설정 - 간소화된 안정적 설정 (Collector Page)
         gtag('config', 'G-DE2ZNKWV2W', {
             'page_title': 'Artist - Collector Portal',
-            'page_location': window.location.href,
-            'send_page_view': true,
-            'enhanced_measurements': {
-                'scrolls': true,
-                'outbound_clicks': true,
-                'site_search': false,
-                'video_engagement': false,
-                'file_downloads': true
-            },
-            'custom_parameters_allowed': true,
-            'allow_enhanced_conversions': true
+            'send_page_view': true
         });
 
         console.log('🚀 GA4 초기화 완료 - 측정 ID: G-DE2ZNKWV2W (Collector Page)');
 
-        // CTA 추적을 위한 표준화된 함수 - GA4 가이드라인 준수 (안전한 래퍼)
+        // CTA 추적을 위한 간소화된 함수 - 안정성 우선
         function trackCTA(actionName, ctaLocation, ctaText) {
-            // gtag 함수가 정의되었는지 확인
-            if (typeof gtag === 'undefined') {
-                console.warn('⚠️ gtag 함수가 아직 로드되지 않음 (Collector). 이벤트를 대기열에 추가:', actionName);
-                // gtag이 로드될 때까지 대기
-                setTimeout(function() {
-                    trackCTA(actionName, ctaLocation, ctaText);
-                }, 100);
-                return;
-            }
-
             try {
-                // GA4 권장 cta_click 이벤트
-                gtag('event', 'cta_click', {
+                // 기본 GA4 이벤트만 전송
+                gtag('event', 'click', {
                     'event_category': 'engagement',
                     'event_label': actionName,
-                    'button_text': ctaText,
-                    'button_location': ctaLocation,
-                    'button_type': actionName.includes('primary') ? 'primary' : 'secondary',
-                    'page_path': window.location.pathname,
-                    'page_title': 'Artist - Collector Portal'
+                    'value': 1
                 });
                 
-                // 개별 액션별 이벤트 (세부 분석용)
-                gtag('event', actionName, {
-                    'event_category': 'user_action',
-                    'location': ctaLocation,
-                    'button_text': ctaText,
-                    'timestamp': new Date().toISOString(),
-                    'user_type': 'collector'
-                });
-                
-                console.log('📈 GA4 CTA 추적 성공 (Collector):', {
-                    event: 'cta_click',
-                    action: actionName,
-                    location: ctaLocation,
-                    text: ctaText
-                });
+                console.log('📈 GA4 이벤트 추적:', actionName);
             } catch (error) {
-                console.error('❌ GA4 CTA 추적 오류 (Collector):', error, {
-                    action: actionName,
-                    location: ctaLocation,
-                    text: ctaText
-                });
+                console.error('❌ GA4 추적 오류:', error);
             }
         }
         
-        // 디버그 정보 출력
-        console.log('🖼️ GA4 로딩 시작 - ID: G-DE2ZNKWV2W (Collector)');
-        console.log('🌍 현재 URL:', window.location.href);
-        console.log('🏷️ 페이지 제목:', 'Artist - Collector Portal');
-        
-        // 즉시 확인 가능한 테스트 이벤트 전송
-        setTimeout(function() {
-            gtag('event', 'test_connection', {
-                'custom_parameter': 'collector_test_value',
-                'debug_timestamp': new Date().toISOString(),
-                'user_type': 'collector'
-            });
-            console.log('🧪 테스트 이벤트 전송 완료 (Collector)');
-            
-            // 페이지 진입 이벤트 (전환 퍼널 시작점)
+        // 간단한 페이지 로드 확인
+        window.addEventListener('load', function() {
+            console.log('📄 Collector 페이지 로드 완료');
             gtag('event', 'page_view', {
-                'event_category': 'engagement',
-                'page_title': 'Artist - Collector Portal',
-                'page_location': window.location.href,
-                'user_engagement': 'collector_page_loaded',
-                'user_type': 'collector'
+                'page_title': 'Collector Portal'
             });
-            
-            console.log('📄 Collector 페이지 진입 이벤트 전송 완료');
-        }, 1000);
-        
-        // 페이지 로드 완료 시 추가 테스트
-        window.addEventListener('load', function() {
-            console.log('✅ Collector 페이지 로드 완료');
-            
-            // 로드 완료 이벤트
-            gtag('event', 'page_loaded', {
-                'event_category': 'page_timing',
-                'event_label': 'collector_load_complete',
-                'user_type': 'collector'
-            });
-            
-            // 3초 후 생존 확인 이벤트
-            setTimeout(function() {
-                gtag('event', 'user_alive', {
-                    'event_category': 'engagement',
-                    'event_label': '3_second_check_collector',
-                    'user_type': 'collector'
-                });
-                console.log('💓 3초 생존 확인 이벤트 전송 (Collector)');
-            }, 3000);
         });
+    </script>
         
-        console.log('🚀 GA4 스크립트 로딩 완료 (Collector)');
-        
-        // GA4 초기화 및 Collector 전용 추적
-        function initializeGA4Collector() {
-            console.log('✅ Collector GA4 초기화 완료');
-        }
-
-        // Collector 특화 참여도 추적
-        let artworkInteractionTime = {};
-        
-        function startCollectorEngagementTracking() {
-            // 아트워크 갤러리 상호작용 추적
-            document.querySelectorAll('.artwork-item').forEach((artwork, index) => {
-                artwork.addEventListener('mouseenter', function() {
-                    artworkInteractionTime[index] = Date.now();
-                    gtag('event', 'artwork_browse_start', {
-                        event_category: 'collector_engagement',
-                        artwork_index: index,
-                        user_category: 'collector_visitor'
-                    });
-                });
-                
-                artwork.addEventListener('mouseleave', function() {
-                    if (artworkInteractionTime[index]) {
-                        const interactionDuration = Date.now() - artworkInteractionTime[index];
-                        gtag('event', 'artwork_browse_end', {
-                            event_category: 'collector_engagement',
-                            artwork_index: index,
-                            interaction_duration_ms: interactionDuration,
-                            user_category: 'collector_visitor'
-                        });
-                        delete artworkInteractionTime[index];
-                    }
-                });
-            });
-        }
-
-        // Collector CTA 추적 함수
-        function trackCTAClick(feature_name, user_type, category) {
-            gtag('event', 'cta_click', {
-                event_category: 'collector_cta',
-                feature_name: feature_name,
-                user_type: user_type,
-                cta_category: category,
-                page_section: 'collector_features'
-            });
-            
-            console.log('🎯 Collector CTA 추적:', {
-                feature: feature_name,
-                type: user_type,
-                category: category
-            });
-        }
-
-        // 페이지 로드 시 초기화
-        window.addEventListener('load', function() {
-            setTimeout(initializeGA4Collector, 500);
-            
-            // 작품 호버 이벤트 추적 초기화
-            initArtworkHoverTracking();
-        });
-        
-        // 작품 호버 이벤트 추적
-        function initArtworkHoverTracking() {
-            const artworkSample = document.querySelector('.artwork-sample');
-            if (artworkSample) {
-                artworkSample.addEventListener('mouseenter', function() {
-                    gtag('event', 'artwork_story_hover', {
-                        event_category: 'collector_engagement',
-                        artwork_name: '시간이 머문 자리',
-                        artist_name: '이정숙',
-                        user_category: 'collector_visitor'
-                    });
-                });
-                
-                artworkSample.addEventListener('mouseleave', function() {
-                    gtag('event', 'artwork_story_hover_end', {
-                        event_category: 'collector_engagement',
-                        artwork_name: '시간이 머문 자리',
-                        artist_name: '이정숙',
-                        user_category: 'collector_visitor'
-                    });
-                });
-            }
-        }
     </script>
     
     <style>
