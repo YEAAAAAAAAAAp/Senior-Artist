@@ -1189,12 +1189,14 @@
                     scrollMilestones.forEach(milestone => {
                         if (scrollPercent >= milestone && !trackedMilestones.includes(milestone)) {
                             trackedMilestones.push(milestone);
-                            gtag('event', 'scroll_depth', {
-                                'event_category': 'engagement',
-                                'event_label': `${milestone}%`,
-                                'scroll_depth': milestone,
-                                'page_title': document.title
-                            });
+                            if (window.safeGtag) {
+                                safeGtag('event', 'scroll_depth', {
+                                    'event_category': 'engagement',
+                                    'event_label': `${milestone}%`,
+                                    'scroll_depth': milestone,
+                                    'page_title': document.title
+                                });
+                            }
                             // Scroll depth milestone reached
                         }
                     });
@@ -1209,26 +1211,32 @@
             // 페이지 이탈 추적
             window.addEventListener('beforeunload', function() {
                 const timeSpent = Math.round((Date.now() - startTime) / 1000);
-                gtag('event', 'page_exit', {
-                    'event_category': 'engagement',
-                    'event_label': 'before_unload',
-                    'time_spent': timeSpent,
-                    'page_title': document.title
-                });
+                if (window.safeGtag) {
+                    safeGtag('event', 'page_exit', {
+                        'event_category': 'engagement',
+                        'event_label': 'before_unload',
+                        'time_spent': timeSpent,
+                        'page_title': document.title
+                    });
+                }
             });
             
             // 페이지 숨김/표시 추적 (탭 전환 등)
             document.addEventListener('visibilitychange', function() {
                 if (document.visibilityState === 'hidden') {
-                    gtag('event', 'page_hidden', {
-                        'event_category': 'engagement',
-                        'event_label': 'tab_hidden'
-                    });
+                    if (window.safeGtag) {
+                        safeGtag('event', 'page_hidden', {
+                            'event_category': 'engagement',
+                            'event_label': 'tab_hidden'
+                        });
+                    }
                 } else if (document.visibilityState === 'visible') {
-                    gtag('event', 'page_visible', {
-                        'event_category': 'engagement',
-                        'event_label': 'tab_visible'
-                    });
+                    if (window.safeGtag) {
+                        safeGtag('event', 'page_visible', {
+                            'event_category': 'engagement',
+                            'event_label': 'tab_visible'
+                        });
+                    }
                 }
             });
         }
@@ -1449,7 +1457,14 @@
         </div>
     </section>
 
-
+    <!-- CTA Form Overlay -->
+    <div class="cta-overlay" id="ctaOverlay">
+        <div class="cta-form">
+            <button class="close-btn" onclick="closeForm()">&times;</button>
+            <div class="form-header">
+                <h2>관심 등록하기</h2>
+                <p>맞춤 정보를 받아보세요</p>
+            </div>
             
             <form id="leadForm">
                 <div class="form-group">
@@ -1480,14 +1495,22 @@
             </form>
         </div>
     </div>
+        </div>
+    </div>
 
     <script>
         function openForm() {
-            document.getElementById('ctaOverlay').style.display = 'flex';
+            const overlay = document.getElementById('ctaOverlay');
+            if (overlay) {
+                overlay.style.display = 'flex';
+            }
         }
         
         function closeForm() {
-            document.getElementById('ctaOverlay').style.display = 'none';
+            const overlay = document.getElementById('ctaOverlay');
+            if (overlay) {
+                overlay.style.display = 'none';
+            }
         }
         
         function selectRadio(type) {
@@ -1499,14 +1522,19 @@
         }
         
         // Close form when clicking outside
-        document.getElementById('ctaOverlay').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeForm();
-            }
-        });
+        const ctaOverlay = document.getElementById('ctaOverlay');
+        if (ctaOverlay) {
+            ctaOverlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeForm();
+                }
+            });
+        }
         
         // Form submission
-        document.getElementById('leadForm').addEventListener('submit', function(e) {
+        const leadForm = document.getElementById('leadForm');
+        if (leadForm) {
+            leadForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
             // Get form data
@@ -1548,7 +1576,8 @@
             closeForm();
             
             // Form submitted successfully
-        });
+            });
+        }
         
         // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
@@ -1560,6 +1589,7 @@
         // 폼 필드 상호작용 추적
         function initFormTracking() {
             const formFields = document.querySelectorAll('#leadForm input, #leadForm select, #leadForm textarea');
+            if (formFields.length === 0) return;
             
             formFields.forEach(field => {
                 // 필드 포커스 추적
@@ -1600,16 +1630,21 @@
         initFormTracking();
         
         // 모바일 메뉴 토글
-        document.getElementById('mobileToggle')?.addEventListener('click', function() {
-            const navMenu = document.getElementById('navMenu');
-            navMenu.classList.toggle('active');
-        });
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.getElementById('navMenu');
+        
+        if (mobileToggle && navMenu) {
+            mobileToggle.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+            });
+        }
 
         // 모바일 메뉴 링크 클릭 시 메뉴 닫기
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function() {
-                const navMenu = document.getElementById('navMenu');
-                navMenu.classList.remove('active');
+                if (navMenu) {
+                    navMenu.classList.remove('active');
+                }
             });
         });
 
@@ -1679,7 +1714,6 @@
                 'error_lineno': e.lineno,
                 'error_colno': e.colno
             });
-            console.error('🚨 JavaScript 에러 감지:', e.message);
         });
         
         // Promise rejection 에러 추적
@@ -1689,7 +1723,6 @@
                 'event_label': e.reason.toString(),
                 'error_type': 'unhandled_promise'
             });
-            console.error('🚨 Unhandled Promise Rejection:', e.reason);
         });
         
         // 이미지 로딩 에러 추적
@@ -1700,7 +1733,6 @@
                     'event_label': e.target.src,
                     'error_type': 'image_load_failed'
                 });
-                console.error('🖼️ 이미지 로딩 실패:', e.target.src);
             }
         }, true);
         
@@ -1713,8 +1745,6 @@
                     'event_label': 'tracking_ready',
                     'load_time': Date.now()
                 });
-            } else {
-                console.error('❌ GA4 로딩 실패 - gtag 함수 없음');
             }
         }, 2000);
     </script>
