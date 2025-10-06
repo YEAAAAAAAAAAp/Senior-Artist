@@ -10,28 +10,15 @@
     <meta property="og:type" content="website">
     <title>Artisty - 당신의 예술 여정을 시작하세요</title>
     
-    <!-- 통합 추적 초기화 (dataLayer 충돌 방지) -->
+    <!-- Google Analytics 4 (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
-        // dataLayer 먼저 초기화
         window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-DE2ZNKWV2W');
         
-        // GTM 전용 설정
-        window.__GTM_ID__ = 'GTM-594SVWKB';
-        
-        console.log('[TRACKING] 🚀 Initializing unified tracking system');
-    </script>
-    
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-594SVWKB');</script>
-    <!-- End Google Tag Manager -->
-    
-    <!-- GTM 전용 설정 - GA4는 GTM을 통해서만 관리 -->
-        
-        console.log('[GA4] ✅ GA4 initialized with enhanced tracking');
+        console.log('[GA4] ✅ GA4 initialized with direct implementation');
         console.log('[GA4] 📊 Page view sent for:', window.location.href);
     </script>
     
@@ -1433,10 +1420,7 @@
     </script>
 </head>
 <body>
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-594SVWKB"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+
     
     <!-- Header -->
     <header class="header">
@@ -1445,7 +1429,7 @@
             <ul class="nav-menu" id="navMenu">
                 <li><a href="artist.html" class="nav-link" data-cta-type="navigation" data-cta-name="nav_artist">예술가용</a></li>
                 <li><a href="collector.html" class="nav-link" data-cta-type="navigation" data-cta-name="nav_collector">콜렉터용</a></li>
-                <li><a href="#" class="nav-link" onclick="openAboutModal()" data-cta-type="navigation" data-cta-name="nav_about">소개</a></li>
+                <li><a href="#" class="nav-link" data-cta-type="navigation" data-cta-name="nav_about" data-action="openAboutModal">소개</a></li>
             </ul>
             <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기" data-cta-type="navigation" data-cta-name="mobile_menu_toggle" data-cta-location="header">☰</button>
         </nav>
@@ -1550,7 +1534,7 @@
     <!-- CTA Form Overlay -->
     <div class="cta-overlay" id="ctaOverlay">
         <div class="cta-form">
-            <button class="close-btn" onclick="closeForm()" data-cta-type="action" data-cta-name="contact_form_close" data-cta-location="contact_modal">&times;</button>
+            <button class="close-btn" data-cta-type="action" data-cta-name="contact_form_close" data-cta-location="contact_modal" data-action="closeForm">&times;</button>
             <div class="form-header">
                 <h2>관심 등록하기</h2>
                 <p>맞춤 정보를 받아보세요</p>
@@ -1570,11 +1554,11 @@
                 <div class="form-group">
                     <label>관심 분야 *</label>
                     <div class="radio-group">
-                        <div class="radio-item" onclick="selectRadio('artist')">
+                        <div class="radio-item" data-radio-value="artist" data-action="selectRadio">
                             <input type="radio" id="artist" name="userType" value="artist" required>
                             <label for="artist">예술가</label>
                         </div>
-                        <div class="radio-item" onclick="selectRadio('collector')">
+                        <div class="radio-item" data-radio-value="collector" data-action="selectRadio">
                             <input type="radio" id="collector" name="userType" value="collector" required>
                             <label for="collector">콜렉터</label>
                         </div>
@@ -1760,7 +1744,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>🎨 Artisty 플랫폼 소개</h2>
-                <span class="close" onclick="closeAboutModal()">&times;</span>
+                <span class="close" data-action="closeAboutModal">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="service-intro">
@@ -1802,8 +1786,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="modal-btn primary" onclick="location.href='artist.html'" data-cta-type="primary" data-cta-name="modal_artist_start">예술가로 시작하기</button>
-                <button class="modal-btn secondary" onclick="location.href='collector.html'" data-cta-type="secondary" data-cta-name="modal_collector_start">콜렉터로 시작하기</button>
+                <button class="modal-btn primary" data-cta-type="primary" data-cta-name="modal_artist_start" data-href="artist.html">예술가로 시작하기</button>
+                <button class="modal-btn secondary" data-cta-type="secondary" data-cta-name="modal_collector_start" data-href="collector.html">콜렉터로 시작하기</button>
             </div>
         </div>
     </div>
@@ -1867,7 +1851,7 @@
     </script>
     
     <!-- GA4 Tracking Scripts -->
-    <script src="js/gtm-only.js?v=202510070061"></script>
+    <script src="js/ga4-tracking.js?v=202510070100"></script>
     
     <!-- 실시간 GA4 테스트 스크립트 -->
     <script>
