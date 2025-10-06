@@ -37,7 +37,8 @@
             overflow-x: hidden;
             font-weight: 400;
             height: 100vh;
-            overflow-y: hidden;
+            overflow-y: auto;
+            scroll-behavior: smooth;
             font-size: 16px;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -166,7 +167,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 80px 60px;
+            padding: 80px 50px;
             color: #3c2415;
             position: relative;
             overflow: hidden;
@@ -189,28 +190,43 @@
         }
         
         .hero-text {
-            max-width: 520px;
+            max-width: 560px;
             text-align: left;
             z-index: 2;
             position: relative;
+            padding-right: 20px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .hero-text h1 {
-            font-size: clamp(42px, 5vw, 58px);
-            margin-bottom: 24px;
+            font-size: clamp(36px, 4.5vw, 52px);
+            margin-bottom: 20px;
             font-weight: 700;
-            line-height: 1.1;
-            letter-spacing: -0.04em;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
             font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #1e293b;
         }
         
         .hero-text p {
-            font-size: 20px;
-            margin-bottom: 32px;
+            font-size: clamp(16px, 2vw, 18px);
+            margin-bottom: 28px;
             color: #475569;
-            line-height: 1.5;
+            line-height: 1.6;
             font-weight: 400;
             letter-spacing: -0.01em;
+            max-width: 480px;
         }
         
         .cta-buttons {
@@ -557,12 +573,26 @@
                 grid-template-rows: 1fr 1fr;
             }
             
+            .hero-content {
+                padding: 60px 30px;
+            }
+            
+            .hero-text {
+                max-width: 100%;
+                padding-right: 0;
+                text-align: center;
+            }
+            
             .hero-text h1 {
-                font-size: 2rem;
+                font-size: clamp(28px, 6vw, 36px);
+                line-height: 1.2;
+                margin-bottom: 16px;
             }
             
             .hero-text p {
-                font-size: 1rem;
+                font-size: clamp(14px, 4vw, 16px);
+                line-height: 1.5;
+                margin-bottom: 24px;
             }
             
             .cta-buttons {
@@ -612,11 +642,17 @@
             }
             
             .hero-content, .choice-section {
-                padding: 1rem;
+                padding: 40px 20px;
             }
             
             .hero-text h1 {
-                font-size: 1.8rem;
+                font-size: clamp(24px, 7vw, 32px);
+                line-height: 1.25;
+            }
+            
+            .hero-text p {
+                font-size: clamp(13px, 4vw, 15px);
+                line-height: 1.4;
             }
             
             .btn {
@@ -1367,7 +1403,7 @@
         <div class="hero-content">
             <div class="hero-text">
                 <h1>Artisty — 예술가의 손끝에서,<br>당신의 공간으로</h1>
-                <p>깊이 있는 작품 스토리와 함께<br>특별한 예술 경험을 시작하세요</p>
+                <p>시니어 예술가와 컬렉터를 연결하는 온라인 마켓플레이스에서<br>특별한 예술 경험을 시작하세요</p>
             </div>
         </div>
         
