@@ -6,24 +6,45 @@
 (function() {
     'use strict';
 
-    // CTA 셀렉터 정의 (지시문에서 제공된 파라미터 기반)
+    // CTA 셀렉터 정의 - 완벽한 포괄적 선택자 (우선순위 기반)
     const CTA_SELECTORS = [
+        // 최고 우선순위: 명시적 CTA 속성이 있는 모든 요소
+        '[data-cta-name]',
+        '[data-cta-type]',
+        
+        // 높은 우선순위: 주요 CTA 클래스들 
         '.cta-button',
         '.choice-btn', 
-        '.btn-primary',
-        '.feature-btn',
         '.submit-btn',
         '.modal-btn',
+        
+        // 중간 우선순위: 보조 CTA 클래스들
+        '.feature-btn',
+        '.btn-primary',
         '.nav-link',
         '.back-btn',
+        '.mobile-toggle',
+        '.close-btn',
+        
+        // 낮은 우선순위: 일반 버튼들
+        '.btn',
+        'button.primary',
+        'button.secondary',
+        
+        // 링크 기반 CTA들
         'a[href*="artist.html"]',
         'a[href*="collector.html"]',
-        'button[onclick*="trackCTA"]',
-        'button[onclick*="openRegistration"]',
-        'button[onclick*="openInterestForm"]',
-        'button[onclick*="openAboutModal"]',
-        'button[data-cta-name]',
-        'a[data-cta-name]'
+        
+        // 이벤트 핸들러 기반 요소들
+        'button[onclick]', // 모든 onclick 이벤트가 있는 버튼
+        
+        // 폼 관련 요소들
+        'button[type="submit"]',
+        'input[type="submit"]',
+        
+        // 포괄적 백업 선택자
+        'button:not([type="button"]):not([class*="ignore-tracking"])',
+        'a[href]:not([class*="ignore-tracking"])'
     ];
 
     // MPA 여부 (현재 프로젝트는 MPA)
@@ -118,19 +139,38 @@
         
         console.log(`[GA4] 🎯 Total CTA elements found: ${totalElements}`);
 
-        // 1초 후 추가 검증
+        // 1초 후 스마트 검증 (재시도 최소화)
         setTimeout(() => {
             const boundElements = document.querySelectorAll('[data-ga-bound]').length;
-            console.log(`[GA4] ✅ Bound elements: ${boundElements}/${totalElements}`);
+            const bindingRate = totalElements > 0 ? (boundElements / totalElements) : 1;
             
-            // 바인딩이 부족하면 재시도
-            if (boundElements < totalElements * 0.8 && initRetryCount < MAX_INIT_RETRIES) {
-                console.warn('[GA4] 🔄 Low binding rate, retrying binding...');
-                setTimeout(() => {
-                    if (window.GA4Utils.bindCtaEvents) {
-                        window.GA4Utils.bindCtaEvents(CTA_SELECTORS);
+            console.log(`[GA4] ✅ Bound elements: ${boundElements}/${totalElements} (${Math.round(bindingRate * 100)}%)`);
+            
+            // 바인딩률이 85% 미만이고 첫 번째 재시도일 때만 실행
+            if (bindingRate < 0.85 && initRetryCount <= 1) {
+                console.warn('[GA4] 🔄 Low binding rate, smart retry once...');
+                
+                // 바인딩되지 않은 요소들만 타겟팅
+                const unboundSelectors = CTA_SELECTORS.filter(selector => {
+                    try {
+                        const elements = document.querySelectorAll(selector + ':not([data-ga-bound])');
+                        return elements.length > 0;
+                    } catch (e) {
+                        return false;
                     }
-                }, 1000);
+                });
+                
+                if (unboundSelectors.length > 0 && window.GA4Utils.bindCtaEvents) {
+                    console.log('[GA4] 🎯 Retrying for unbound selectors:', unboundSelectors.length);
+                    window.GA4Utils.bindCtaEvents(unboundSelectors);
+                    
+                    // 재시도 후 최종 상태 확인
+                    setTimeout(() => {
+                        const finalBound = document.querySelectorAll('[data-ga-bound]').length;
+                        const finalRate = totalElements > 0 ? (finalBound / totalElements) : 1;
+                        console.log(`[GA4] 🎯 Final binding: ${finalBound}/${totalElements} (${Math.round(finalRate * 100)}%)`);
+                    }, 1000);
+                }
             }
         }, 1000);
     }

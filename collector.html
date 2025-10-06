@@ -41,15 +41,25 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         
-        // 최적화된 GA4 설정
+        // CTA 추적 최적화된 GA4 설정
         gtag('config', 'G-DE2ZNKWV2W', { 
-            send_page_view: true,  // 자동 페이지뷰만 사용
+            send_page_view: true,  
             transport_type: 'beacon',
             allow_enhanced_conversions: true,
             anonymize_ip: false,
             allow_google_signals: true,
             debug_mode: true,
-            cookie_flags: 'SameSite=None;Secure'
+            cookie_flags: 'SameSite=None;Secure',
+            // CTA 추적을 위한 향상된 설정
+            linker: {
+                domains: ['yeaaaaaaaaaap.github.io']
+            },
+            custom_map: {
+                'custom_parameter_1': 'cta_type',
+                'custom_parameter_2': 'cta_name', 
+                'custom_parameter_3': 'cta_location',
+                'custom_parameter_4': 'cta_context'
+            }
         });
         
         console.log('[GA4] ✅ GA4 initialized with enhanced tracking');
@@ -800,7 +810,7 @@
                 <li><a href="index.html#about" class="nav-link" data-cta-type="navigation" data-cta-name="nav_about">소개</a></li>
             </ul>
             <a href="index.html" class="back-btn" data-cta-type="navigation" data-cta-name="back_to_main">← 메인으로</a>
-            <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기">☰</button>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기" data-cta-type="navigation" data-cta-name="mobile_menu_toggle" data-cta-location="header">☰</button>
         </nav>
     </header>
 
@@ -906,7 +916,7 @@
     <!-- Interest Form Overlay -->
     <div class="interest-overlay" id="interestOverlay">
         <div class="interest-form">
-            <button class="close-btn" onclick="closeInterestForm()">&times;</button>
+            <button class="close-btn" onclick="closeInterestForm()" data-cta-type="action" data-cta-name="interest_form_close" data-cta-location="interest_modal">&times;</button>
             <div class="form-header">
                 <h3>콜렉터 관심 등록</h3>
                 <p>맞춤 작품을 추천받으세요</p>
@@ -1213,7 +1223,7 @@
             });
         }
     </script>
-    <script src="js/ga-lite.js?v=202510070028"></script>
-    <script src="js/init-ga.js?v=202510070028"></script>
+    <script src="js/ga-lite.js?v=202510070045"></script>
+    <script src="js/init-ga.js?v=202510070045"></script>
 </body>
 </html>

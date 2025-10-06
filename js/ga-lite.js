@@ -111,58 +111,54 @@
     function sendCtaClick(ctaText, ctaLocation, element) {
         const timestamp = Date.now();
         
-        // GA4 표준 이벤트 형식으로 변경
+        // GA4 표준 이벤트 파라미터 구조
         const eventData = {
+            // GA4 표준 파라미터들
             event_category: 'engagement',
             event_label: ctaText || 'Unknown CTA',
-            value: 1,
-            // GA4 표준 파라미터들
-            content_type: 'button',
+            content_type: 'cta',
             item_id: element?.getAttribute('data-cta-name') || 'unknown_cta',
-            method: 'click'
+            method: 'click',
+            value: 1,
+            
+            // 커스텀 파라미터들 (GA4 custom_map에 정의됨)
+            custom_parameter_1: element?.getAttribute('data-cta-type') || 'unknown',
+            custom_parameter_2: element?.getAttribute('data-cta-name') || 'unknown',
+            custom_parameter_3: element?.getAttribute('data-cta-location') || ctaLocation || 'unknown',
+            custom_parameter_4: document.title || 'unknown_page',
+            
+            // 추가 컨텍스트 정보
+            page_location: window.location.href,
+            page_path: window.location.pathname,
+            page_title: document.title,
+            timestamp: timestamp
         };
 
-        // 데이터 속성에서 추가 정보 수집
+        // 링크 URL 추가 (있는 경우)
+        if (element?.href) {
+            eventData.link_url = element.href;
+            eventData.link_domain = new URL(element.href).hostname;
+        }
+        
+        // 요소 타입별 추가 정보
         if (element) {
-            const ctaType = element.getAttribute('data-cta-type');
-            const ctaName = element.getAttribute('data-cta-name');
-            
-            if (ctaType) {
-                eventData.custom_parameter_1 = ctaType; // GA4에서 허용하는 커스텀 파라미터 형식
-            }
-            
-            if (ctaName) {
-                eventData.custom_parameter_2 = ctaName;
-            }
-            
-            // 링크 URL 추가 (있는 경우)
-            if (element.href) {
-                eventData.link_url = element.href;
-            }
+            eventData.element_type = element.tagName.toLowerCase();
+            eventData.element_classes = element.className || 'no-class';
+            eventData.element_text = (element.textContent || '').trim().substring(0, 100);
         }
 
-        // GA4 표준 이벤트로 전송 (click 이벤트 사용)
+        // GA4 표준 click 이벤트로 전송
         const success = sendUnifiedEvent('click', eventData);
         
-        // 추가로 select_content 이벤트도 전송 (GA4 표준 이벤트)
-        sendUnifiedEvent('select_content', {
-            content_type: 'button',
-            item_id: element?.getAttribute('data-cta-name') || 'unknown_cta',
-            value: 1
-        });
-        
         if (GA_CONFIG.debug) {
-            console.log('[GA4] 🎯 CTA Click Event:', {
+            console.log('[GA4] 🎯 Enhanced CTA Click Event:', {
                 success,
-                eventData,
-                element: element?.outerHTML?.substring(0, 100) + '...'
+                cta_name: eventData.custom_parameter_2,
+                cta_type: eventData.custom_parameter_1,
+                cta_location: eventData.custom_parameter_3,
+                cta_text: ctaText
             });
         }
-        
-        // 추가적인 실시간 추적 이벤트
-        safeGtag('event', 'user_engagement', {
-            engagement_time_msec: 100
-        });
         
         return success;
     }
@@ -263,9 +259,23 @@
                         return;
                     }
 
-                    // 강화된 클릭 이벤트 리스너 추가
+                    // 중복 방지를 위한 최적화된 클릭 이벤트 리스너 
                     const clickHandler = function(event) {
-                        // 즉시 로그 출력
+                        // 중복 클릭 방지 (debouncing)
+                        if (element.hasAttribute('data-click-processing')) {
+                            console.log('[GA4] ⚠️ Click ignored - already processing');
+                            return;
+                        }
+                        
+                        // 처리 중 플래그 설정
+                        element.setAttribute('data-click-processing', 'true');
+                        
+                        // 0.5초 후 플래그 제거
+                        setTimeout(() => {
+                            element.removeAttribute('data-click-processing');
+                        }, 500);
+                        
+                        // 단일 로그 출력
                         console.log('[GA4] 🎯 CTA CLICKED!', element);
                         
                         const ctaText = element.textContent.trim() || 
@@ -280,20 +290,7 @@
                                            element.closest('.hero-content, .choice-section, .gallery-section')?.className?.split(' ')[0] ||
                                            'unknown_section';
 
-                        // 즉시 로그 출력
-                        console.log('[GA4] 🎯 CTA CLICKED!', element);
-                        
-                        // 강제 dataLayer 푸시 (백업)
-                        window.dataLayer = window.dataLayer || [];
-                        window.dataLayer.push({
-                            event: 'cta_click_immediate',
-                            cta_text: ctaText,
-                            cta_location: ctaLocation,
-                            timestamp: Date.now(),
-                            page_url: window.location.href
-                        });
-
-                        // 즉시 이벤트 전송
+                        // 즉시 이벤트 전송 (중복 dataLayer 푸시 제거)
                         const success = sendCtaClick(ctaText, ctaLocation, element);
                         
                         console.log('[GA4] 🔥 CTA Event Fired:', {
@@ -314,9 +311,12 @@
                         }
                     };
 
-                    // 여러 이벤트 타입에 바인딩 (안정성 확보)
-                    element.addEventListener('click', clickHandler, { capture: true });
-                    element.addEventListener('mousedown', clickHandler, { capture: true });
+                    // 단일 클릭 이벤트만 바인딩 (중복 방지)
+                    element.addEventListener('click', clickHandler, { 
+                        capture: true, 
+                        once: false, 
+                        passive: false 
+                    });
 
                     // 바인딩 완료 표시
                     element.setAttribute('data-ga-bound', 'true');

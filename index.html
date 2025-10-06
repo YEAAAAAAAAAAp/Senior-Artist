@@ -37,15 +37,25 @@
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         
-        // 최적화된 GA4 설정
+        // CTA 추적 최적화된 GA4 설정
         gtag('config', 'G-DE2ZNKWV2W', { 
-            send_page_view: true,  // 자동 페이지뷰만 사용
+            send_page_view: true,  
             transport_type: 'beacon',
             allow_enhanced_conversions: true,
             anonymize_ip: false,
             allow_google_signals: true,
             debug_mode: true,
-            cookie_flags: 'SameSite=None;Secure'
+            cookie_flags: 'SameSite=None;Secure',
+            // CTA 추적을 위한 향상된 설정
+            linker: {
+                domains: ['yeaaaaaaaaaap.github.io']
+            },
+            custom_map: {
+                'custom_parameter_1': 'cta_type',
+                'custom_parameter_2': 'cta_name', 
+                'custom_parameter_3': 'cta_location',
+                'custom_parameter_4': 'cta_context'
+            }
         });
         
         console.log('[GA4] ✅ GA4 initialized with enhanced tracking');
@@ -1430,7 +1440,7 @@
                 <li><a href="collector.html" class="nav-link" data-cta-type="navigation" data-cta-name="nav_collector">콜렉터용</a></li>
                 <li><a href="#" class="nav-link" onclick="openAboutModal()" data-cta-type="navigation" data-cta-name="nav_about">소개</a></li>
             </ul>
-            <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기">☰</button>
+            <button class="mobile-toggle" id="mobileToggle" aria-label="메뉴 열기" data-cta-type="navigation" data-cta-name="mobile_menu_toggle" data-cta-location="header">☰</button>
         </nav>
     </header>
 
@@ -1451,14 +1461,14 @@
                     <div class="choice-icon">🎨</div>
                     <h3>예술가</h3>
                     <p>3가지 핵심 기능으로 작품 활동을<br>체계적으로 관리하고 성장시키세요</p>
-                    <a href="artist.html" class="choice-btn" data-cta-type="primary" data-cta-name="artist_start">예술가로 시작하기</a>
+                    <a href="artist.html" class="choice-btn" data-cta-type="primary" data-cta-name="artist_start" data-cta-location="hero_section">예술가로 시작하기</a>
                 </div>
                 
                 <div class="choice-card">
                     <div class="choice-icon">👁️</div>
                     <h3>콜렉터</h3>
                     <p>스토리텔링 기반으로 작품을 탐색하고<br>안전하게 소장할 수 있어요</p>
-                    <a href="collector.html" class="choice-btn" data-cta-type="primary" data-cta-name="collector_start">콜렉터로 시작하기</a>
+                    <a href="collector.html" class="choice-btn" data-cta-type="primary" data-cta-name="collector_start" data-cta-location="hero_section">콜렉터로 시작하기</a>
                 </div>
             </div>
         </div>
@@ -1533,7 +1543,7 @@
     <!-- CTA Form Overlay -->
     <div class="cta-overlay" id="ctaOverlay">
         <div class="cta-form">
-            <button class="close-btn" onclick="closeForm()">&times;</button>
+            <button class="close-btn" onclick="closeForm()" data-cta-type="action" data-cta-name="contact_form_close" data-cta-location="contact_modal">&times;</button>
             <div class="form-header">
                 <h2>관심 등록하기</h2>
                 <p>맞춤 정보를 받아보세요</p>
@@ -1823,8 +1833,8 @@
     </script>
     
     <!-- GA4 Tracking Scripts -->
-    <script src="js/ga-lite.js?v=202510070028"></script>
-    <script src="js/init-ga.js?v=202510070028"></script>
+    <script src="js/ga-lite.js?v=202510070045"></script>
+    <script src="js/init-ga.js?v=202510070045"></script>
     
     <!-- 실시간 GA4 테스트 스크립트 -->
     <script>
