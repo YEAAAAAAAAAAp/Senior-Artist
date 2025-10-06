@@ -9,6 +9,7 @@
     // 전역 설정
     const GA_CONFIG = {
         measurementId: window.__GA_MEASUREMENT_ID__ || 'G-DE2ZNKWV2W',
+        gtmId: window.__GTM_ID__ || 'GTM-594SVWKB',
         debug: true // 실시간 디버깅을 위해 활성화
     };
 
@@ -123,8 +124,8 @@
             }
         }
 
-        // 실시간 이벤트 전송
-        const success = safeGtag('event', 'cta_click', eventData);
+        // 통합 이벤트 전송 (GA4 + GTM)
+        const success = sendUnifiedEvent('cta_click', eventData);
         
         if (GA_CONFIG.debug) {
             console.log('[GA4] 🎯 CTA Click Event:', {
@@ -140,6 +141,58 @@
         });
         
         return success;
+    }
+
+    /**
+     * GTM 데이터레이어 푸시 (GTM과 호환)
+     * @param {object} eventData - 이벤트 데이터
+     */
+    function pushToDataLayer(eventData) {
+        try {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push(eventData);
+            
+            if (GA_CONFIG.debug) {
+                console.log('[GTM] 📤 DataLayer push:', eventData);
+            }
+            return true;
+        } catch (error) {
+            console.error('[GTM] ❌ DataLayer push failed:', error);
+            return false;
+        }
+    }
+
+    /**
+     * 통합 이벤트 전송 (GA4 + GTM)
+     * @param {string} eventName - 이벤트명
+     * @param {object} eventData - 이벤트 데이터
+     */
+    function sendUnifiedEvent(eventName, eventData) {
+        const timestamp = Date.now();
+        const unifiedData = {
+            event: eventName,
+            ...eventData,
+            timestamp: timestamp,
+            gtm_id: GA_CONFIG.gtmId,
+            ga4_measurement_id: GA_CONFIG.measurementId
+        };
+
+        // GA4로 전송
+        const ga4Success = safeGtag('event', eventName, eventData);
+        
+        // GTM 데이터레이어로 전송
+        const gtmSuccess = pushToDataLayer(unifiedData);
+
+        if (GA_CONFIG.debug) {
+            console.log('[UNIFIED] 🚀 Event sent:', {
+                eventName,
+                ga4Success,
+                gtmSuccess,
+                data: unifiedData
+            });
+        }
+
+        return ga4Success && gtmSuccess;
     }
 
     /**
@@ -237,11 +290,13 @@
         sendCtaClick: sendCtaClick,
         bindCtaEvents: bindCtaEvents,
         setDebugMode: setDebugMode,
-        isGtagAvailable: isGtagAvailable
+        isGtagAvailable: isGtagAvailable,
+        pushToDataLayer: pushToDataLayer,
+        sendUnifiedEvent: sendUnifiedEvent
     };
 
     if (GA_CONFIG.debug) {
-        console.log('[GA4] GA4Utils initialized');
+        console.log('[GA4] GA4Utils initialized with GTM support');
     }
 
 })();

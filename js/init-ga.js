@@ -55,11 +55,12 @@
         window.GA4Utils.bindCtaEvents(CTA_SELECTORS);
 
         // 즉시 테스트 이벤트 전송
-        window.GA4Utils.safeGtag('event', 'ga4_initialized', {
+        window.GA4Utils.sendUnifiedEvent('ga4_initialized', {
             event_category: 'system',
             event_label: 'tracking_ready',
             page_url: window.location.href,
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            gtm_ready: typeof window.dataLayer !== 'undefined'
         });
 
         console.log('[GA4] ✅ GA4 tracking initialized successfully');
