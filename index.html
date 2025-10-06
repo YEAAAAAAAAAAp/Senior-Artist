@@ -21,6 +21,24 @@
             'allow_enhanced_conversions': true,
             'allow_google_signals': true
         });
+        
+        // GA4 로딩 상태 디버깅
+        console.log('🔍 GA4 초기화 시작');
+        console.log('gtag 함수:', typeof gtag);
+        console.log('dataLayer:', window.dataLayer);
+        
+        // 즉시 테스트 이벤트 전송
+        setTimeout(function() {
+            if (typeof gtag === 'function') {
+                gtag('event', 'page_load_test', {
+                    'event_category': 'debug',
+                    'page_title': document.title
+                });
+                console.log('✅ 테스트 이벤트 전송 완료');
+            } else {
+                console.error('❌ gtag 함수 로드 실패');
+            }
+        }, 2000);
     </script>
     
     <style>
@@ -1092,6 +1110,11 @@
         
         // 사용자 유지율 측정
         function trackUserRetention() {
+            if (typeof gtag !== 'function') {
+                console.error('gtag 함수가 로드되지 않았습니다.');
+                return;
+            }
+            
             const currentVisit = Date.now();
             const lastVisit = localStorage.getItem('lastVisit');
             
@@ -1102,17 +1125,24 @@
                     'days_since_last_visit': daysSinceLastVisit,
                     'visitor_type': 'returning'
                 });
+                console.log('✅ 재방문 사용자 추적 완료');
             } else {
                 gtag('event', 'user_retention', {
                     'event_category': 'retention',
                     'visitor_type': 'new'
                 });
+                console.log('✅ 신규 사용자 추적 완료');
             }
             localStorage.setItem('lastVisit', currentVisit.toString());
         }
         
         // 트래픽 소스 분석
         function trackTrafficSource() {
+            if (typeof gtag !== 'function') {
+                console.error('gtag 함수가 로드되지 않았습니다.');
+                return;
+            }
+            
             const urlParams = new URLSearchParams(window.location.search);
             const referrer = document.referrer;
             
@@ -1123,6 +1153,7 @@
                 'utm_campaign': urlParams.get('utm_campaign') || 'none',
                 'referrer_domain': referrer ? new URL(referrer).hostname : 'direct'
             });
+            console.log('✅ 트래픽 소스 추적 완료');
         }
         
         // About Modal Functions
@@ -1448,9 +1479,22 @@
         // 폼 추적 초기화
         initFormTracking();
         
-        // 활성 사용자 추적 함수들 호출
-        trackUserRetention();
-        trackTrafficSource();
+        // GA4 로딩 완료 후 활성 사용자 추적 함수들 호출
+        function initGA4Tracking() {
+            if (typeof gtag === 'function') {
+                trackUserRetention();
+                trackTrafficSource();
+                console.log('✅ GA4 추적 함수들 실행 완료');
+            } else {
+                console.log('⏳ gtag 로딩 대기 중...');
+                setTimeout(initGA4Tracking, 500);
+            }
+        }
+        
+        // 페이지 로드 완료 후 GA4 추적 시작
+        window.addEventListener('load', function() {
+            setTimeout(initGA4Tracking, 1000);
+        });
         
         // 모바일 메뉴 토글
         const mobileToggle = document.getElementById('mobileToggle');
