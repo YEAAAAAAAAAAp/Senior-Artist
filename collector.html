@@ -34,19 +34,35 @@
     })(window,document,'script','dataLayer','GTM-594SVWKB');</script>
     <!-- End Google Tag Manager -->
     
-    <!-- Google Analytics 4 - GTM과 안전하게 병행 -->
+    <!-- Google Analytics 4 - 기본 추적 활성화 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
         // dataLayer가 이미 존재하므로 재초기화하지 않음
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
+        
+        // 기본 추적 설정 (실시간 데이터 수집을 위해)
         gtag('config', 'G-DE2ZNKWV2W', { 
-            send_page_view: false,  // GTM에서 관리하도록 변경
+            send_page_view: true,  // 페이지뷰 활성화
             transport_type: 'beacon',
-            allow_enhanced_conversions: true
+            allow_enhanced_conversions: true,
+            anonymize_ip: false,
+            allow_google_signals: true,
+            // 추가 디버깅 설정
+            debug_mode: true,
+            dev_id: 'dZTNiMT'  // GA4 개발자 식별자
         });
         
-        console.log('[GA4] ✅ GA4 initialized with GTM integration');
+        // 즉시 커스텀 페이지뷰 전송 (백업)
+        gtag('event', 'page_view', {
+            page_title: document.title,
+            page_location: window.location.href,
+            page_path: window.location.pathname,
+            timestamp: Date.now()
+        });
+        
+        console.log('[GA4] ✅ GA4 initialized with enhanced tracking');
+        console.log('[GA4] 📊 Page view sent for:', window.location.href);
     </script>
     
     <style>
@@ -1206,7 +1222,7 @@
             });
         }
     </script>
-    <script src="js/ga-lite.js?v=202510062354"></script>
-    <script src="js/init-ga.js?v=202510062354"></script>
+    <script src="js/ga-lite.js?v=202510070010"></script>
+    <script src="js/init-ga.js?v=202510070010"></script>
 </body>
 </html>

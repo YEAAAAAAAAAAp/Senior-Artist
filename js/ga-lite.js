@@ -110,15 +110,16 @@
      */
     function sendCtaClick(ctaText, ctaLocation, element) {
         const timestamp = Date.now();
+        
+        // GA4 표준 이벤트 형식으로 변경
         const eventData = {
             event_category: 'engagement',
-            event_label: 'cta_click',
-            cta_text: ctaText || 'Unknown CTA',
-            cta_location: ctaLocation || 'unknown_location',
+            event_label: ctaText || 'Unknown CTA',
             value: 1,
-            timestamp: timestamp,
-            page_url: window.location.href,
-            page_title: document.title
+            // GA4 표준 파라미터들
+            content_type: 'button',
+            item_id: element?.getAttribute('data-cta-name') || 'unknown_cta',
+            method: 'click'
         };
 
         // 데이터 속성에서 추가 정보 수집
@@ -127,26 +128,28 @@
             const ctaName = element.getAttribute('data-cta-name');
             
             if (ctaType) {
-                eventData.cta_type = ctaType;
+                eventData.custom_parameter_1 = ctaType; // GA4에서 허용하는 커스텀 파라미터 형식
             }
             
             if (ctaName) {
-                eventData.cta_name = ctaName;
+                eventData.custom_parameter_2 = ctaName;
             }
             
             // 링크 URL 추가 (있는 경우)
             if (element.href) {
                 eventData.link_url = element.href;
             }
-            
-            // 요소 클래스 정보
-            if (element.className) {
-                eventData.element_classes = element.className;
-            }
         }
 
-        // 통합 이벤트 전송 (GA4 + GTM)
-        const success = sendUnifiedEvent('cta_click', eventData);
+        // GA4 표준 이벤트로 전송 (click 이벤트 사용)
+        const success = sendUnifiedEvent('click', eventData);
+        
+        // 추가로 select_content 이벤트도 전송 (GA4 표준 이벤트)
+        sendUnifiedEvent('select_content', {
+            content_type: 'button',
+            item_id: element?.getAttribute('data-cta-name') || 'unknown_cta',
+            value: 1
+        });
         
         if (GA_CONFIG.debug) {
             console.log('[GA4] 🎯 CTA Click Event:', {
