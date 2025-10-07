@@ -20,7 +20,9 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'G-DE2ZNKWV2W');
+        gtag('config', 'G-DE2ZNKWV2W', {
+            'send_page_view': true
+        });
     </script>
     
     <style>
@@ -746,7 +748,7 @@
                     <li>콜렉터와 직접 소통</li>
                 </ul>
                 
-                <button class="cta-button" onclick="gtag('event', 'artist_registration_click', {'page': 'artist', 'location': 'hero'}); openRegistration()">작가 등록하기</button>
+                <button class="cta-button" onclick="gtag('event', 'artist_registration_click', {'event_category': 'cta', 'event_label': 'artist_registration', 'page': 'artist', 'location': 'hero'}); openRegistration()">작가 등록하기</button>
             </div>
         </div>
         
@@ -759,7 +761,7 @@
             
             <div class="features-grid">
                 <!-- 포트폴리오 최적화 -->
-                <div class="feature-card" onclick="gtag('event', 'portfolio_feature_click', {'page': 'artist', 'feature': 'portfolio'})">
+                <div class="feature-card" onclick="gtag('event', 'portfolio_feature_click', {'event_category': 'feature', 'event_label': 'portfolio_optimization', 'page': 'artist', 'feature': 'portfolio'})">
                     <div class="feature-icon">🎨</div>
                     <div class="feature-content">
                         <h3>포트폴리오 최적화</h3>
@@ -774,7 +776,7 @@
                 </div>
 
                 <!-- 거래 관리 -->
-                <div class="feature-card" onclick="gtag('event', 'transaction_feature_click', {'page': 'artist', 'feature': 'transaction'})">
+                <div class="feature-card" onclick="gtag('event', 'transaction_feature_click', {'event_category': 'feature', 'event_label': 'transaction_management', 'page': 'artist', 'feature': 'transaction'})">
                     <div class="feature-icon">💳</div>
                     <div class="feature-content">
                         <h3>거래 관리</h3>
@@ -789,7 +791,7 @@
                 </div>
 
                 <!-- 고객 관계 관리 -->
-                <div class="feature-card" onclick="gtag('event', 'customer_feature_click', {'page': 'artist', 'feature': 'customer'})">
+                <div class="feature-card" onclick="gtag('event', 'customer_feature_click', {'event_category': 'feature', 'event_label': 'customer_management', 'page': 'artist', 'feature': 'customer'})">
                     <div class="feature-icon">👥</div>
                     <div class="feature-content">
                         <h3>고객 관계 관리</h3>
@@ -809,7 +811,7 @@
     <!-- Registration Form Overlay -->
     <div class="registration-overlay" id="registrationOverlay">
         <div class="registration-form">
-            <button class="close-btn" onclick="gtag('event', 'artist_form_close', {'page': 'artist'}); closeRegistration()">&times;</button>
+            <button class="close-btn" onclick="gtag('event', 'artist_form_close', {'event_category': 'form', 'event_label': 'close_registration_form', 'page': 'artist'}); closeRegistration()">&times;</button>
             <div class="form-header">
                 <h3>작가 등록하기</h3>
                 <p>예술가로 함께하세요</p>
@@ -1029,12 +1031,6 @@
         
         // 페이지 로드 완료 후 GA4 추적 시작
         window.addEventListener('load', function() {
-            trackUserRetention();
-            trackTrafficSource();
-        });
-        
-        // DOMContentLoaded 이벤트에서도 실행
-        document.addEventListener('DOMContentLoaded', function() {
             trackUserRetention();
             trackTrafficSource();
         });

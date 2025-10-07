@@ -20,7 +20,9 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'G-DE2ZNKWV2W');
+        gtag('config', 'G-DE2ZNKWV2W', {
+            'send_page_view': true
+        });
     </script>
     
 
@@ -808,7 +810,7 @@
                     <li>안전한 거래 보장</li>
                 </ul>
                 
-                <button class="cta-button" onclick="gtag('event', 'collector_interest_click', {'page': 'collector', 'location': 'hero'}); openInterestForm()">관심 등록하기</button>
+                <button class="cta-button" onclick="gtag('event', 'collector_interest_click', {'event_category': 'cta', 'event_label': 'collector_interest_registration', 'page': 'collector', 'location': 'hero'}); openInterestForm()">관심 등록하기</button>
             </div>
         </div>
         
@@ -821,7 +823,7 @@
             
             <div class="features-grid">
                 <!-- AI 기반 스토리 탐색 -->
-                <div class="feature-card" onclick="gtag('event', 'ai_story_feature_click', {'page': 'collector', 'feature': 'ai_story'})">
+                <div class="feature-card" onclick="gtag('event', 'ai_story_feature_click', {'event_category': 'feature', 'event_label': 'ai_story_exploration', 'page': 'collector', 'feature': 'ai_story'})">
                     <div class="feature-icon">🤖</div>
                     <div class="feature-content">
                         <h3>AI 기반 스토리 탐색</h3>
@@ -836,7 +838,7 @@
                 </div>
 
                 <!-- 안심 거래 -->
-                <div class="feature-card" onclick="gtag('event', 'secure_transaction_feature_click', {'page': 'collector', 'feature': 'secure_transaction'})">
+                <div class="feature-card" onclick="gtag('event', 'secure_transaction_feature_click', {'event_category': 'feature', 'event_label': 'secure_transaction', 'page': 'collector', 'feature': 'secure_transaction'})">
                     <div class="feature-icon">🛡️</div>
                     <div class="feature-content">
                         <h3>안심 거래</h3>
@@ -851,7 +853,7 @@
                 </div>
 
                 <!-- 즉시 소통·견적 -->
-                <div class="feature-card" onclick="gtag('event', 'instant_communication_feature_click', {'page': 'collector', 'feature': 'communication'})">
+                <div class="feature-card" onclick="gtag('event', 'instant_communication_feature_click', {'event_category': 'feature', 'event_label': 'instant_communication', 'page': 'collector', 'feature': 'communication'})">
                     <div class="feature-icon">💬</div>
                     <div class="feature-content">
                         <h3>즉시 소통·견적</h3>
@@ -871,7 +873,7 @@
     <!-- Interest Form Overlay -->
     <div class="interest-overlay" id="interestOverlay">
         <div class="interest-form">
-            <button class="close-btn" onclick="gtag('event', 'collector_form_close', {'page': 'collector'}); closeInterestForm()">&times;</button>
+            <button class="close-btn" onclick="gtag('event', 'collector_form_close', {'event_category': 'form', 'event_label': 'close_interest_form', 'page': 'collector'}); closeInterestForm()">&times;</button>
             <div class="form-header">
                 <h3>콜렉터 관심 등록</h3>
                 <p>맞춤 작품을 추천받으세요</p>
@@ -1120,12 +1122,6 @@
         
         // 페이지 로드 완료 후 GA4 추적 시작
         window.addEventListener('load', function() {
-            trackUserRetention();
-            trackTrafficSource();
-        });
-        
-        // DOMContentLoaded 이벤트에서도 실행
-        document.addEventListener('DOMContentLoaded', function() {
             trackUserRetention();
             trackTrafficSource();
         });
