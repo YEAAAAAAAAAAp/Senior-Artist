@@ -13,74 +13,10 @@
     <!-- Google Analytics 4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-DE2ZNKWV2W"></script>
     <script>
-        // dataLayer 초기화
         window.dataLayer = window.dataLayer || [];
-        
-        // 초기 gtag 함수 (GA4 스크립트 로드 전까지 사용)
         function gtag(){dataLayer.push(arguments);}
-        
-        // GA4 초기 설정
         gtag('js', new Date());
-        gtag('config', 'G-DE2ZNKWV2W', {
-            'send_page_view': true,
-            'allow_enhanced_conversions': true,
-            'allow_google_signals': true,
-            'debug_mode': true
-        });
-        
-        console.log('🔍 GA4 초기 설정 완료');
-        console.log('dataLayer:', window.dataLayer);
-        
-        // GA4 스크립트 로딩 확인 변수
-        let ga4Loaded = false;
-        let originalGtag = gtag;
-        
-        // GA4 스크립트 로딩 확인 함수
-        function checkGA4Loading() {
-            // GA4 스크립트가 로드되었는지 확인 (실제 Google gtag 함수인지 체크)
-            if (window.gtag && 
-                window.gtag !== originalGtag && 
-                window.gtag.toString().includes('google') &&
-                typeof window.gtag === 'function') {
-                
-                ga4Loaded = true;
-                console.log('✅ GA4 스크립트 로딩 완료');
-                console.log('gtag 함수:', typeof window.gtag);
-                
-                // 강제 페이지뷰 전송
-                window.gtag('event', 'page_view', {
-                    'page_title': document.title,
-                    'page_location': window.location.href
-                });
-                
-                console.log('✅ 강제 페이지뷰 전송 완료');
-                return true;
-            } else {
-                console.log('⏳ GA4 스크립트 로딩 대기 중...');
-                return false;
-            }
-        }
-        
-        // GA4 로딩 확인 및 재시도
-        if (!checkGA4Loading()) {
-            setTimeout(checkGA4Loading, 1000);
-            setTimeout(checkGA4Loading, 3000);
-            setTimeout(checkGA4Loading, 5000);
-        }
-        
-        // 전역 gtag 함수 (모든 onclick에서 사용)
-        window.gtag = function() {
-            if (ga4Loaded) {
-                // GA4가 로드된 경우 실제 Google gtag 함수 호출
-                // window.gtag를 직접 호출하지 않고 dataLayer에 추가하여 GA4가 처리하도록 함
-                window.dataLayer = window.dataLayer || [];
-                window.dataLayer.push(arguments);
-            } else {
-                // GA4가 아직 로드되지 않은 경우 dataLayer에 추가
-                window.dataLayer = window.dataLayer || [];
-                window.dataLayer.push(arguments);
-            }
-        };
+        gtag('config', 'G-DE2ZNKWV2W');
     </script>
     
     <style>
@@ -1150,7 +1086,7 @@
             maxScrollDepth: 0
         };
         
-        // 사용자 유지율 측정 (안전한 방식)
+        // 사용자 유지율 측정
         function trackUserRetention() {
             const currentVisit = Date.now();
             const lastVisit = localStorage.getItem('lastVisit');
@@ -1163,20 +1099,15 @@
                 const daysSinceLastVisit = Math.floor((currentVisit - parseInt(lastVisit)) / (1000 * 60 * 60 * 24));
                 eventData.days_since_last_visit = daysSinceLastVisit;
                 eventData.visitor_type = 'returning';
-                console.log('✅ 재방문 사용자 추적 준비 완료');
             } else {
                 eventData.visitor_type = 'new';
-                console.log('✅ 신규 사용자 추적 준비 완료');
             }
             
-            // GA4 이벤트 전송
             gtag('event', 'user_retention', eventData);
-            console.log('✅ 사용자 유지율 이벤트 전송 완료');
-            
             localStorage.setItem('lastVisit', currentVisit.toString());
         }
         
-        // 트래픽 소스 분석 (안전한 방식)
+        // 트래픽 소스 분석
         function trackTrafficSource() {
             const urlParams = new URLSearchParams(window.location.search);
             const referrer = document.referrer;
@@ -1189,9 +1120,7 @@
                 'referrer_domain': referrer ? new URL(referrer).hostname : 'direct'
             };
             
-            // GA4 이벤트 전송
             gtag('event', 'traffic_source_analysis', eventData);
-            console.log('✅ 트래픽 소스 추적 완료');
         }
         
         // About Modal Functions
@@ -1403,12 +1332,22 @@
             }
         }
         
-        function selectRadio(type) {
+        function selectRadio(type, element) {
             document.querySelectorAll('.radio-item').forEach(item => {
                 item.classList.remove('selected');
             });
-            event.currentTarget.classList.add('selected');
+            element.classList.add('selected');
             document.getElementById(type).checked = true;
+        }
+        
+        // 라디오 버튼 클릭 이벤트 처리
+        function initRadioButtons() {
+            document.querySelectorAll('.radio-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const radioValue = this.getAttribute('data-radio-value');
+                    selectRadio(radioValue, this);
+                });
+            });
         }
         
         // Close form when clicking outside
@@ -1518,28 +1457,17 @@
         // 폼 추적 초기화
         initFormTracking();
         
-        // GA4 로딩 완료 후 활성 사용자 추적 함수들 호출
-        function initGA4Tracking() {
-            // GA4가 로드되었는지 확인
-            if (ga4Loaded) {
-                trackUserRetention();
-                trackTrafficSource();
-                console.log('✅ GA4 추적 함수들 실행 완료');
-            } else {
-                console.log('⏳ GA4 로딩 대기 중...');
-                setTimeout(initGA4Tracking, 500);
-            }
-        }
-        
         // 페이지 로드 완료 후 GA4 추적 시작
         window.addEventListener('load', function() {
-            // 즉시 실행 (지연 없이)
-            initGA4Tracking();
+            trackUserRetention();
+            trackTrafficSource();
         });
         
-        // DOMContentLoaded 이벤트에서도 실행 (더 빠른 실행)
+        // DOMContentLoaded 이벤트에서도 실행
         document.addEventListener('DOMContentLoaded', function() {
-            initGA4Tracking();
+            trackUserRetention();
+            trackTrafficSource();
+            initRadioButtons();
         });
         
         // 모바일 메뉴 토글
